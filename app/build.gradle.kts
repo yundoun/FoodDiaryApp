@@ -60,7 +60,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // CalendarView
-    implementation("com.kizitonwose.calendar:view:2.4.0")
+    implementation("com.kizitonwose.calendar:view:2.5.2")
 
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
 

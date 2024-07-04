@@ -1,9 +1,11 @@
 package com.example.fitnutrijournal.ui.diet
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
@@ -15,6 +17,7 @@ class DietFragment : Fragment() {
     private val binding get() = _binding!!
     private val dietViewModel: DietViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -23,6 +26,7 @@ class DietFragment : Fragment() {
             viewModel = dietViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
         return binding.root
     }
 

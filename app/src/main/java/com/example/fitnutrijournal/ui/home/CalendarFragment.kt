@@ -1,17 +1,26 @@
-// CalendarFragment.kt
 package com.example.fitnutrijournal.ui.home
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
+import java.time.YearMonth
+import java.time.format.TextStyle
 import java.util.*
 
 class CalendarFragment : Fragment() {
@@ -20,6 +29,7 @@ class CalendarFragment : Fragment() {
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,9 +39,9 @@ class CalendarFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
 
-        setupViewPager(binding.viewPager)
+        setupCalendarView()
 
-        binding.selectDate.setOnClickListener{
+        binding.selectDate.setOnClickListener {
             findNavController().navigateUp()
         }
 
@@ -39,14 +49,32 @@ class CalendarFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-
         return binding.root
     }
 
-    private fun setupViewPager(viewPager: ViewPager2) {
-        val adapter = CalendarPagerAdapter(this)
-        viewPager.adapter = adapter
-        viewPager.setCurrentItem(adapter.itemCount / 2, false) // 현재 달을 중앙으로 설정
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupCalendarView() {
+        val calendarView = binding.calendarView
+
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            // Called only when a new container is needed.
+            override fun create(view: View) = DayViewContainer(view)
+
+            // Called every time we need to reuse a container.
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
+                container.textView.text = data.date.dayOfMonth.toString()
+            }
+        }
+
+        val titlesContainer = binding.titlesContainer
+        val daysOfWeek = daysOfWeek(firstDayOfWeekFromLocale())
+
+        val currentMonth = YearMonth.now()
+        val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
+        val endMonth = currentMonth.plusMonths(100)  // Adjust as needed
+
+        calendarView.setup(startMonth, endMonth, daysOfWeek.first())
+        calendarView.scrollToMonth(currentMonth)
     }
 
     override fun onDestroyView() {
@@ -54,3 +82,4 @@ class CalendarFragment : Fragment() {
         _binding = null
     }
 }
+
