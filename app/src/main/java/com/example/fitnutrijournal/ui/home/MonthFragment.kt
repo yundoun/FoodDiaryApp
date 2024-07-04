@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentMonthBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import java.text.SimpleDateFormat
@@ -51,20 +49,9 @@ class MonthFragment : Fragment() {
 
         binding.monthText.text = "${year}년 ${month + 1}월"
 
-        setupWeekDaysHeader()
         setupCalendar(month, year)
 
         return binding.root
-    }
-
-    private fun setupWeekDaysHeader() {
-        val weekDays = listOf("일", "월", "화", "수", "목", "금", "토")
-        val gridLayout = binding.weekDaysHeader
-        weekDays.forEach { day ->
-            val textView = LayoutInflater.from(context).inflate(R.layout.item_week_day, gridLayout, false) as TextView
-            textView.text = day
-            gridLayout.addView(textView)
-        }
     }
 
     private fun setupCalendar(month: Int, year: Int) {
@@ -81,7 +68,14 @@ class MonthFragment : Fragment() {
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        binding.recyclerView.layoutManager = GridLayoutManager(context, 7)
+        val layoutManager = GridLayoutManager(context, 7)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (position == 0) 7 else 1
+            }
+        }
+
+        binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = CalendarDateAdapter(days, today, homeViewModel)
     }
 
