@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
@@ -28,6 +30,15 @@ class CalendarFragment : Fragment() {
         }
 
         setupViewPager(binding.viewPager)
+
+        binding.selectDate.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
+        binding.btnBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
 
         return binding.root
     }
