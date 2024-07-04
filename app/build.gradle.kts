@@ -62,6 +62,8 @@ dependencies {
     // CalendarView
     implementation("com.kizitonwose.calendar:view:2.4.0")
 
+    implementation ("androidx.viewpager2:viewpager2:1.1.0")
+
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }
