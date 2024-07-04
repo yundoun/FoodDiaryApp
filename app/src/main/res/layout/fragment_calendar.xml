@@ -29,7 +29,10 @@
 
         <include
             android:id="@+id/titlesContainer"
-            layout="@layout/calendar_day_titles_container" />
+            layout="@layout/calendar_day_titles_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.kizitonwose.calendar.view.CalendarView
             android:id="@+id/calendarView"
@@ -37,9 +40,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             app:cv_dayViewResource="@layout/calendar_day_layout"
+            app:cv_monthHeaderResource="@layout/calendar_day_titles_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/titlesContainer" />
 
         <TextView
             android:id="@+id/writeDiary"

@@ -15,10 +15,12 @@ import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.daysOfWeek
-import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
@@ -57,29 +59,55 @@ class CalendarFragment : Fragment() {
         val calendarView = binding.calendarView
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
-            // Called only when a new container is needed.
             override fun create(view: View) = DayViewContainer(view)
 
-            // Called every time we need to reuse a container.
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.textView.text = data.date.dayOfMonth.toString()
             }
         }
 
-        val titlesContainer = binding.titlesContainer
-        val daysOfWeek = daysOfWeek(firstDayOfWeekFromLocale())
-
         val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
-        val endMonth = currentMonth.plusMonths(100)  // Adjust as needed
+        val startMonth = currentMonth.minusMonths(100)
+        val endMonth = currentMonth.plusMonths(100)
 
+        val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
         calendarView.setup(startMonth, endMonth, daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
+
+        val titlesContainer = binding.titlesContainer
+
+//        titlesContainer.children
+//            .map { it as TextView }
+//            .forEachIndexed { index, textView ->
+//                val dayOfWeek = daysOfWeek[index]
+//                val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+//                textView.text = title
+//            }
+
+        calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                if (container.titlesContainer.tag == null) {
+                    container.titlesContainer.tag = data.yearMonth
+                    container.titlesContainer.children.map { it as TextView }
+                        .forEachIndexed { index, textView ->
+                            val dayOfWeek = daysOfWeek[index]
+                            val title =
+                                dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                            textView.text = title
+                        }
+                }
+            }
+        }
     }
+
+    class MonthViewContainer(view: View) : ViewContainer(view) {
+        val titlesContainer = view as ViewGroup
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-
