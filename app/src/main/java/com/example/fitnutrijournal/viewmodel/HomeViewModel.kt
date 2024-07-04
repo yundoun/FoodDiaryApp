@@ -3,11 +3,21 @@ package com.example.fitnutrijournal.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home fragment"
+    // 날짜 포맷 정의
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
+
+    // 현재 날짜 값을 설정하는 MutableLiveData
+    private val _date = MutableLiveData<String>().apply {
+        val currentDate = Calendar.getInstance().time
+        value = dateFormat.format(currentDate)
     }
-    val text: LiveData<String> = _text
+    val date: MutableLiveData<String>
+        get() = _date
 }
