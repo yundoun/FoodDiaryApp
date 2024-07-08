@@ -3,6 +3,7 @@ package com.example.fitnutrijournal.ui.home
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
@@ -31,18 +33,17 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 class CalendarFragment : Fragment() {
 
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     private var selectedDate: LocalDate? = null
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private val monthYearFormatter = DateTimeFormatter.ofPattern("yyyy.MM")
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,22 +52,29 @@ class CalendarFragment : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setupCalendarView()
 
         binding.selectDate.setOnClickListener {
-            findNavController().navigateUp()
+            selectedDate?.let {
+                homeViewModel.updateCurrentDate(it)
+                Log.d("CalendarFragment", "Selected date updated to: $it")
+                findNavController().popBackStack()
+            }
         }
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
-
-        return binding.root
     }
 
+
     // 캘린더 뷰와 스크롤 리스너 설정
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendarView() {
         val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
         val currentMonth = YearMonth.now()
@@ -78,29 +86,31 @@ class CalendarFragment : Fragment() {
         binding.calendarView.apply {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
-            monthScrollListener = { month ->
-                updateMonthTitle(month.yearMonth)
-            }
         }
 
-        binding.calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
-                if (container.titlesContainer.tag == null) {
-                    container.titlesContainer.tag = data.yearMonth
-                    container.titlesContainer.children.map { it as TextView }
-                        .forEachIndexed { index, textView ->
-                            val dayOfWeek = daysOfWeek[index]
-                            val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = title
-                        }
+        binding.calendarView.monthScrollListener = { month ->
+            updateMonthTitle(month.yearMonth)
+        }
+
+        binding.calendarView.monthHeaderBinder =
+            object : MonthHeaderFooterBinder<MonthViewContainer> {
+                override fun create(view: View) = MonthViewContainer(view)
+                override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                    if (container.titlesContainer.tag == null) {
+                        container.titlesContainer.tag = data.yearMonth
+                        container.titlesContainer.children.map { it as TextView }
+                            .forEachIndexed { index, textView ->
+                                val dayOfWeek = daysOfWeek[index]
+                                val title =
+                                    dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                textView.text = title
+                            }
+                    }
                 }
             }
-        }
     }
 
     // 월 제목 업데이트
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateMonthTitle(yearMonth: YearMonth) {
         val formattedMonth = yearMonth.format(monthYearFormatter)
         binding.Month.text = formattedMonth
@@ -128,13 +138,12 @@ class CalendarFragment : Fragment() {
                         selectDate(day.date, day.position)
                     }
                 }
-            }
+            } // 날짜를 클릭했을 때 이벤트
         }
 
         binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
                 container.textView.text = data.date.dayOfMonth.toString()
@@ -152,17 +161,25 @@ class CalendarFragment : Fragment() {
                                     ContextCompat.getColor(requireContext(), R.color.white)
                                 )
                             }
+
                             selectedDate -> {
                                 drawable.setColor(
-                                    ContextCompat.getColor(requireContext(), R.color.calendar_date_select)
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.calendar_date_select
+                                    )
                                 )
                                 container.textView.setTextColor(
                                     ContextCompat.getColor(requireContext(), R.color.white)
                                 )
                             }
+
                             else -> {
                                 drawable.setColor(
-                                    ContextCompat.getColor(requireContext(), android.R.color.transparent)
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        android.R.color.transparent
+                                    )
                                 )
                                 container.textView.setTextColor(
                                     ContextCompat.getColor(requireContext(), R.color.black)
@@ -170,6 +187,7 @@ class CalendarFragment : Fragment() {
                             }
                         }
                     }
+
                     else -> {
                         val drawable = container.textView.background as GradientDrawable
                         drawable.setColor(
@@ -182,7 +200,6 @@ class CalendarFragment : Fragment() {
                 }
             }
         }
-
     }
 
     // 월 헤더의 ViewContainer
