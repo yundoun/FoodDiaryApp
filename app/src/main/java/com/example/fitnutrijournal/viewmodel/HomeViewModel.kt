@@ -26,11 +26,23 @@ class HomeViewModel : ViewModel() {
     val currentDate: LiveData<String>
         get() = _currentDate
 
+    private val _selectedDate = MutableLiveData<String>()
+    val selectedDate: LiveData<String>
+        get() = _selectedDate
+
     fun updateCurrentDate(date: LocalDate) {
         val newDate = date.format(dateFormatter)
         if (_currentDate.value != newDate) {
             _currentDate.value = newDate
             Log.d("HomeViewModel", "Current date updated to: $newDate")
+        }
+    }
+
+    fun updateSelectedDate(date: LocalDate) {
+        val newDate = date.format(dateFormatter)
+        if (_selectedDate.value != newDate) {
+            _selectedDate.value = newDate
+            Log.d("HomeViewModel", "Selected date updated to: $newDate")
         }
     }
 }

@@ -63,6 +63,7 @@ class CalendarFragment : Fragment() {
         binding.selectDate.setOnClickListener {
             selectedDate?.let {
                 homeViewModel.updateCurrentDate(it)
+                homeViewModel.updateSelectedDate(it)
                 Log.d("CalendarFragment", "Selected date updated to: $it")
                 findNavController().popBackStack()
             }
@@ -72,7 +73,6 @@ class CalendarFragment : Fragment() {
             findNavController().popBackStack()
         }
     }
-
 
     // 캘린더 뷰와 스크롤 리스너 설정
     private fun setupCalendarView() {
@@ -212,3 +212,4 @@ class CalendarFragment : Fragment() {
         _binding = null
     }
 }
+

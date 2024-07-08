@@ -36,12 +36,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         binding.btnCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

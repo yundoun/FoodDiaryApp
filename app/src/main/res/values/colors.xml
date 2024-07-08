@@ -7,5 +7,6 @@
     <color name="calendar_date_select">#B3E2CD</color>
     <color name="purple">#65558F</color>
     <color name="out_of_month_color">#d1d1d1</color>
+    <color name="blue">#0019FA</color>
 
 </resources>
