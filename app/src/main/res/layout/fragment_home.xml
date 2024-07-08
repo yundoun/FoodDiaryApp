@@ -36,7 +36,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/btn_calendar"
+                    android:id="@+id/btnCalendar"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"

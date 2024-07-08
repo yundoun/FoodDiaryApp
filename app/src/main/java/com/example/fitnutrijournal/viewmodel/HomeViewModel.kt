@@ -20,4 +20,6 @@ class HomeViewModel : ViewModel() {
     }
     val date: MutableLiveData<String>
         get() = _date
+
+
 }

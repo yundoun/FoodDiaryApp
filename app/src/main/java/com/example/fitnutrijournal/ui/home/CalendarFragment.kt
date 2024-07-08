@@ -1,17 +1,19 @@
 package com.example.fitnutrijournal.ui.home
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.CalendarDayLayoutBinding
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
@@ -19,13 +21,13 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
-import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -36,6 +38,9 @@ class CalendarFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
 
     private var selectedDate: LocalDate? = null
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val monthYearFormatter = DateTimeFormatter.ofPattern("yyyy.MM")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -49,7 +54,6 @@ class CalendarFragment : Fragment() {
 
         setupCalendarView()
 
-
         binding.selectDate.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -61,27 +65,25 @@ class CalendarFragment : Fragment() {
         return binding.root
     }
 
+    // 캘린더 뷰와 스크롤 리스너 설정
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupCalendarView() {
-        val calendarView = binding.calendarView
-
-
-        // 요일 타이틀 생성 메소드
         val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(100)
         val endMonth = currentMonth.plusMonths(100)
+
         configureBinders(daysOfWeek)
 
         binding.calendarView.apply {
             setup(startMonth, endMonth, daysOfWeek.first())
             scrollToMonth(currentMonth)
+            monthScrollListener = { month ->
+                updateMonthTitle(month.yearMonth)
+            }
         }
 
-
-
-
-        calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+        binding.calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, data: CalendarMonth) {
                 if (container.titlesContainer.tag == null) {
@@ -89,8 +91,7 @@ class CalendarFragment : Fragment() {
                     container.titlesContainer.children.map { it as TextView }
                         .forEachIndexed { index, textView ->
                             val dayOfWeek = daysOfWeek[index]
-                            val title =
-                                dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                            val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                             textView.text = title
                         }
                 }
@@ -98,66 +99,96 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    class MonthViewContainer(view: View) : ViewContainer(view) {
-        val titlesContainer = view as ViewGroup
+    // 월 제목 업데이트
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateMonthTitle(yearMonth: YearMonth) {
+        val formattedMonth = yearMonth.format(monthYearFormatter)
+        binding.Month.text = formattedMonth
     }
 
+    // 날짜를 선택하고 UI를 업데이트
+    private fun selectDate(date: LocalDate, dayPosition: DayPosition) {
+        if (dayPosition == DayPosition.MonthDate && selectedDate != date) {
+            val oldDate = selectedDate
+            selectedDate = date
+            oldDate?.let { binding.calendarView.notifyDateChanged(it) }
+            binding.calendarView.notifyDateChanged(date)
+        }
+    }
 
+    // 일(day) 및 월(month) 헤더 바인더 구성
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
         class DayViewContainer(view: View) : ViewContainer(view) {
-            // MonthDayBinder에서 해당 변수에 data(CalendarDay)를 넣어줄 예정
             lateinit var day: CalendarDay
             val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
 
             init {
                 view.setOnClickListener {
-                    // 날짜를 클릭했을 때 이벤트
-                    Log.d("CollapisbleActivity", day.toString())
-
                     if (day.position == DayPosition.MonthDate) {
-                        selectDate(day.date)
+                        selectDate(day.date, day.position)
                     }
-
                 }
             }
-
         }
-
-
-
 
         binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
-            // 새 컨테이너가 필요할 때만 호출
             override fun create(view: View) = DayViewContainer(view)
-            // create() 메소드의 반환 값으로 방금 생성한 DayViewContainer(view) 클래스를 지정한다.
-            // 그럼 캘린더의 각 셀에 뷰가 내가 지정한 레이아웃으로 만들어지게 된다.
 
-            // 컨테이너가 재사용될 때마다 호출
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
-                // DayViewContainer의 day 변수에 data 할당
                 container.day = data
                 container.textView.text = data.date.dayOfMonth.toString()
+
+                // 날짜의 위치에 따라 색상 설정
+                when {
+                    data.position == DayPosition.MonthDate -> {
+                        val drawable = container.textView.background as GradientDrawable
+                        when (data.date) {
+                            LocalDate.now() -> {
+                                drawable.setColor(
+                                    ContextCompat.getColor(requireContext(), R.color.calendar_today)
+                                )
+                                container.textView.setTextColor(
+                                    ContextCompat.getColor(requireContext(), R.color.white)
+                                )
+                            }
+                            selectedDate -> {
+                                drawable.setColor(
+                                    ContextCompat.getColor(requireContext(), R.color.calendar_date_select)
+                                )
+                                container.textView.setTextColor(
+                                    ContextCompat.getColor(requireContext(), R.color.white)
+                                )
+                            }
+                            else -> {
+                                drawable.setColor(
+                                    ContextCompat.getColor(requireContext(), android.R.color.transparent)
+                                )
+                                container.textView.setTextColor(
+                                    ContextCompat.getColor(requireContext(), R.color.black)
+                                )
+                            }
+                        }
+                    }
+                    else -> {
+                        val drawable = container.textView.background as GradientDrawable
+                        drawable.setColor(
+                            ContextCompat.getColor(requireContext(), android.R.color.transparent)
+                        )
+                        container.textView.setTextColor(
+                            ContextCompat.getColor(requireContext(), R.color.out_of_month_color)
+                        )
+                    }
+                }
             }
-            // bind() 메소드에선 셀 내의 뷰들에 대한 값을 세팅해준다.
-            // 달력 밑에 점을 통해서 일정을 표시하는 경우가 많은데,
-            // 그런 경우에도 이 bind() 메소드에서 작업해주면 될 것 같다.
         }
-
 
     }
 
-
-
-    private fun selectDate(date: LocalDate) {
-        if (selectedDate != date) {
-            val oldDate = selectedDate
-            selectedDate = date
-            oldDate?.let { binding.calendarView.notifyDateChanged(it) }
-            binding.calendarView.notifyDateChanged(date)
-            //updateAdapterForDate(date)
-        }
+    // 월 헤더의 ViewContainer
+    class MonthViewContainer(view: View) : ViewContainer(view) {
+        val titlesContainer = view as ViewGroup
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
