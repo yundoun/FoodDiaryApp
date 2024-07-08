@@ -11,19 +11,54 @@
         android:weightSum="7"
         android:orientation="horizontal">
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="일"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="월"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="화"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="목"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="금"
+            android:gravity="center" />
 
-        <include layout="@layout/calendar_day_title_text" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="토"
+            android:gravity="center" />
 
     </LinearLayout>
 </layout>

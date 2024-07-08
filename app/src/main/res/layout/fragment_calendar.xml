@@ -27,12 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back" />
 
-        <include
-            android:id="@+id/titlesContainer"
-            layout="@layout/calendar_day_titles_container"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.kizitonwose.calendar.view.CalendarView
             android:id="@+id/calendarView"
@@ -43,7 +37,7 @@
             app:cv_monthHeaderResource="@layout/calendar_day_titles_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titlesContainer" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/writeDiary"

@@ -1,6 +1,5 @@
 package com.example.fitnutrijournal.ui.home
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +35,6 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
