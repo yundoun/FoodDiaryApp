@@ -62,14 +62,168 @@
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout"
+                    android:id="@+id/todaySummarySection"
                     android:layout_width="270dp"
-                    android:layout_height="150dp"
+                    android:layout_height="200dp"
                     android:layout_marginTop="100dp"
                     android:background="@drawable/border_home_section"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
+                    <Button
+                        android:id="@+id/testBtn"
+                        android:layout_width="36dp"
+                        android:layout_height="23dp"
+                        android:text="Button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:gravity="center"
+                        android:text='@{viewModel.currentCalories + "\n" + "섭취량"}'
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/circularProgressBar"
+                        app:layout_constraintHorizontal_bias="0.101"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.34" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:gravity="center"
+                        android:text="0\n소비량"
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.932"
+                        app:layout_constraintStart_toEndOf="@+id/circularProgressBar"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.34" />
+
+                    <ProgressBar
+                        android:id="@+id/circularProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="false"
+                        android:max="@{viewModel.targetCalories}"
+                        android:progress="@{viewModel.currentCalories}"
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.15" />
+
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text='@{viewModel.remainingCalories + "\n" + "잔여칼로리"}'
+                        android:textSize="12dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.35" />
+
+                    <ProgressBar
+                        android:id="@+id/carbProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="60dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="10dp"
+                        android:max="@{viewModel.targetCarbIntake}"
+                        android:progress="@{viewModel.currentCarbIntake}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/proteinProgressBar"
+                        app:layout_constraintHorizontal_bias="0.115"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.733" />
+
+                    <TextView
+                        android:id="@+id/tvCarb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text='@{viewModel.currentCarbIntake + "/" + viewModel.targetCarbIntake + "g"}'
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvProtein"
+                        app:layout_constraintHorizontal_bias="0.181"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.883" />
+
+
+                    <ProgressBar
+                        android:id="@+id/proteinProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="60dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:max="@{viewModel.targetProteinIntake}"
+                        android:progress="@{viewModel.currentProteinIntake}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.736" />
+
+                    <TextView
+                        android:id="@+id/tvProtein"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text='@{viewModel.currentProteinIntake + "/" + viewModel.targetProteinIntake + "g"}'
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.883" />
+
+                    <ProgressBar
+                        android:id="@+id/fatProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="60dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginEnd="10dp"
+                        android:max="@{viewModel.targetFatIntake}"
+                        android:progress="@{viewModel.currentFatIntake}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.876"
+                        app:layout_constraintStart_toEndOf="@+id/proteinProgressBar"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.736" />
+
+                    <TextView
+                        android:id="@+id/tvFat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:text='@{viewModel.currentFatIntake + "/" + viewModel.targetFatIntake + "g"}'
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.82"
+                        app:layout_constraintStart_toEndOf="@+id/tvProtein"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.883" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -79,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="오늘 하루 요약"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                    app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.217"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -92,20 +246,20 @@
                     android:text="상세정보"
                     android:textColor="@color/blue"
                     android:textSize="12dp"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                    app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.809"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout2"
+                    android:id="@+id/todayDietSection"
                     android:layout_width="270dp"
-                    android:layout_height="150dp"
+                    android:layout_height="200dp"
                     android:layout_marginTop="100dp"
                     android:background="@drawable/border_home_section"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/todaySummarySection">
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -115,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="오늘의 식단"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+                    app:layout_constraintBottom_toTopOf="@+id/todayDietSection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.206"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -128,20 +282,20 @@
                     android:text="상세정보"
                     android:textColor="@color/blue"
                     android:textSize="12dp"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+                    app:layout_constraintBottom_toTopOf="@+id/todayDietSection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.809"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout3"
+                    android:id="@+id/myExerciseRoutineSection"
                     android:layout_width="270dp"
-                    android:layout_height="150dp"
+                    android:layout_height="200dp"
                     android:layout_marginTop="100dp"
                     android:background="@drawable/border_home_section"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+                    app:layout_constraintTop_toBottomOf="@+id/todayDietSection">
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,7 +305,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="나의 운동 루틴"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+                    app:layout_constraintBottom_toTopOf="@+id/myExerciseRoutineSection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.217"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -162,22 +316,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="나의 활동"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout4"
+                    app:layout_constraintBottom_toTopOf="@+id/myActivitySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.199"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout4"
+                    android:id="@+id/myActivitySection"
                     android:layout_width="270dp"
-                    android:layout_height="150dp"
+                    android:layout_height="200dp"
                     android:layout_marginTop="100dp"
                     android:layout_marginBottom="150dp"
                     android:background="@drawable/border_home_section"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+                    app:layout_constraintTop_toBottomOf="@+id/myExerciseRoutineSection">
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
