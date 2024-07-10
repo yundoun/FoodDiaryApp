@@ -2,20 +2,18 @@ package com.example.fitnutrijournal.ui.home
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.fitnutrijournal.R
-import com.example.fitnutrijournal.databinding.FragmentProfileBinding
 import com.example.fitnutrijournal.databinding.FragmentTodaySummaryDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
-import com.example.fitnutrijournal.viewmodel.ProfileViewModel
+import com.google.android.material.tabs.TabLayoutMediator
 
 @RequiresApi(Build.VERSION_CODES.O)
 class TodaySummaryDetailFragment : Fragment() {
@@ -39,12 +37,29 @@ class TodaySummaryDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.testBtn.setOnClickListener{
+            homeViewModel.setMaxCarbsBreakfast(500)
+            homeViewModel.addCarbsBreakfast(100)
+            Log.d("TodaySummaryDetailFragment", "Breakfast: ${homeViewModel.currentCarbIntakeBreakfast.value}")
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.viewPager.adapter = ViewPagerAdapter(this)
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "아침"
+                1 -> "점심"
+                2 -> "저녁"
+                3 -> "간식"
+                else -> "Breakfast"
+            }
+        }.attach()
 
     }
 

@@ -377,7 +377,7 @@
                         app:layout_constraintVertical_bias="0.3" />
 
                     <ImageView
-                        android:id="@+id/ivDessert"
+                        android:id="@+id/ivSnack"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -426,7 +426,7 @@
                         android:layout_marginStart="10dp"
                         android:text="간식"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivDessert"
+                        app:layout_constraintStart_toEndOf="@+id/ivSnack"
                         app:layout_constraintTop_toBottomOf="@+id/view3"
                         app:layout_constraintVertical_bias="0.3" />
 
@@ -471,7 +471,7 @@
                         android:text="TextView"
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivDessert"
+                        app:layout_constraintStart_toEndOf="@+id/ivSnack"
                         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
                     <ImageView
@@ -511,7 +511,7 @@
                         app:srcCompat="@drawable/ic_plus" />
 
                     <ImageView
-                        android:id="@+id/addDessert"
+                        android:id="@+id/addSnack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="30dp"

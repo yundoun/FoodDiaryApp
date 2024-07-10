@@ -49,14 +49,14 @@ class HomeFragment : Fragment() {
 
         binding.testBtn.setOnClickListener {
             // 테스트 코드
-            homeViewModel.addCarbs(50)
-            homeViewModel.addProtein(30)
-            homeViewModel.addFat(10)
-            homeViewModel.addCalories(100)
             homeViewModel.setMaxCarbs(300) // 예시로 300g 설정
             homeViewModel.setMaxProtein(500)
             homeViewModel.setMaxFat(100)
             homeViewModel.setMaxCalories(2000)
+            homeViewModel.addCarbs(50)
+            homeViewModel.addProtein(30)
+            homeViewModel.addFat(10)
+            homeViewModel.addCalories(100)
         }
 
 
