@@ -369,8 +369,10 @@
                 android:text="testBtn"
                 app:layout_constraintBottom_toTopOf="@+id/detailSection"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/currentProgressSection" />
+                app:layout_constraintTop_toBottomOf="@+id/currentProgressSection"
+                app:layout_constraintVertical_bias="0.269" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

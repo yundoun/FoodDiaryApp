@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -8,16 +9,28 @@
             type="com.example.fitnutrijournal.viewmodel.HomeViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.home.Lunch">
+        tools:context=".ui.home.detail.Lunch">
 
-        <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
+        <com.example.fitnutrijournal.ui.common.NutritionProgressView
+            android:id="@+id/nutritionProgressView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:viewModel="@{viewModel}"
+            app:targetCarbIntake="@{viewModel.targetCarbIntakeLunch}"
+            app:currentCarbIntake="@{viewModel.currentCarbIntakeLunch}"
+            app:targetProteinIntake="@{viewModel.targetProteinIntakeLunch}"
+            app:currentProteinIntake="@{viewModel.currentProteinIntakeLunch}"
+            app:targetFatIntake="@{viewModel.targetFatIntakeLunch}"
+            app:currentFatIntake="@{viewModel.currentFatIntakeLunch}"
+            app:targetCalories="@{viewModel.targetCaloriesLunch}"
+            app:currentCalories="@{viewModel.currentCaloriesLunch}" />
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

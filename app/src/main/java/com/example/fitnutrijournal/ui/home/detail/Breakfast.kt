@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.home
+package com.example.fitnutrijournal.ui.home.detail
 
 import android.os.Build
 import android.os.Bundle
@@ -26,23 +26,6 @@ class Breakfast : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
-
-
-        // 아침에 해당하는 변수 설정
-        binding.nutritionProgressView.setViewModel(
-            homeViewModel,
-            homeViewModel.targetCarbIntakeBreakfast,
-            homeViewModel.currentCarbIntakeBreakfast,
-            homeViewModel.targetProteinIntakeBreakfast,
-            homeViewModel.currentProteinIntakeBreakfast,
-            homeViewModel.targetFatIntakeBreakfast,
-            homeViewModel.currentFatIntakeBreakfast,
-            homeViewModel.targetCaloriesBreakfast,
-            homeViewModel.currentCaloriesBreakfast
-        )
-
-
-
 
         return binding.root
     }

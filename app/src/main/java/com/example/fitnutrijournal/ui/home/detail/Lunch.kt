@@ -1,17 +1,20 @@
-package com.example.fitnutrijournal.ui.home
+package com.example.fitnutrijournal.ui.home.detail
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.fitnutrijournal.databinding.FragmentSnackBinding
+import com.example.fitnutrijournal.databinding.FragmentLunchBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
-class Snack : Fragment() {
+@RequiresApi(Build.VERSION_CODES.O)
+class Lunch : Fragment() {
 
-    private var _binding: FragmentSnackBinding? = null
+    private var _binding: FragmentLunchBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
 
@@ -19,10 +22,12 @@ class Snack : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSnackBinding.inflate(inflater, container, false).apply {
+        _binding = FragmentLunchBinding.inflate(inflater, container, false).apply {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+
         return binding.root
     }
 

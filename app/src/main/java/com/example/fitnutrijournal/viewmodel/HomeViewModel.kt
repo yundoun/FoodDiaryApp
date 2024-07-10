@@ -183,7 +183,7 @@ class HomeViewModel : ViewModel() {
         _targetCarbIntake.value = intake
     }
 
-    // 탄수화물 섭취량을 증가시키는 테스트 함수
+    // 섭취량 증가시키는 테스트 코드
     fun addCarbs(carbs: Int) {
         _currentCarbIntake.value = (_currentCarbIntake.value ?: 0) + carbs
         if (_currentCarbIntake.value!! > _targetCarbIntake.value!!) {
@@ -219,7 +219,56 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    // 목표 탄수화물 값을 임의로 설정하는 메소드
+    fun addProteinBreakfast(protein: Int) {
+        _currentProteinIntakeBreakfast.value = (_currentProteinIntakeBreakfast.value ?: 0) + protein
+        if (_currentProteinIntakeBreakfast.value!! > _targetProteinIntakeBreakfast.value!!) {
+            _currentProteinIntakeBreakfast.value = _targetProteinIntakeBreakfast.value
+        }
+    }
+
+    fun addFatBreakfast(fat: Int) {
+        _currentFatIntakeBreakfast.value = (_currentFatIntakeBreakfast.value ?: 0) + fat
+        if (_currentFatIntakeBreakfast.value!! > _targetFatIntakeBreakfast.value!!) {
+            _currentFatIntakeBreakfast.value = _targetFatIntakeBreakfast.value
+        }
+    }
+
+    fun addCaloriesBreakfast(calories: Int) {
+        _currentCaloriesBreakfast.value = (_currentCaloriesBreakfast.value ?: 0) + calories
+        if (_currentCaloriesBreakfast.value!! > _targetCaloriesBreakfast.value!!) {
+            _currentCaloriesBreakfast.value = _targetCaloriesBreakfast.value
+        }
+    }
+
+    fun addCarbsLunch(carbs: Int) {
+        _currentCarbIntakeLunch.value = (_currentCarbIntakeLunch.value ?: 0) + carbs
+        if (_currentCarbIntakeLunch.value!! > _targetCarbIntakeLunch.value!!) {
+            _currentCarbIntakeLunch.value = _targetCarbIntakeLunch.value
+        }
+    }
+
+    fun addProteinLunch(protein: Int) {
+        _currentProteinIntakeLunch.value = (_currentProteinIntakeLunch.value ?: 0) + protein
+        if (_currentProteinIntakeLunch.value!! > _targetProteinIntakeLunch.value!!) {
+            _currentProteinIntakeLunch.value = _targetProteinIntakeLunch.value
+        }
+    }
+
+    fun addFatLunch(fat: Int) {
+        _currentFatIntakeLunch.value = (_currentFatIntakeLunch.value ?: 0) + fat
+        if (_currentFatIntakeLunch.value!! > _targetFatIntakeLunch.value!!) {
+            _currentFatIntakeLunch.value = _targetFatIntakeLunch.value
+        }
+    }
+
+    fun addCaloriesLunch(calories: Int) {
+        _currentCaloriesLunch.value = (_currentCaloriesLunch.value ?: 0) + calories
+        if (_currentCaloriesLunch.value!! > _targetCaloriesLunch.value!!) {
+            _currentCaloriesLunch.value = _targetCaloriesLunch.value
+        }
+    }
+
+    // 목표값을 설정하는 테스트 코드
     fun setMaxCarbs(max: Int) {
         _targetCarbIntake.value = max
     }
@@ -238,6 +287,34 @@ class HomeViewModel : ViewModel() {
 
     fun setMaxCarbsBreakfast(max: Int) {
         _targetCarbIntakeBreakfast.value = max
+    }
+
+    fun setMaxProteinBreakfast(max: Int) {
+        _targetProteinIntakeBreakfast.value = max
+    }
+
+    fun setMaxFatBreakfast(max: Int) {
+        _targetFatIntakeBreakfast.value = max
+    }
+
+    fun setMaxCaloriesBreakfast(max: Int) {
+        _targetCaloriesBreakfast.value = max
+    }
+
+    fun setMaxCarbsLunch(max: Int) {
+        _targetCarbIntakeLunch.value = max
+    }
+
+    fun setMaxProteinLunch(max: Int) {
+        _targetProteinIntakeLunch.value = max
+    }
+
+    fun setMaxFatLunch(max: Int) {
+        _targetFatIntakeLunch.value = max
+    }
+
+    fun setMaxCaloriesLunch(max: Int) {
+        _targetCaloriesLunch.value = max
     }
 
 
