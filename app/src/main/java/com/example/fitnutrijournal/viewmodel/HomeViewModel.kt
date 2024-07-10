@@ -22,7 +22,7 @@ class HomeViewModel : ViewModel() {
     private val _currentFatIntake = MutableLiveData(0)
     private val _targetCalories = MutableLiveData(0)
     private val _currentCalories = MutableLiveData(0)
-    private val _remainingCalories = MutableLiveData(0)
+    private val _remainingCalories = MediatorLiveData<Int>()
 
     val targetCarbIntake: LiveData<Int>
         get() = _targetCarbIntake
@@ -40,11 +40,20 @@ class HomeViewModel : ViewModel() {
         get() = _targetCalories
     val currentCalories: LiveData<Int>
         get() = _currentCalories
-    val remainingCalories = MediatorLiveData<Int>().apply {
-        addSource(_currentCalories) { updateRemainingCalories() }
-        addSource(_targetCalories) { updateRemainingCalories() }
+    val remainingCalories: LiveData<Int>
+        get() = _remainingCalories
+
+    init {
+        _remainingCalories.addSource(_currentCalories) { updateRemainingCalories() }
+        _remainingCalories.addSource(_targetCalories) { updateRemainingCalories() }
     }
 
+
+    private fun updateRemainingCalories() {
+        val max = _targetCalories.value ?: 0
+        val current = _currentCalories.value ?: 0
+        _remainingCalories.value = max - current
+    }
 
     private val _todayDate = MutableLiveData<String>().apply {
         value = LocalDate.now().format(dateFormatter)
@@ -69,13 +78,6 @@ class HomeViewModel : ViewModel() {
     fun setTargetCarbIntake(intake: Int) {
         _targetCarbIntake.value = intake
     }
-
-    private fun updateRemainingCalories() {
-        val max = _targetCalories.value ?: 0
-        val current = _currentCalories.value ?: 0
-        remainingCalories.value = max - current
-    }
-
 
     // 탄수화물 섭취량을 증가시키는 테스트 함수
     fun addCarbs(carbs: Int) {

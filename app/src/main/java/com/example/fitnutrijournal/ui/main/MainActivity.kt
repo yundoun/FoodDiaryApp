@@ -2,6 +2,7 @@ package com.example.fitnutrijournal.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.fitnutrijournal.R
@@ -24,4 +25,9 @@ class MainActivity : AppCompatActivity() {
 
         navView.setupWithNavController(navController)
     }
+
+    fun showBottomNavigation(show: Boolean) {
+        binding.navView .visibility = if (show) View.VISIBLE else View.GONE
+    }
+
 }

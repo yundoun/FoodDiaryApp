@@ -8,5 +8,7 @@
     <color name="purple">#65558F</color>
     <color name="out_of_month_color">#d1d1d1</color>
     <color name="blue">#0019FA</color>
+    <color name="light_green">#B3E2CD</color>
+    <color name="light_blue">#c7e9ff</color>
 
 </resources>

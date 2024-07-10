@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_home_to_calendarFragment"
             app:destination="@id/calendarFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_todaySummaryDetailFragment"
+            app:destination="@id/todaySummaryDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_diet"
@@ -33,4 +36,8 @@
         android:id="@+id/calendarFragment"
         android:name="com.example.fitnutrijournal.ui.home.CalendarFragment"
         android:label="CalendarFragment" />
+    <fragment
+        android:id="@+id/todaySummaryDetailFragment"
+        android:name="com.example.fitnutrijournal.ui.home.TodaySummaryDetailFragment"
+        android:label="TodaySummaryDetailFragment" />
 </navigation>

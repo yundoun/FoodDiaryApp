@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.CalendarDayLayoutBinding
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
+import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -57,6 +58,7 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as MainActivity).showBottomNavigation(false)
 
         setupCalendarView()
 
