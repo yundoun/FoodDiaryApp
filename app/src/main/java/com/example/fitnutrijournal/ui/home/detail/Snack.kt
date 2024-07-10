@@ -23,6 +23,9 @@ class Snack : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        binding.nutritionProgressView.setLifecycleOwner(viewLifecycleOwner)
+
         return binding.root
     }
 

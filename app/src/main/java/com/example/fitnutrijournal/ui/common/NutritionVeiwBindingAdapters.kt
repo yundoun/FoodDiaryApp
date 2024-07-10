@@ -5,15 +5,9 @@ import androidx.lifecycle.LiveData
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @BindingAdapter(
-    "viewModel",
-    "targetCarbIntake",
-    "currentCarbIntake",
-    "targetProteinIntake",
-    "currentProteinIntake",
-    "targetFatIntake",
-    "currentFatIntake",
-    "targetCalories",
-    "currentCalories"
+    value = ["viewModel", "targetCarbIntake", "currentCarbIntake", "targetProteinIntake",
+        "currentProteinIntake", "targetFatIntake", "currentFatIntake", "targetCalories", "currentCalories"],
+    requireAll = true
 )
 fun setViewModel(
     view: NutritionProgressView,
@@ -27,15 +21,15 @@ fun setViewModel(
     targetCalories: LiveData<Int>,
     currentCalories: LiveData<Int>
 ) {
-    view.setViewModel(
-        viewModel,
-        targetCarbIntake,
-        currentCarbIntake,
-        targetProteinIntake,
-        currentProteinIntake,
-        targetFatIntake,
-        currentFatIntake,
-        targetCalories,
-        currentCalories
-    )
+    val binding = view.binding
+    binding.viewModel = viewModel
+    binding.targetCarbIntake = targetCarbIntake
+    binding.currentCarbIntake = currentCarbIntake
+    binding.targetProteinIntake = targetProteinIntake
+    binding.currentProteinIntake = currentProteinIntake
+    binding.targetFatIntake = targetFatIntake
+    binding.currentFatIntake = currentFatIntake
+    binding.targetCalories = targetCalories
+    binding.currentCalories = currentCalories
+    binding.executePendingBindings()
 }

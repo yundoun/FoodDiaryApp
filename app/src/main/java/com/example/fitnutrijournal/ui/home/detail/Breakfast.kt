@@ -27,6 +27,10 @@ class Breakfast : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
 
+        // LifecycleOwner 설정
+        binding.nutritionProgressView.setLifecycleOwner(viewLifecycleOwner)
+
+
         return binding.root
     }
 

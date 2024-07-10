@@ -28,6 +28,10 @@ class Lunch : Fragment() {
         }
 
 
+        // LifecycleOwner 설정
+        binding.nutritionProgressView.setLifecycleOwner(viewLifecycleOwner)
+
+
         return binding.root
     }
 

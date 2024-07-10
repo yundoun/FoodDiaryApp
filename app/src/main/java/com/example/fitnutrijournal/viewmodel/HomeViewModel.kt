@@ -143,6 +143,25 @@ class HomeViewModel : ViewModel() {
     val currentCaloriesDinner: LiveData<Int>
         get() = _currentCaloriesDinner
 
+    // 간식 getter
+    val targetCarbIntakeSnack: LiveData<Int>
+        get() = _targetCarbIntakeSnack
+    val currentCarbIntakeSnack: LiveData<Int>
+        get() = _currentCarbIntakeSnack
+    val targetProteinIntakeSnack: LiveData<Int>
+        get() = _targetProteinIntakeSnack
+    val currentProteinIntakeSnack: LiveData<Int>
+        get() = _currentProteinIntakeSnack
+    val targetFatIntakeSnack: LiveData<Int>
+        get() = _targetFatIntakeSnack
+    val currentFatIntakeSnack: LiveData<Int>
+        get() = _currentFatIntakeSnack
+    val targetCaloriesSnack: LiveData<Int>
+        get() = _targetCaloriesSnack
+    val currentCaloriesSnack: LiveData<Int>
+        get() = _currentCaloriesSnack
+
+
     // 잔여 칼로리 계산
     init {
         _remainingCalories.addSource(_currentCalories) { updateRemainingCalories() }
