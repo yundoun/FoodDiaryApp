@@ -2,19 +2,17 @@ package com.example.fitnutrijournal.ui.home
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentHomeBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
 
@@ -39,6 +37,27 @@ class HomeFragment : Fragment() {
         binding.btnCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
         }
+
+
+        binding.testBtn.setOnClickListener {
+            // 테스트 코드
+            homeViewModel.addCarbs(50)
+            homeViewModel.addProtein(30)
+            homeViewModel.addFat(10)
+            homeViewModel.addCalories(100)
+            homeViewModel.setMaxCarbs(300) // 예시로 300g 설정
+            homeViewModel.setMaxProtein(500)
+            homeViewModel.setMaxFat(100)
+            homeViewModel.setMaxCalories(2000)
+        }
+
+        // 탄수화물 목표치가 바뀌는지 관찰
+        homeViewModel.targetCarbIntake.observe(viewLifecycleOwner) { max ->
+            binding.carbProgressBar.max = max
+            binding.proteinProgressBar.max = max
+            binding.fatProgressBar.max = max
+        }
+
     }
 
     override fun onDestroyView() {
