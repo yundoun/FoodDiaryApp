@@ -14,6 +14,7 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.CalendarDayLayoutBinding
@@ -32,7 +33,6 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
-
 @RequiresApi(Build.VERSION_CODES.O)
 class CalendarFragment : Fragment() {
 
@@ -72,6 +72,12 @@ class CalendarFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
+        homeViewModel.currentDate.observe(viewLifecycleOwner, Observer { currentDate ->
+            selectedDate = LocalDate.parse(currentDate)
+            binding.calendarView.notifyDateChanged(selectedDate!!)
+            binding.calendarView.scrollToDate(selectedDate!!) // 선택된 날짜에 맞게 달력 바인딩
+        })
     }
 
     // 캘린더 뷰와 스크롤 리스너 설정
@@ -149,11 +155,12 @@ class CalendarFragment : Fragment() {
                 container.textView.text = data.date.dayOfMonth.toString()
 
                 // 날짜의 위치에 따라 색상 설정
+                // 날짜의 위치에 따라 색상 설정
                 when {
                     data.position == DayPosition.MonthDate -> {
                         val drawable = container.textView.background as GradientDrawable
-                        when (data.date) {
-                            LocalDate.now() -> {
+                        when {
+                            data.date == selectedDate -> {
                                 drawable.setColor(
                                     ContextCompat.getColor(requireContext(), R.color.calendar_today)
                                 )
@@ -161,25 +168,17 @@ class CalendarFragment : Fragment() {
                                     ContextCompat.getColor(requireContext(), R.color.white)
                                 )
                             }
-
-                            selectedDate -> {
+                            data.date == LocalDate.now() -> {
                                 drawable.setColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.calendar_date_select
-                                    )
+                                    ContextCompat.getColor(requireContext(), R.color.calendar_date_select)
                                 )
                                 container.textView.setTextColor(
                                     ContextCompat.getColor(requireContext(), R.color.white)
                                 )
                             }
-
                             else -> {
                                 drawable.setColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        android.R.color.transparent
-                                    )
+                                    ContextCompat.getColor(requireContext(), android.R.color.transparent)
                                 )
                                 container.textView.setTextColor(
                                     ContextCompat.getColor(requireContext(), R.color.black)
@@ -187,7 +186,6 @@ class CalendarFragment : Fragment() {
                             }
                         }
                     }
-
                     else -> {
                         val drawable = container.textView.background as GradientDrawable
                         drawable.setColor(
@@ -198,6 +196,7 @@ class CalendarFragment : Fragment() {
                         )
                     }
                 }
+
             }
         }
     }
