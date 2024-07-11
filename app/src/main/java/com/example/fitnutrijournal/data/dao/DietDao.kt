@@ -8,6 +8,8 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.fitnutrijournal.data.model.Diet
 
+// Room Database에 접근하기 위한 DAO 인터페이스
+// 데이터베이스 쿼리 메소드 선언함
 @Dao
 interface DietDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

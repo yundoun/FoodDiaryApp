@@ -1,3 +1,5 @@
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,28 +12,35 @@ import com.example.fitnutrijournal.data.model.Diet
 
 // RecyclerView.Adapter
 class DietTabAdapter(
-    private val items: List<Diet>,
-    private val onFavoriteClicked: (Diet) -> Unit,
+    private var diets: List<Diet>,
+    private val toggleFavorite: (Diet) -> Unit,
     private val favorites: LiveData<Set<String>>
-) : RecyclerView.Adapter<DietTabAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.text_view)
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateDiets(newDiets: List<Diet>) {
+        diets = newDiets
+        notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
+    }
+
+    inner class DietViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textView: TextView = view.findViewById(R.id.foodName)
         val favoriteButton: ImageButton = view.findViewById(R.id.favorite_button)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DietViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_diet, parent, false)
-        return ViewHolder(view)
+        return DietViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
+    override fun onBindViewHolder(holder: DietViewHolder, position: Int) {
+        val item = diets[position]
+        Log.d("DietTabAdapter", "Binding item at position $position: $item")
         holder.textView.text = item.foodName
         updateFavoriteButton(holder.favoriteButton, item.foodCode)
 
         holder.favoriteButton.setOnClickListener {
-            onFavoriteClicked(item)
+            toggleFavorite(item)
         }
 
         favorites.observeForever {
@@ -47,5 +56,5 @@ class DietTabAdapter(
         )
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = diets.size
 }

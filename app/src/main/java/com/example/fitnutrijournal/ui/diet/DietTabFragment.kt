@@ -2,6 +2,7 @@ package com.example.fitnutrijournal.ui.diet
 
 import DietTabAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,19 +26,27 @@ class DietTabFragment : Fragment() {
     }
 
     private val dietViewModel: DietViewModel by activityViewModels()
+    private lateinit var adapter: DietTabAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_diet_tab, container, false)
+        return inflater.inflate(R.layout.fragment_diet_tab, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        dietViewModel.allDiets.observe(viewLifecycleOwner) { diets ->
-            recyclerView.adapter = DietTabAdapter(diets, dietViewModel::toggleFavorite, dietViewModel.favorites)
-        }
+        adapter = DietTabAdapter(emptyList(), dietViewModel::toggleFavorite, dietViewModel.favorites)
+        recyclerView.adapter = adapter
 
-        return view
+        dietViewModel.filteredDiets.observe(viewLifecycleOwner) { diets ->
+            Log.d("DietTabFragment", "Updating adapter with diets: $diets")
+            adapter.updateDiets(diets)
+        }
     }
 }
+

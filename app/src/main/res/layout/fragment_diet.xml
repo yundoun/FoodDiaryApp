@@ -16,7 +16,7 @@
         tools:context=".ui.diet.DietFragment">
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -26,21 +26,21 @@
             app:srcCompat="@drawable/ic_arrow_back" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tvFoodSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginBottom="10dp"
             android:text="음식 검색하기"
-            app:layout_constraintBottom_toTopOf="@+id/frame_7"
+            app:layout_constraintBottom_toTopOf="@+id/searchLayout"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_7"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/searchLayout"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="40dp"
             android:layout_marginTop="80dp"
             android:layout_marginEnd="60dp"
@@ -52,7 +52,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/icSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -60,7 +60,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_search_white" />
+
+            <EditText
+                android:id="@+id/searchEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:hint="Search"
+                android:padding="0dp"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icSearch"
+                app:layout_constraintTop_toTopOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <ImageView
             android:id="@+id/imageView2"
@@ -68,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="80dp"
-            app:layout_constraintStart_toEndOf="@+id/frame_7"
+            app:layout_constraintStart_toEndOf="@+id/searchLayout"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_mic" />
 
@@ -77,9 +93,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frame_7" />
+            app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager"
