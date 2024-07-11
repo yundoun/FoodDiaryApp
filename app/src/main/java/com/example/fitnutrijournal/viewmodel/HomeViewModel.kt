@@ -336,6 +336,40 @@ class HomeViewModel : ViewModel() {
         _targetCaloriesLunch.value = max
     }
 
+    fun setMaxCarbsDinner(max: Int) {
+        _targetCarbIntakeDinner.value = max
+    }
+
+    fun setMaxProteinDinner(max: Int) {
+        _targetProteinIntakeDinner.value = max
+    }
+
+    fun setMaxFatDinner(max: Int) {
+        _targetFatIntakeDinner.value = max
+    }
+
+    fun setMaxCaloriesDinner(max: Int) {
+        _targetCaloriesDinner.value = max
+    }
+
+    fun setMaxCarbsSnack(max: Int) {
+        _targetCarbIntakeSnack.value = max
+    }
+
+    fun setMaxProteinSnack(max: Int) {
+        _targetProteinIntakeSnack.value = max
+    }
+
+    fun setMaxFatSnack(max: Int) {
+        _targetFatIntakeSnack.value = max
+    }
+
+    fun setMaxCaloriesSnack(max: Int) {
+        _targetCaloriesSnack.value = max
+    }
+
+
+
 
     fun updateCurrentDate(date: LocalDate) {
         val newDate = date.format(dateFormatter)

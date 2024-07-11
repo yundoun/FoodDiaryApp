@@ -1,11 +1,8 @@
-package com.example.fitnutrijournal.ui.home
+package com.example.fitnutrijournal.ui.home.detail
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.fitnutrijournal.ui.home.detail.Breakfast
-import com.example.fitnutrijournal.ui.home.detail.Dinner
-import com.example.fitnutrijournal.ui.home.detail.Lunch
-import com.example.fitnutrijournal.ui.home.detail.Snack
+import com.example.fitnutrijournal.ui.home.TodaySummaryDetailFragment
 
 class ViewPagerAdapter(fragmentActivity: TodaySummaryDetailFragment) : FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int = 4

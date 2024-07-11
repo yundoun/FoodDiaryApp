@@ -43,7 +43,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/targetEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/todayTargetSection"
@@ -64,11 +64,11 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/tvTargetCalories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="총 섭취 칼로리\n2100kcal"
+                    android:text='@{"목표 칼로리"+ "\n" + viewModel.targetCalories + "kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.501"
@@ -77,71 +77,103 @@
                     app:layout_constraintVertical_bias="0.156" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/tvBreakfast"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="아침"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView10"
+                    app:layout_constraintEnd_toStartOf="@+id/tvLunch"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
                     app:layout_constraintVertical_bias="0.3" />
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/tvLunch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="점심"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView19"
+                    app:layout_constraintEnd_toStartOf="@+id/tvDinner"
                     app:layout_constraintHorizontal_bias="0.393"
-                    app:layout_constraintStart_toEndOf="@+id/textView9"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintStart_toEndOf="@+id/tvBreakfast"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
                     app:layout_constraintVertical_bias="0.3" />
 
                 <TextView
-                    android:id="@+id/textView19"
+                    android:id="@+id/tvDinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="저녁"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView10"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintEnd_toStartOf="@+id/tvSnack"
+                    app:layout_constraintStart_toEndOf="@+id/tvLunch"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
                     app:layout_constraintVertical_bias="0.3" />
 
                 <TextView
-                    android:id="@+id/textView20"
+                    android:id="@+id/tvSnack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="500kcal"
+                    android:gravity="center"
+                    android:text="간식"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView21"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tvDinner"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
+                    app:layout_constraintVertical_bias="0.311" />
+
+                <TextView
+                    android:id="@+id/breakfast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text='@{viewModel.targetCaloriesBreakfast + "kcal"}'
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/lunch"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.8" />
 
                 <TextView
-                    android:id="@+id/textView21"
+                    android:id="@+id/lunch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="800kcal"
+                    android:gravity="center"
+                    android:text='@{viewModel.targetCaloriesLunch + "kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/textView22"
-                    app:layout_constraintStart_toEndOf="@+id/textView20"
+                    app:layout_constraintEnd_toStartOf="@+id/dinner"
+                    app:layout_constraintStart_toEndOf="@+id/breakfast"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.8" />
 
                 <TextView
-                    android:id="@+id/textView22"
+                    android:id="@+id/dinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="800kcal"
+                    android:gravity="center"
+                    android:text='@{viewModel.targetCaloriesDinner + "kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView21"
+                    app:layout_constraintEnd_toStartOf="@+id/snack"
+                    app:layout_constraintStart_toEndOf="@+id/lunch"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.8" />
+
+
+
+                <TextView
+                    android:id="@+id/snack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text='@{viewModel.targetCaloriesSnack + "kcal"}'
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/dinner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.8"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -151,7 +183,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="현재 진행 상황"
-                app:layout_constraintBottom_toTopOf="@+id/todayTargetSection"
+                app:layout_constraintBottom_toTopOf="@+id/currentProgressSection"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />

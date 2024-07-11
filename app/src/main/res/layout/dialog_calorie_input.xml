@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표를 설정하세요"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/morning_calories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="아침 칼로리"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/lunch_calories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="점심 칼로리"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/dinner_calories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="저녁 칼로리"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/snack_calories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="간식 칼로리"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/total_calories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="목표 칼로리: 0"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textSize="16sp" />
+
+</LinearLayout>
