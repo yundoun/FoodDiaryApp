@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.google.android.material.tabs.TabLayoutMediator
 
 class DietFragment : Fragment() {
 
@@ -27,8 +28,18 @@ class DietFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
 
+        val viewPager = binding.viewPager
+        val adapter = DietPagerAdapter(requireActivity())
+        viewPager.adapter = adapter
+
+        val tabLayout = binding.tabLayout
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = adapter.getTabTitle(position)
+        }.attach()
+
         return binding.root
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
