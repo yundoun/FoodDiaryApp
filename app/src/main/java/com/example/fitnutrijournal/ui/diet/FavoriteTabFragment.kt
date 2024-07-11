@@ -25,8 +25,7 @@ class FavoriteTabFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.favoriteDiets.observe(viewLifecycleOwner) { favorites ->
-            recyclerView.adapter =
-                DietTabAdapter(favorites, dietViewModel::toggleFavorite, dietViewModel.favorites)
+            recyclerView.adapter = DietTabAdapter(favorites, dietViewModel::toggleFavorite, dietViewModel.favorites)
         }
 
         return view

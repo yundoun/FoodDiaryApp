@@ -17,30 +17,29 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: DietRepository
     val allDiets: LiveData<List<Diet>>
-    val favoriteDiets = MediatorLiveData<List<Diet>>()
+    val favoriteDiets: LiveData<List<Diet>>
 
     init {
         val dietDao = DietDatabase.getDatabase(application).dietDao()
         repository = DietRepository(dietDao)
         allDiets = repository.allDiets
+        favoriteDiets = repository.favoriteDiets
 
         // Insert dummy data
         insertDummyData()
-
-        favoriteDiets.addSource(allDiets) { diets ->
-            filterFavoriteDiets(diets, _favorites.value ?: emptySet())
-        }
-        favoriteDiets.addSource(_favorites) { favorites ->
-            filterFavoriteDiets(allDiets.value ?: emptyList(), favorites)
-        }
     }
 
     fun toggleFavorite(item: Diet) {
-        val currentFavorites = _favorites.value ?: emptySet()
-        _favorites.value = if (currentFavorites.contains(item.foodCode)) {
-            currentFavorites - item.foodCode
-        } else {
-            currentFavorites + item.foodCode
+        viewModelScope.launch {
+            val currentFavorites = _favorites.value ?: emptySet()
+            if (currentFavorites.contains(item.foodCode)) {
+                _favorites.value = currentFavorites - item.foodCode
+                item.isFavorite = false
+            } else {
+                _favorites.value = currentFavorites + item.foodCode
+                item.isFavorite = true
+            }
+            repository.update(item)
         }
     }
 
@@ -57,9 +56,5 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
                 repository.insert(it)
             }
         }
-    }
-
-    private fun filterFavoriteDiets(diets: List<Diet>, favorites: Set<String>) {
-        favoriteDiets.value = diets.filter { it.foodCode in favorites }
     }
 }

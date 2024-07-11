@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Diet
 
+// RecyclerView.Adapter
 class DietTabAdapter(
     private val items: List<Diet>,
     private val onFavoriteClicked: (Diet) -> Unit,

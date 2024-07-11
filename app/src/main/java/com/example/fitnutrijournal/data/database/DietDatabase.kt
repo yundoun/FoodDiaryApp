@@ -7,9 +7,8 @@ import androidx.room.RoomDatabase
 import com.example.fitnutrijournal.data.dao.DietDao
 import com.example.fitnutrijournal.data.model.Diet
 
-@Database(entities = [Diet::class], version = 1, exportSchema = false)
+@Database(entities = [Diet::class], version = 2, exportSchema = false) // 버전 번호를 2로 증가시킴
 abstract class DietDatabase : RoomDatabase() {
-
     abstract fun dietDao(): DietDao
 
     companion object {
@@ -22,7 +21,8 @@ abstract class DietDatabase : RoomDatabase() {
                     context.applicationContext,
                     DietDatabase::class.java,
                     "diet_database"
-                ).build()
+                ).fallbackToDestructiveMigration() // 스키마 변경 시 데이터베이스를 재생성
+                    .build()
                 INSTANCE = instance
                 instance
             }
