@@ -1,16 +1,12 @@
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.databinding.ItemDietBinding
 
-// RecyclerView.Adapter
 class DietTabAdapter(
     private var diets: List<Diet>,
     private val toggleFavorite: (Diet) -> Unit,
@@ -23,28 +19,31 @@ class DietTabAdapter(
         notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
     }
 
-    inner class DietViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.foodName)
-        val favoriteButton: ImageButton = view.findViewById(R.id.favorite_button)
+    inner class DietViewHolder(private val binding: ItemDietBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Diet) {
+            binding.foodName.text = item.foodName
+            binding.foodTotalContent.text = "${item.totalContent} g"
+            binding.foodCalories.text = "${item.calories} kcal"
+            updateFavoriteButton(binding.favoriteButton, item.foodCode)
+
+            binding.favoriteButton.setOnClickListener {
+                toggleFavorite(item)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DietViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_diet, parent, false)
-        return DietViewHolder(view)
+        val binding = ItemDietBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return DietViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: DietViewHolder, position: Int) {
         val item = diets[position]
-        Log.d("DietTabAdapter", "Binding item at position $position: $item")
-        holder.textView.text = item.foodName
-        updateFavoriteButton(holder.favoriteButton, item.foodCode)
+        holder.bind(item)
 
-        holder.favoriteButton.setOnClickListener {
-            toggleFavorite(item)
-        }
-
+        // 즐겨찾기 상태 관찰
         favorites.observeForever {
-            updateFavoriteButton(holder.favoriteButton, item.foodCode)
+            holder.bind(item)
         }
     }
 
