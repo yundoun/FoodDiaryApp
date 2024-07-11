@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.diet
 
+import DietTabAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,25 +34,10 @@ class DietTabFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-
-        val tabName = arguments?.getString(ARG_TAB_NAME) ?: "음식"
-        val items = getDataForTab(tabName)
-
-        dietViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            recyclerView.adapter = DietTabAdapter(items, dietViewModel::toggleFavorite, favorites)
+        dietViewModel.allDiets.observe(viewLifecycleOwner) { diets ->
+            recyclerView.adapter = DietTabAdapter(diets, dietViewModel::toggleFavorite, dietViewModel.favorites)
         }
-
 
         return view
     }
-
-    private fun getDataForTab(tabName: String): List<String> {
-        return when (tabName) {
-            "음식" -> List(20) { "Item ${it + 1} for Tab 1" }
-            "최근" -> List(20) { "Item ${it + 1} for Tab 2" }
-            "즐겨찾기" -> List(20) { "Item ${it + 1} for Tab 3" }
-            else -> emptyList()
-        }
-    }
 }
-
