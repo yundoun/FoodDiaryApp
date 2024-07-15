@@ -8,7 +8,7 @@ class DietPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
 
     companion object {
-        private val TAB_TITLES = arrayOf("음식", "최근", "즐겨찾기")
+        private val TAB_TITLES = arrayOf("음식", "직접 추가한 음식", "즐겨찾기")
     }
 
     override fun getItemCount(): Int {

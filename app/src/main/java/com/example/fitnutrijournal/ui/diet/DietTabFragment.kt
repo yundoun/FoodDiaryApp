@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
@@ -40,7 +41,15 @@ class DietTabFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        adapter = DietTabAdapter(emptyList(), dietViewModel::toggleFavorite, dietViewModel.favorites)
+        adapter = DietTabAdapter(
+            emptyList(),
+            dietViewModel::toggleFavorite,
+            dietViewModel.favorites
+        ) { diet ->
+            // Handle item click
+            dietViewModel.selectDiet(diet.foodCode)
+            findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+        }
         recyclerView.adapter = adapter
 
         dietViewModel.filteredDiets.observe(viewLifecycleOwner) { diets ->

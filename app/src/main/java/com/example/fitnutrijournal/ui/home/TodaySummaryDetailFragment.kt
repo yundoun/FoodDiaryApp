@@ -17,7 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.DialogCalorieInputBinding
 import com.example.fitnutrijournal.databinding.FragmentTodaySummaryDetailBinding
-import com.example.fitnutrijournal.ui.home.detail.ViewPagerAdapter
+import com.example.fitnutrijournal.ui.home.Tab.ViewPagerAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator

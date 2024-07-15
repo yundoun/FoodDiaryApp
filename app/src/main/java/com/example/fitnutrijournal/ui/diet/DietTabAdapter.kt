@@ -11,7 +11,8 @@ import com.example.fitnutrijournal.databinding.ItemDietBinding
 class DietTabAdapter(
     private var diets: List<Diet>,
     private val toggleFavorite: (Diet) -> Unit,
-    private val favorites: LiveData<Set<String>>
+    private val favorites: LiveData<Set<String>>,
+    private val onItemClick: (Diet) -> Unit
 ) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -21,6 +22,7 @@ class DietTabAdapter(
     }
 
     inner class DietViewHolder(private val binding: ItemDietBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(item: Diet) {
             binding.foodName.text = item.foodName
             binding.foodTotalContent.text = "${item.totalContent} g"
@@ -30,6 +32,11 @@ class DietTabAdapter(
             binding.favoriteButton.setOnClickListener {
                 toggleFavorite(item)
             }
+
+            binding.root.setOnClickListener { // Add this line
+                onItemClick(item)
+            }
+
         }
     }
 
@@ -46,6 +53,8 @@ class DietTabAdapter(
         favorites.observeForever {
             holder.bind(item)
         }
+
+
     }
 
     private fun updateFavoriteButton(button: ImageButton, foodCode: String) {
@@ -55,6 +64,8 @@ class DietTabAdapter(
             else R.drawable.ic_star_border
         )
     }
+
+
 
     override fun getItemCount(): Int = diets.size
 }

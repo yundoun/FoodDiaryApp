@@ -21,7 +21,12 @@
         android:id="@+id/navigation_diet"
         android:name="com.example.fitnutrijournal.ui.diet.DietFragment"
         android:label="@string/title_diet"
-        tools:layout="@layout/fragment_diet" />
+        tools:layout="@layout/fragment_diet" >
+        <action
+            android:id="@+id/action_navigation_diet_to_dietDetailFragment"
+            app:destination="@id/dietDetailFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_exercise"
         android:name="com.example.fitnutrijournal.ui.exercise.ExerciseFragment"
@@ -40,4 +45,9 @@
         android:id="@+id/todaySummaryDetailFragment"
         android:name="com.example.fitnutrijournal.ui.home.TodaySummaryDetailFragment"
         android:label="TodaySummaryDetailFragment" />
+    <fragment
+        android:id="@+id/dietDetailFragment"
+        android:name="com.example.fitnutrijournal.ui.home.DietDetailFragment"
+        android:label="fragment_diet_detail"
+        tools:layout="@layout/fragment_diet_detail" />
 </navigation>

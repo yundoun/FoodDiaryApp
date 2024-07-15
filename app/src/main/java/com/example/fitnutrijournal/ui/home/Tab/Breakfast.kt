@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.home.detail
+package com.example.fitnutrijournal.ui.home.Tab
 
 import android.os.Build
 import android.os.Bundle
@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.fitnutrijournal.databinding.FragmentLunchBinding
+import com.example.fitnutrijournal.databinding.FragmentBreakfastBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-class Lunch : Fragment() {
+class Breakfast : Fragment() {
 
-    private var _binding: FragmentLunchBinding? = null
+    private var _binding: FragmentBreakfastBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
 
@@ -22,11 +22,10 @@ class Lunch : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLunchBinding.inflate(inflater, container, false).apply {
+        _binding = FragmentBreakfastBinding.inflate(inflater, container, false).apply {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
-
 
         // LifecycleOwner 설정
         binding.nutritionProgressView.setLifecycleOwner(viewLifecycleOwner)
@@ -34,6 +33,7 @@ class Lunch : Fragment() {
 
         return binding.root
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

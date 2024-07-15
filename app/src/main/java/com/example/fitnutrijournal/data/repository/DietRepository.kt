@@ -20,10 +20,7 @@ class DietRepository(private val dietDao: DietDao) {
         Log.d("DietRepository", "Diet updated: $diet")
     }
 
-
-    // Get the count of all diets in the database
-    suspend fun getAllDietsCount(): Int {
-        return dietDao.getAllDietsCount()
+    suspend fun getDietByFoodCode(foodCode: String): Diet {
+        return dietDao.getDietByFoodCode(foodCode)
     }
-
 }

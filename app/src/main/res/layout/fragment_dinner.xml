@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.home.detail.Dinner">
+        tools:context=".ui.home.Tab.Dinner">
 
         <com.example.fitnutrijournal.ui.common.NutritionProgressView
             android:id="@+id/nutritionProgressView"

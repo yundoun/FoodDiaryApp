@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
@@ -25,7 +26,11 @@ class FavoriteTabFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.favoriteDiets.observe(viewLifecycleOwner) { favorites ->
-            recyclerView.adapter = DietTabAdapter(favorites, dietViewModel::toggleFavorite, dietViewModel.favorites)
+            recyclerView.adapter = DietTabAdapter(favorites, dietViewModel::toggleFavorite, dietViewModel.favorites) { diet ->
+                // 아이템 클릭 이벤트
+                dietViewModel.selectDiet(diet.foodCode)
+                findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+            }
         }
 
         return view

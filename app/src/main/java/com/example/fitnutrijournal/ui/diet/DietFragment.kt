@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
+import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -31,6 +32,8 @@ class DietFragment : Fragment() {
             viewModel = dietViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        (activity as MainActivity).showBottomNavigation(true)
 
         val viewPager = binding.viewPager
         val adapter = DietPagerAdapter(requireActivity())

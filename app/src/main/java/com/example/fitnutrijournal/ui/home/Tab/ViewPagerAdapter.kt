@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.home.detail
+package com.example.fitnutrijournal.ui.home.Tab
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
