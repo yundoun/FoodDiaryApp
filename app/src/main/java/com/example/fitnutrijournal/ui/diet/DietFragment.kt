@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
@@ -56,6 +57,10 @@ class DietFragment : Fragment() {
                 dietViewModel.setSearchQuery(query)
             }
         })
+
+        binding.btnBack.setOnClickListener {
+           findNavController().popBackStack()
+        }
 
         handleArgs(arguments?.getString("source") ?: "")
 
