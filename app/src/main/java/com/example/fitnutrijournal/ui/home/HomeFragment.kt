@@ -59,6 +59,33 @@ class HomeFragment : Fragment() {
             homeViewModel.addCalories(100)
         }
 
+        binding.btnCalendar.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
+        }
+
+        binding.btnTodaySummaryDetail.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
+        }
+
+        binding.addBreakfast.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            findNavController().navigate(action)
+        }
+
+        binding.addLunch.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            findNavController().navigate(action)
+        }
+
+        binding.addDinner.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            findNavController().navigate(action)
+        }
+
+        binding.addSnack.setOnClickListener {
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            findNavController().navigate(action)
+        }
 
     }
 

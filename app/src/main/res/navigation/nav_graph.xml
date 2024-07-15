@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_navigation_home_to_todaySummaryDetailFragment"
             app:destination="@id/todaySummaryDetailFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_diet"
+            app:destination="@id/navigation_diet" />
     </fragment>
     <fragment
         android:id="@+id/navigation_diet"
@@ -25,6 +28,11 @@
         <action
             android:id="@+id/action_navigation_diet_to_dietDetailFragment"
             app:destination="@id/dietDetailFragment" />
+        <argument
+            android:name="source"
+            app:argType="string"
+            android:defaultValue="navigation" />
+
     </fragment>
 
     <fragment

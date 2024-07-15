@@ -57,7 +57,21 @@ class DietFragment : Fragment() {
             }
         })
 
+        handleArgs(arguments?.getString("source") ?: "")
+
         return binding.root
+    }
+
+    private fun handleArgs(source: String) {
+        when (source) {
+            "home" -> {
+                // 음식 추가 관련 UI 조정
+                (activity as MainActivity).showBottomNavigation(false)
+            }
+            else -> {
+                // 네비게이션 바를 통해 접근했을 때 기본 UI
+            }
+        }
     }
 
     override fun onDestroyView() {
