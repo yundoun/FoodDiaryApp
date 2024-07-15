@@ -1,7 +1,6 @@
 package com.example.fitnutrijournal.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -28,8 +27,24 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val diet = repository.getDietByFoodCode(foodCode)
             _selectedDiet.value = diet
+            updateNutrientValues(diet.totalContent) // 초기값으로 기본 중량 설정
         }
     }
+
+    private val _totalContent = MutableLiveData<String>("")
+    val totalContent: MutableLiveData<String> get() = _totalContent
+
+    private val _calculatedCalories = MutableLiveData<String>("")
+    val calculatedCalories: MutableLiveData<String> get() = _calculatedCalories
+
+    private val _calculatedCarbohydrate = MutableLiveData<String>("")
+    val calculatedCarbohydrate: MutableLiveData<String> get() = _calculatedCarbohydrate
+
+    private val _calculatedProtein = MutableLiveData<String>("")
+    val calculatedProtein: MutableLiveData<String> get() = _calculatedProtein
+
+    private val _calculatedFat = MutableLiveData<String>("")
+    val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
     private val repository: DietRepository
     private val allDiets: LiveData<List<Diet>>
@@ -48,6 +63,24 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         }
 
 
+    }
+
+    fun updateTotalContent(value: String) {
+        _totalContent.value = value
+        val diet = _selectedDiet.value ?: return
+        val totalContent = value.toIntOrNull() ?: 0
+        updateNutrientValues(totalContent)
+    }
+
+    private fun updateNutrientValues(totalContent: Int) {
+        val diet = _selectedDiet.value ?: return
+        if (diet.totalContent == 0) return
+
+        val factor = totalContent.toFloat() / diet.totalContent
+        _calculatedCalories.value = (diet.calories * factor).toString()
+        _calculatedCarbohydrate.value = (diet.carbohydrate * factor).toString()
+        _calculatedProtein.value = (diet.protein * factor).toString()
+        _calculatedFat.value = (diet.fat * factor).toString()
     }
 
 

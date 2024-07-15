@@ -1,6 +1,8 @@
 package com.example.fitnutrijournal.ui.home
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,26 +15,33 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 class DietDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
+    private lateinit var binding: FragmentDietDetailBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentDietDetailBinding.inflate(inflater, container, false)
+        binding = FragmentDietDetailBinding.inflate(inflater, container, false)
+        binding.viewModel = dietViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
         (activity as MainActivity).showBottomNavigation(false)
 
         dietViewModel.selectedDiet.observe(viewLifecycleOwner) { diet ->
-            binding.foodName.text = diet?.foodName ?: ""
-            binding.totalContent.text = diet?.totalContent?.toString() ?: ""
-            binding.calories.text = diet?.calories?.toString() ?: ""
-            binding.carbohydrate.text = diet?.carbohydrate?.toString() ?: ""
-            binding.protein.text = diet?.protein?.toString() ?: ""
-            binding.fat.text = diet?.fat?.toString() ?: ""
-
             binding.totalContentInput.setText(diet?.totalContent?.toString() ?: "")
             binding.unit.setText("g")
         }
+
+        binding.totalContentInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                dietViewModel.updateTotalContent(s.toString())
+            }
+        })
+
 
         return binding.root
     }
