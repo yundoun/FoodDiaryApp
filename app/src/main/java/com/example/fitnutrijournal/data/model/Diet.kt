@@ -16,5 +16,6 @@ data class Diet(
     val protein: Float,
     val fat: Float,
     val caloriesPerGram: Float,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var isAddedByUser: Boolean = false // 새 필드 추가
 )

@@ -24,6 +24,9 @@ interface DietDao {
     @Query("SELECT * FROM diet_table WHERE isFavorite = 1")
     fun getFavoriteDiets(): LiveData<List<Diet>>
 
+    @Query("SELECT * FROM diet_table WHERE isAddedByUser = 1")
+    fun getUserAddedDiets(): LiveData<List<Diet>>
+
     // RecyclerView에서 선택한 아이템을 음식 코드로 검색
     @Query("SELECT * FROM diet_table WHERE foodCode = :foodCode")
     suspend fun getDietByFoodCode(foodCode: String): Diet

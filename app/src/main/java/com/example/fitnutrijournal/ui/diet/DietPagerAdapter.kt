@@ -16,10 +16,16 @@ class DietPagerAdapter(fragmentActivity: FragmentActivity) :
     }
 
     override fun createFragment(position: Int): Fragment {
-        return if (position == 2) {
-            FavoriteTabFragment()
-        } else {
-            DietTabFragment.newInstance(TAB_TITLES[position])
+        return when (position) {
+            0 -> {
+                DietTabFragment.newInstance(TAB_TITLES[position])
+            }
+            1 -> {
+                CustomAddTabFragment()
+            }
+            else -> {
+                FavoriteTabFragment()
+            }
         }
     }
 
