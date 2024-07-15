@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
@@ -72,9 +74,18 @@ class DietFragment : Fragment() {
             "home" -> {
                 // 음식 추가 관련 UI 조정
                 (activity as MainActivity).showBottomNavigation(false)
+                binding.btnAddFood.text = "선택된 1개 추가"
+
+                val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
+                layoutParams.bottomMargin = 50
+                binding.btnAddFood.layoutParams = layoutParams
+
+                dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
+
             }
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
+                dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
             }
         }
     }

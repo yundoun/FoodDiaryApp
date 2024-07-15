@@ -1,5 +1,6 @@
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.lifecycle.LiveData
@@ -7,12 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Diet
 import com.example.fitnutrijournal.databinding.ItemDietBinding
+import com.example.fitnutrijournal.viewmodel.DietViewModel
 
 class DietTabAdapter(
     private var diets: List<Diet>,
     private val toggleFavorite: (Diet) -> Unit,
     private val favorites: LiveData<Set<String>>,
-    private val onItemClick: (Diet) -> Unit
+    private val onItemClick: (Diet) -> Unit,
+    private val viewModel: DietViewModel
 ) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -27,9 +30,9 @@ class DietTabAdapter(
             binding.foodName.text = item.foodName
             binding.foodTotalContent.text = "${item.totalContent} g"
             binding.foodCalories.text = "${item.calories} kcal"
-            updateFavoriteButton(binding.favoriteButton, item.foodCode)
+            updateFavoriteButton(binding.favoriteBtn, item.foodCode)
 
-            binding.favoriteButton.setOnClickListener {
+            binding.favoriteBtn.setOnClickListener {
                 toggleFavorite(item)
             }
 
@@ -37,6 +40,9 @@ class DietTabAdapter(
                 onItemClick(item)
             }
 
+            val isCheckboxVisible = viewModel.isCheckboxVisible.value == true
+            binding.favoriteBtn.visibility = if (isCheckboxVisible) View.GONE else View.VISIBLE
+            binding.checkbox.visibility = if (isCheckboxVisible) View.VISIBLE else View.GONE
         }
     }
 

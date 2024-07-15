@@ -1,6 +1,7 @@
 package com.example.fitnutrijournal.ui.diet
 
 import DietTabAdapter
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class DietTabFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_diet_tab, container, false)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
@@ -44,17 +46,25 @@ class DietTabFragment : Fragment() {
         adapter = DietTabAdapter(
             emptyList(),
             dietViewModel::toggleFavorite,
-            dietViewModel.favorites
-        ) { diet ->
-            // Handle item click
-            dietViewModel.selectDiet(diet.foodCode)
-            findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
-        }
+            dietViewModel.favorites,
+            { diet ->
+                // Handle item click
+                dietViewModel.selectDiet(diet.foodCode)
+                findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+            },
+            dietViewModel // DietViewModel 전달
+        )
         recyclerView.adapter = adapter
+
+
 
         dietViewModel.filteredDiets.observe(viewLifecycleOwner) { diets ->
             Log.d("DietTabFragment", "Updating adapter with diets: $diets")
             adapter.updateDiets(diets)
+        }
+
+        dietViewModel.isCheckboxVisible.observe(viewLifecycleOwner) {
+            adapter.notifyDataSetChanged() // 가시성 변경 시 어댑터 갱신
         }
     }
 }
