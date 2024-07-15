@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Diet
 import com.example.fitnutrijournal.databinding.ItemDietBinding
 
@@ -50,8 +51,8 @@ class DietTabAdapter(
     private fun updateFavoriteButton(button: ImageButton, foodCode: String) {
         val isFavorite = favorites.value?.contains(foodCode) ?: false
         button.setImageResource(
-            if (isFavorite) android.R.drawable.btn_star_big_on
-            else android.R.drawable.btn_star_big_off
+            if (isFavorite) R.drawable.ic_star
+            else R.drawable.ic_star_border
         )
     }
 

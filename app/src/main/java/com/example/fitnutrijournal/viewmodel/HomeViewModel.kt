@@ -205,9 +205,9 @@ class HomeViewModel : ViewModel() {
     // 섭취량 증가시키는 테스트 코드
     fun addCarbs(carbs: Int) {
         _currentCarbIntake.value = (_currentCarbIntake.value ?: 0) + carbs
-        if (_currentCarbIntake.value!! > _targetCarbIntake.value!!) {
-            _currentCarbIntake.value = _targetCarbIntake.value
-        }
+//        if (_currentCarbIntake.value!! > _targetCarbIntake.value!!) {
+//            _currentCarbIntake.value = _targetCarbIntake.value
+//        }
     }
 
     fun addProtein(protein: Int) {

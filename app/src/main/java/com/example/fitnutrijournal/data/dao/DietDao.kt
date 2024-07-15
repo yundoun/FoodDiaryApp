@@ -23,4 +23,9 @@ interface DietDao {
 
     @Query("SELECT * FROM diet_table WHERE isFavorite = 1")
     fun getFavoriteDiets(): LiveData<List<Diet>>
+
+
+    // Query to get the count of all diets in the database
+    @Query("SELECT COUNT(*) FROM diet_table")
+    suspend fun getAllDietsCount(): Int
 }

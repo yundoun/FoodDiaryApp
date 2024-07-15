@@ -30,14 +30,21 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         allDiets = repository.allDiets
         favoriteDiets = repository.favoriteDiets
 
+
+        // Load initial favorites from the database
+        favoriteDiets.observeForever { favoriteList ->
+            _favorites.value = favoriteList.map { it.foodCode }.toSet()
+        }
+
         // Insert dummy data
-        insertDummyData()
+        //insertDummyData()
+
     }
 
 
     val filteredDiets = MediatorLiveData<List<Diet>>().apply {
         addSource(allDiets) { diets ->
-            Log.d("DietViewModel", "allDiets source changed, diets: $diets")
+            //Log.d("DietViewModel", "allDiets source changed, diets: $diets")
             if (diets.isNotEmpty()) {
                 value = filterDiets(diets, searchQuery.value.orEmpty())
             } else {
@@ -45,7 +52,7 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         addSource(searchQuery) { query ->
-            Log.d("DietViewModel", "searchQuery source changed, query: $query")
+            //Log.d("DietViewModel", "searchQuery source changed, query: $query")
             val currentDiets = allDiets.value.orEmpty()
             if (currentDiets.isNotEmpty()) {
                 value = filterDiets(currentDiets, query)
@@ -61,12 +68,12 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             diets.filter { it.foodName.contains(query, ignoreCase = true) }
         }
-        Log.d("DietViewModel", "Filtered diets with query \"$query\": $filtered")
+        //Log.d("DietViewModel", "Filtered diets with query \"$query\": $filtered")
         return filtered
     }
 
     fun setSearchQuery(query: String) {
-        Log.d("DietViewModel", "Setting search query: $query")
+       // Log.d("DietViewModel", "Setting search query: $query")
         _searchQuery.value = query
     }
 
@@ -84,19 +91,24 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun insertDummyData() {
-        val dummyData = listOf(
-            Diet("D00001", "구이류", "가자미구이", 200, 314f, 3.5f, 43.2f, 14.2f, 314f / 200),
-            Diet("D00002", "구이류", "갈치구이", 250, 481.32f, 0.35f, 61.99f, 14.2f, 481.32f / 250),
-            Diet("D00003", "구이류", "고등어구이", 180, 400f, 4.0f, 30.0f, 25.0f, 400f / 180),
-            Diet("D00004", "구이류", "연어구이", 220, 350f, 2.0f, 40.0f, 20.0f, 350f / 220),
-            Diet("D00005", "구이류", "삼치구이", 200, 300f, 5.0f, 35.0f, 10.0f, 300f / 200)
-        )
-        viewModelScope.launch {
-            dummyData.forEach {
-                repository.insert(it)
-            }
-            //Log.d("DietViewModel", "Dummy data inserted")
-        }
-    }
+
+
+//    private fun insertDummyData() {
+//        val tmp = favoriteDiets.value
+//        Log.d("favoriteDiets", "Favorite diets: $tmp")
+//
+//        val dummyData = listOf(
+//            Diet("D00001", "구이류", "가자미구이", 200, 314f, 3.5f, 43.2f, 14.2f, 314f / 200),
+//            Diet("D00002", "구이류", "갈치구이", 250, 481.32f, 0.35f, 61.99f, 14.2f, 481.32f / 250),
+//            //Diet("D00003", "구이류", "고등어구이", 180, 400f, 4.0f, 30.0f, 25.0f, 400f / 180),
+//            Diet("D00004", "구이류", "연어구이", 220, 350f, 2.0f, 40.0f, 20.0f, 350f / 220),
+//            Diet("D00005", "구이류", "삼치구이", 200, 300f, 5.0f, 35.0f, 10.0f, 300f / 200)
+//        )
+//        viewModelScope.launch {
+//            dummyData.forEach {
+//                repository.insert(it)
+//                Log.d("DietViewModel", "Inserted dummy data: $it")
+//            }
+//        }
+//    }
 }

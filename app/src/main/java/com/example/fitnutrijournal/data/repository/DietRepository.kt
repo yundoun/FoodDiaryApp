@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.fitnutrijournal.data.dao.DietDao
 import com.example.fitnutrijournal.data.model.Diet
@@ -11,9 +12,18 @@ class DietRepository(private val dietDao: DietDao) {
 
     suspend fun insert(diet: Diet) {
         dietDao.insert(diet)
+        Log.d("DietRepository", "Diet inserted: $diet")
     }
 
     suspend fun update(diet: Diet) {
         dietDao.update(diet)
+        Log.d("DietRepository", "Diet updated: $diet")
     }
+
+
+    // Get the count of all diets in the database
+    suspend fun getAllDietsCount(): Int {
+        return dietDao.getAllDietsCount()
+    }
+
 }
