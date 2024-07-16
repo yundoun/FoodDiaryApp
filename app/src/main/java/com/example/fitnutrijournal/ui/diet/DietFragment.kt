@@ -9,12 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
@@ -61,10 +60,12 @@ class DietFragment : Fragment() {
         })
 
         binding.btnBack.setOnClickListener {
-           findNavController().popBackStack()
+            findNavController().popBackStack()
         }
 
         handleArgs(arguments?.getString("source") ?: "")
+
+        observeFoodInfo() // 추가된 부분
 
         return binding.root
     }
@@ -83,12 +84,27 @@ class DietFragment : Fragment() {
                 dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
 
             }
+
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
             }
         }
     }
+
+
+    private fun observeFoodInfo() {
+        val repository = FoodApiRepository()
+        repository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
+            foodResponse?.i2790?.rows?.forEach { item ->
+                Log.d(
+                    "DietFragment",
+                    "식품코드: ${item.foodCd}, 식품군: ${item.groupName}, 식품이름: ${item.descKor}, 총내용량: ${item.servingSize}, 단위: ${item.servingUnit}, 열량: ${item.nutrCont1}, 탄수화물: ${item.nutrCont2}, 단백질: ${item.nutrCont3}, 지방: ${item.nutrCont4}, 당류: ${item.nutrCont5}, 나트륨: ${item.nutrCont6}, 콜레스테롤: ${item.nutrCont7}, 포화지방산: ${item.nutrCont8}, 트랜스지방: ${item.nutrCont9}"
+                )
+            }
+        })
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
