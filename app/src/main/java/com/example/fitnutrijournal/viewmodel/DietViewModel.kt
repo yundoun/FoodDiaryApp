@@ -1,6 +1,7 @@
 package com.example.fitnutrijournal.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -51,7 +52,6 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     val favoriteFoods: LiveData<List<Food>>
     val userAddedFoods: LiveData<List<Food>>
 
-
     private val _isCheckboxVisible = MutableLiveData<Boolean>()
     val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
 
@@ -61,6 +61,12 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
     val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
+
+    private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
+    val checkedItems: LiveData<Set<Food>> get() = _checkedItems
+
+    private val _selectedCountFoodItem = MutableLiveData<Int>(0)
+    val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
     fun setSaveButtonVisibility(isVisible: Boolean) {
         _isSaveButtonVisible.value = isVisible
@@ -78,6 +84,35 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
 
+    }
+
+    // 체크 상태 업데이트 메서드
+    fun toggleCheckedItem(item: Food) {
+        val currentCheckedItems = _checkedItems.value ?: emptySet()
+        if (currentCheckedItems.contains(item)) {
+            _checkedItems.value = currentCheckedItems - item
+        } else {
+            _checkedItems.value = currentCheckedItems + item
+        }
+        _checkedItems.value = _checkedItems.value // 트리거
+        logCheckedItems()
+    }
+
+    // 체크된 아이템 초기화 메서드
+    fun clearCheckedItems() {
+        _checkedItems.value = emptySet()
+        _checkedItems.value = _checkedItems.value // 트리거
+    }
+
+
+    // 체크된 아이템 로그 출력 메서드
+    private fun logCheckedItems() {
+        val checkedItems = _checkedItems.value ?: return
+        _selectedCountFoodItem.value = checkedItems.size
+        Log.d("DietViewModel", "Checked items count: ${checkedItems.size}")
+        checkedItems.forEach { item ->
+            Log.d("DietViewModel", "Checked item: ${item.foodCd}, serving size: ${item.servingSize}")
+        }
     }
 
     fun updateTotalContent(value: String) {

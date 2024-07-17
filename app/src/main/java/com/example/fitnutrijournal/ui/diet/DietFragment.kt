@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.diet
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -27,6 +28,7 @@ class DietFragment : Fragment() {
     private val binding get() = _binding!!
     private val dietViewModel: DietViewModel by activityViewModels()
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +71,18 @@ class DietFragment : Fragment() {
 
         observeFoodInfo() // 추가된 부분
 
+        // 체크된 항목 개수 관찰
+        dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->
+            binding.btnAddFood.text = "${count}개 추가하기"
+        })
+
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fragment가 다시 생성될 때 체크된 항목 초기화
+        dietViewModel.clearCheckedItems()
     }
 
     private fun handleArgs(source: String) {
@@ -104,7 +117,6 @@ class DietFragment : Fragment() {
     private fun setUi(){
         // 음식 추가 관련 UI 조정
         (activity as MainActivity).showBottomNavigation(false)
-        binding.btnAddFood.text = "선택된 1개 추가"
 
         val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.bottomMargin = 50

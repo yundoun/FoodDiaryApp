@@ -66,6 +66,12 @@ class DietTabFragment : Fragment() {
         dietViewModel.isCheckboxVisible.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged() // 가시성 변경 시 어댑터 갱신
         }
+
+        // 체크박스 상태 변경 시 어댑터 갱신
+        dietViewModel.checkedItems.observe(viewLifecycleOwner) {
+            adapter.notifyDataSetChanged()
+        }
+
     }
 }
 

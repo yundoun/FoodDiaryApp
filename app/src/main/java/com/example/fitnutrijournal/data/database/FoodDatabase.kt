@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.fitnutrijournal.data.dao.FoodDao
 import com.example.fitnutrijournal.data.model.Food
 
-@Database(entities = [Food::class], version = 4, exportSchema = false)
+@Database(entities = [Food::class], version = 5, exportSchema = false)
 abstract class FoodDatabase : RoomDatabase() {
     abstract fun foodDao(): FoodDao
 

@@ -25,19 +25,24 @@ class FavoriteTabFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+        val adapter = DietTabAdapter(
+            emptyList(),
+            dietViewModel::toggleFavorite,
+            dietViewModel.favorites,
+            { diet ->
+                dietViewModel.selectFood(diet.foodCd)
+                findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+            },
+            dietViewModel
+        )
+        recyclerView.adapter = adapter
 
         dietViewModel.favoriteFoods.observe(viewLifecycleOwner) { favorites ->
-            recyclerView.adapter = DietTabAdapter(
-                favorites,
-                dietViewModel::toggleFavorite,
-                dietViewModel.favorites,
-                { diet ->
-                    // 아이템 클릭 이벤트
-                    dietViewModel.selectFood(diet.foodCd)
-                    findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
-                },
-                dietViewModel // DietViewModel 전달
-            )
+            adapter.updateDiets(favorites)
+        }
+
+        dietViewModel.checkedItems.observe(viewLifecycleOwner) {
+            adapter.notifyDataSetChanged()
         }
 
         return view
