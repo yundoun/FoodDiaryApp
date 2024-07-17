@@ -405,6 +405,17 @@
                         app:layout_constraintTop_toBottomOf="@+id/view3"
                         app:srcCompat="@drawable/ic_diet" />
 
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="간식"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ivSnack"
+                        app:layout_constraintTop_toBottomOf="@+id/view3"
+                        app:layout_constraintVertical_bias="0.3" />
+
                     <View
                         android:id="@+id/view1"
                         android:layout_width="329dp"
@@ -438,55 +449,43 @@
                         app:layout_constraintVertical_bias="0.75" />
 
                     <TextView
-                        android:id="@+id/textView8"
+                        android:id="@+id/tvBreakfastCalories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="간식"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivSnack"
-                        app:layout_constraintTop_toBottomOf="@+id/view3"
-                        app:layout_constraintVertical_bias="0.3" />
-
-                    <TextView
-                        android:id="@+id/textView15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="166kcal / 552kcal"
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view1"
                         app:layout_constraintStart_toEndOf="@+id/ivBreakfast"
                         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                     <TextView
-                        android:id="@+id/textView16"
+                        android:id="@+id/tvLunchCalories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="TextView"
+
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view2"
                         app:layout_constraintStart_toEndOf="@+id/ivLunch"
                         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
                     <TextView
-                        android:id="@+id/textView17"
+                        android:id="@+id/tvDinnerCalories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="TextView"
+
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view3"
                         app:layout_constraintStart_toEndOf="@+id/ivDinner"
                         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
                     <TextView
-                        android:id="@+id/textView18"
+                        android:id="@+id/tvSnackCalories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="TextView"
+
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ivSnack"

@@ -1,6 +1,5 @@
 package com.example.fitnutrijournal.viewmodel
 
-import com.example.fitnutrijournal.data.database.FoodDatabase // 여기에 import 추가
 import android.app.Application
 import android.os.Build
 import android.util.Log
@@ -10,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.model.DailyIntakeGoal
 import com.example.fitnutrijournal.data.model.DailyIntakeRecord
 import com.example.fitnutrijournal.data.model.Food
@@ -23,15 +23,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
+
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
 
     private val dietRepository: DietRepository
     private val mealRepository: MealRepository
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
-
 
     // 하루 섭취 목표
     private val _todayGoal = MutableLiveData<DailyIntakeGoal?>()
@@ -55,10 +54,116 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val selectedDate: LiveData<String>
         get() = _selectedDate
 
+    fun setCurrentDate(date: String) {
+        _currentDate.value = date
+    }
+
     // 하루 섭취 기록
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
     val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
 
+    // 각 식사 유형별로 섭취한 영양소 데이터를 저장할 변수들
+    private val _breakfastNutrients = MutableLiveData<NutrientData>()
+    val breakfastNutrients: LiveData<NutrientData> get() = _breakfastNutrients
+
+    private val _lunchNutrients = MutableLiveData<NutrientData>()
+    val lunchNutrients: LiveData<NutrientData> get() = _lunchNutrients
+
+    private val _dinnerNutrients = MutableLiveData<NutrientData>()
+    val dinnerNutrients: LiveData<NutrientData> get() = _dinnerNutrients
+
+    private val _snackNutrients = MutableLiveData<NutrientData>()
+    val snackNutrients: LiveData<NutrientData> get() = _snackNutrients
+
+    // 데이터를 저장할 클래스
+    data class NutrientData(
+        var calories: Int = 0,
+        var carbs: Float = 0f,
+        var protein: Float = 0f,
+        var fat: Float = 0f,
+        var quantity: Float = 0f
+    )
+
+    // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트하는 메소드
+    fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
+        viewModelScope.launch {
+            val meals = checkedItems.map { food ->
+                Meal(
+                    date = date,
+                    mealType = mealType,
+                    dietFoodCode = food.foodCd,
+                    quantity = food.servingSize.toFloat()
+                )
+            }
+
+            addMealsAndUpdateIntakeRecord(meals, mealType)
+        }
+    }
+
+    private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>, mealType: String) {
+        for (meal in meals) {
+            // Meal 데이터를 추가
+            mealRepository.insert(meal)
+
+            // Food 데이터를 조회
+            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+
+            // DailyIntakeRecord 데이터를 가져오기
+            val dailyIntakeRecord = dailyIntakeRecordRepository.getRecordByDate(meal.date).value
+                ?: DailyIntakeRecord(meal.date)
+
+            // Food의 영양성분을 이용해 DailyIntakeRecord의 값 증가
+            val updatedRecord = dailyIntakeRecord.copy(
+                currentCalories = dailyIntakeRecord.currentCalories + (food.calories * meal.quantity / food.servingSize).toInt(),
+                currentCarbs = dailyIntakeRecord.currentCarbs + (food.carbohydrate * meal.quantity / food.servingSize).toInt(),
+                currentProtein = dailyIntakeRecord.currentProtein + (food.protein * meal.quantity / food.servingSize).toInt(),
+                currentFat = dailyIntakeRecord.currentFat + (food.fat * meal.quantity / food.servingSize).toInt()
+            )
+
+            // DailyIntakeRecord 업데이트
+            dailyIntakeRecordRepository.insert(updatedRecord)
+            _dailyIntakeRecord.value = updatedRecord
+
+            // 각 식사 유형별로 섭취한 영양소 데이터 업데이트
+            updateNutrientData(mealType, food, meal.quantity)
+        }
+    }
+
+    private fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
+        val nutrientData = when (mealType) {
+            "breakfast" -> _breakfastNutrients.value ?: NutrientData()
+            "lunch" -> _lunchNutrients.value ?: NutrientData()
+            "dinner" -> _dinnerNutrients.value ?: NutrientData()
+            "snack" -> _snackNutrients.value ?: NutrientData()
+            else -> NutrientData()
+        }
+
+        nutrientData.apply {
+            calories += (food.calories * quantity / food.servingSize).toInt()
+            carbs += (food.carbohydrate * quantity / food.servingSize)
+            protein += (food.protein * quantity / food.servingSize)
+            fat += (food.fat * quantity / food.servingSize)
+            this.quantity += quantity
+        }
+
+        when (mealType) {
+            "breakfast" -> _breakfastNutrients.value = nutrientData
+            "lunch" -> _lunchNutrients.value = nutrientData
+            "dinner" -> _dinnerNutrients.value = nutrientData
+            "snack" -> _snackNutrients.value = nutrientData
+        }
+    }
+
+    // 현재 날짜에 대한 식사 기록을 불러오는 메소드
+    fun loadDailyIntakeForDate(date: String) {
+        viewModelScope.launch {
+            val meals = mealRepository.getMealsByDate(date).value ?: return@launch
+            meals.forEach { meal ->
+                val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+                updateNutrientData(meal.mealType, food, meal.quantity)
+            }
+        }
+    }
 
     init {
         val database = FoodDatabase.getDatabase(application)
@@ -74,6 +179,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         // 현재 날짜의 섭취 목표를 로드합니다.
         loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
+
+        // 데이터 로드
+        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        setCurrentDate(currentDate)
+        loadDailyIntakeForDate(currentDate)
+
     }
 
 
@@ -120,48 +231,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     _todayGoal.value = goal
                 }
             }
-        }
-    }
-
-    // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord를 업데이트하는 메소드
-    fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
-        viewModelScope.launch {
-            val meals = checkedItems.map { food ->
-                Meal(
-                    date = date,
-                    mealType = mealType,
-                    dietFoodCode = food.foodCd,
-                    quantity = food.servingSize.toFloat()
-                )
-            }
-
-            addMealsAndUpdateIntakeRecord(meals)
-        }
-    }
-
-    private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>) {
-        for (meal in meals) {
-            // Meal 데이터를 추가
-            mealRepository.insert(meal)
-
-            // Food 데이터를 조회
-            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
-
-            // DailyIntakeRecord 데이터를 가져오기
-            val dailyIntakeRecord = dailyIntakeRecordRepository.getRecordByDate(meal.date).value
-                ?: DailyIntakeRecord(meal.date)
-
-            // Food의 영양성분을 이용해 DailyIntakeRecord의 값 증가
-            val updatedRecord = dailyIntakeRecord.copy(
-                currentCalories = dailyIntakeRecord.currentCalories + (food.calories * meal.quantity / food.servingSize).toInt(),
-                currentCarbs = dailyIntakeRecord.currentCarbs + (food.carbohydrate * meal.quantity / food.servingSize).toInt(),
-                currentProtein = dailyIntakeRecord.currentProtein + (food.protein * meal.quantity / food.servingSize).toInt(),
-                currentFat = dailyIntakeRecord.currentFat + (food.fat * meal.quantity / food.servingSize).toInt()
-            )
-
-            // DailyIntakeRecord 업데이트
-            dailyIntakeRecordRepository.insert(updatedRecord)
-            _dailyIntakeRecord.value = updatedRecord
         }
     }
 
@@ -312,7 +381,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val currentCaloriesSnack: LiveData<Int>
         get() = _currentCaloriesSnack
 
-
     // 잔여 칼로리 계산
     init {
         _remainingCalories.addSource(_currentCalories) { updateRemainingCalories() }
@@ -324,7 +392,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val current = _currentCalories.value ?: 0
         _remainingCalories.value = max - current
     }
-
 
     fun updateCurrentDate(date: LocalDate) {
         val newDate = date.format(dateFormatter)
@@ -341,6 +408,4 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Log.d("HomeViewModel", "Selected date updated to: $newDate")
         }
     }
-
-
 }

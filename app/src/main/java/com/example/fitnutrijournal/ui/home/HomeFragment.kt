@@ -42,8 +42,45 @@ class HomeFragment : Fragment() {
             }
         }
 
-        homeViewModel.dailyIntakeRecord.observe(viewLifecycleOwner) { record ->
-            // update UI with daily intake record
+//        homeViewModel.dailyIntakeRecord.observe(viewLifecycleOwner) { record ->
+//            // update UI with daily intake record
+//        }
+
+        homeViewModel.breakfastNutrients.observe(viewLifecycleOwner) { nutrients ->
+            // update UI with breakfast nutrients
+//            binding.tvBreakfastCalories.text = "아침 칼로리: ${nutrients.calories}"
+//            binding.tvBreakfastCarbs.text = "아침 탄수화물: ${nutrients.carbs}"
+//            binding.tvBreakfastProtein.text = "아침 단백질: ${nutrients.protein}"
+//            binding.tvBreakfastFat.text = "아침 지방: ${nutrients.fat}"
+            binding.tvBreakfastCalories.text = "아침 칼로리: ${nutrients.calories} kcal"
+        }
+
+
+        homeViewModel.lunchNutrients.observe(viewLifecycleOwner) { nutrients ->
+            // update UI with lunch nutrients
+//            binding.tvLunchCalories.text = "점심 칼로리: ${nutrients.calories}"
+//            binding.tvLunchCarbs.text = "점심 탄수화물: ${nutrients.carbs}"
+//            binding.tvLunchProtein.text = "점심 단백질: ${nutrients.protein}"
+//            binding.tvLunchFat.text = "점심 지방: ${nutrients.fat}"
+            binding.tvLunchCalories.text = "점심 칼로리: ${nutrients.calories} kcal"
+        }
+
+        homeViewModel.dinnerNutrients.observe(viewLifecycleOwner) { nutrients ->
+            // update UI with dinner nutrients
+//            binding.tvDinnerCalories.text = "저녁 칼로리: ${nutrients.calories}"
+//            binding.tvDinnerCarbs.text = "저녁 탄수화물: ${nutrients.carbs}"
+//            binding.tvDinnerProtein.text = "저녁 단백질: ${nutrients.protein}"
+//            binding.tvDinnerFat.text = "저녁 지방: ${nutrients.fat}"
+            binding.tvDinnerCalories.text = "저녁 칼로리: ${nutrients.calories} kcal"
+        }
+
+        homeViewModel.snackNutrients.observe(viewLifecycleOwner) { nutrients ->
+            // update UI with snack nutrients
+//            binding.tvSnackCalories.text = "간식 칼로리: ${nutrients.calories}"
+//            binding.tvSnackCarbs.text = "간식 탄수화물: ${nutrients.carbs}"
+//            binding.tvSnackProtein.text = "간식 단백질: ${nutrients.protein}"
+//            binding.tvSnackFat.text = "간식 지방: ${nutrients.fat}"
+            binding.tvSnackCalories.text = "간식 칼로리: ${nutrients.calories} kcal"
         }
 
         return binding.root

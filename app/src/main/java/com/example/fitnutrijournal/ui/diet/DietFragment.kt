@@ -86,9 +86,10 @@ class DietFragment : Fragment() {
             val date = dietViewModel.currentDate.value ?: ""
             val mealType = dietViewModel.mealType.value ?: ""
 
+            homeViewModel.addCheckedItemsToDailyIntakeRecord(checkedItems, date, mealType)
+
             checkedItems.forEach { food ->
                 val quantity = food.servingSize.toFloat()
-                homeViewModel.addCheckedItemsToDailyIntakeRecord(setOf(food), date, mealType)
                 Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
             }
 
