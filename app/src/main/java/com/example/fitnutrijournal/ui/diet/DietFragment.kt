@@ -20,6 +20,7 @@ import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 
 class DietFragment : Fragment() {
@@ -27,8 +28,8 @@ class DietFragment : Fragment() {
     private var _binding: FragmentDietBinding? = null
     private val binding get() = _binding!!
     private val dietViewModel: DietViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
-    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,12 +72,31 @@ class DietFragment : Fragment() {
 
         observeFoodInfo() // 추가된 부분
 
-        // 체크된 항목 개수 관찰
-        dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->
-            binding.btnAddFood.text = "${count}개 추가하기"
-        })
+
 
         return binding.root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnAddFood.setOnClickListener {
+            val checkedItems = dietViewModel.checkedItems.value ?: emptySet()
+            val date = dietViewModel.currentDate.value ?: ""
+            val mealType = dietViewModel.mealType.value ?: ""
+
+            checkedItems.forEach { food ->
+                val quantity = food.servingSize.toFloat()
+                homeViewModel.addCheckedItemsToDailyIntakeRecord(setOf(food), date, mealType)
+                Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
+            }
+
+            findNavController().popBackStack()
+        }
+
+
+
     }
 
     override fun onResume() {
@@ -90,7 +110,9 @@ class DietFragment : Fragment() {
             "breakfast", "lunch", "dinner", "snack" -> {
                 setUi()
                 dietViewModel.setSaveButtonVisibility(true)
+
             }
+
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
@@ -114,13 +136,19 @@ class DietFragment : Fragment() {
         })
     }
 
-    private fun setUi(){
+    @SuppressLint("SetTextI18n")
+    private fun setUi() {
         // 음식 추가 관련 UI 조정
         (activity as MainActivity).showBottomNavigation(false)
 
         val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.bottomMargin = 50
         binding.btnAddFood.layoutParams = layoutParams
+
+        // 체크된 항목 개수 관찰
+        dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->
+            binding.btnAddFood.text = "${count}개 추가하기"
+        })
 
         dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
         dietViewModel.setSaveButtonVisibility(true) // 저장 버튼 표시

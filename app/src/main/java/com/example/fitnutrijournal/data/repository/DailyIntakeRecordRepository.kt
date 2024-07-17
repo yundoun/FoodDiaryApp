@@ -1,0 +1,23 @@
+package com.example.fitnutrijournal.data.repository
+
+import androidx.lifecycle.LiveData
+import com.example.fitnutrijournal.data.dao.DailyIntakeRecordDao
+import com.example.fitnutrijournal.data.model.DailyIntakeRecord
+
+class DailyIntakeRecordRepository(private val dailyIntakeRecordDao: DailyIntakeRecordDao) {
+
+    // 주어진 DailyIntakeRecord 객체를 삽입하는 역할
+    suspend fun insert(dailyIntakeRecord: DailyIntakeRecord) {
+        dailyIntakeRecordDao.insert(dailyIntakeRecord)
+    }
+
+    // 주어진 DailyIntakeRecord 객체를 업데이트하는 역할
+    suspend fun update(record: DailyIntakeRecord) {
+        dailyIntakeRecordDao.update(record)
+    }
+
+    // 특정 날짜(date)에 해당하는 DailyIntakeRecord 데이터를 LiveData 형태로 반환
+    fun getRecordByDate(date: String): LiveData<DailyIntakeRecord?> {
+        return dailyIntakeRecordDao.getRecordByDate(date)
+    }
+}

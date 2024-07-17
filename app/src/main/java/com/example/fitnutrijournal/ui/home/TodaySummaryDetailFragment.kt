@@ -47,27 +47,6 @@ class TodaySummaryDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        // 아침 식사 테스트 코드
-        binding.testBtn.setOnClickListener{
-            homeViewModel.setMaxCaloriesBreakfast(2300)
-            homeViewModel.setMaxCarbsBreakfast(500)
-            homeViewModel.setMaxProteinBreakfast(2000)
-            homeViewModel.setMaxFatBreakfast(1300)
-            homeViewModel.addCaloriesBreakfast(100)
-            homeViewModel.addCarbsBreakfast(1)
-            homeViewModel.addProteinBreakfast(100)
-            homeViewModel.addFatBreakfast(100)
-
-            homeViewModel.setMaxCaloriesLunch(2300)
-            homeViewModel.setMaxCarbsLunch(1100)
-            homeViewModel.setMaxProteinLunch(2000)
-            homeViewModel.setMaxFatLunch(1300)
-            homeViewModel.addCaloriesLunch(100)
-            homeViewModel.addCarbsLunch(100)
-            homeViewModel.addProteinLunch(100)
-            homeViewModel.addFatLunch(100)
-        }
-
         binding.targetEdit.setOnClickListener {
             showCalorieInputDialog()
         }

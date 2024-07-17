@@ -68,7 +68,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{"목표 칼로리\n" + (viewModel.todayGoal != null ? viewModel.todayGoal.targetCalories : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.501"

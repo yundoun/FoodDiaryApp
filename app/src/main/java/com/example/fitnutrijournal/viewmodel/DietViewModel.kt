@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.viewmodel
 
+import com.example.fitnutrijournal.data.database.FoodDatabase // 여기에 import 추가
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -7,9 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.fitnutrijournal.data.database.FoodDatabase
+import com.example.fitnutrijournal.data.model.DailyIntakeRecord
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
+import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
 import com.example.fitnutrijournal.data.repository.DietRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
@@ -18,14 +20,21 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
     private val mealRepository: MealRepository
     private val dietRepository: DietRepository
+    private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
+
+    private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
+    val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
+
 
     init {
         val database = FoodDatabase.getDatabase(application)
         val foodDao = database.foodDao()
         val mealDao = database.mealDao()
+        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
 
         dietRepository = DietRepository(foodDao)
         mealRepository = MealRepository(mealDao)
+        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
     }
 
     // 식단 기록 관련 메서드
@@ -89,6 +98,25 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
 
+    //
+    private val _mealType = MutableLiveData<String>("")
+    val mealType: LiveData<String> get() = _mealType
+
+    private val _quantity = MutableLiveData<Float>()
+    val quantity: LiveData<Float> get() = _quantity
+
+    private val _currentDate = MutableLiveData<String>("")
+    val currentDate: LiveData<String> get() = _currentDate
+
+    fun setMealType(type: String) {
+        _mealType.value = type
+    }
+
+    fun setCurrentDate(date: String) {
+        _currentDate.value = date
+    }
+
+
     private val _selectedCountFoodItem = MutableLiveData<Int>(0)
     val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
@@ -129,7 +157,10 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         _selectedCountFoodItem.value = checkedItems.size
         Log.d("DietViewModel", "Checked items count: ${checkedItems.size}")
         checkedItems.forEach { item ->
-            Log.d("DietViewModel", "Checked item: ${item.foodCd}, serving size: ${item.servingSize}")
+            Log.d(
+                "DietViewModel",
+                "Checked item: ${item.foodCd}, serving size: ${item.servingSize}, "
+            )
         }
     }
 

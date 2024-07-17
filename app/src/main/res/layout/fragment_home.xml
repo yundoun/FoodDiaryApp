@@ -74,14 +74,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <Button
-                        android:id="@+id/testBtn"
-                        android:layout_width="36dp"
-                        android:layout_height="23dp"
-                        android:text="Button"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <TextView
                         android:id="@+id/tvCalorieIntake"
                         android:layout_width="0dp"

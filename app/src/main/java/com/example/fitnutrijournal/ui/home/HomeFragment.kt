@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentHomeBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -20,7 +22,9 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val dietViewModel: DietViewModel by activityViewModels()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +35,16 @@ class HomeFragment : Fragment() {
         }
 
         ( activity as MainActivity).showBottomNavigation(true)
+
+        homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
+            goal?.let {
+                binding.tvTargetCalories.text = "목표 칼로리\n${it.targetCalories} kcal"
+            }
+        }
+
+        homeViewModel.dailyIntakeRecord.observe(viewLifecycleOwner) { record ->
+            // update UI with daily intake record
+        }
 
         return binding.root
     }
@@ -46,19 +60,6 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
         }
 
-
-        binding.testBtn.setOnClickListener {
-            // 테스트 코드
-            homeViewModel.setMaxCarbs(300) // 예시로 300g 설정
-            homeViewModel.setMaxProtein(500)
-            homeViewModel.setMaxFat(100)
-            homeViewModel.setMaxCalories(2000)
-            homeViewModel.addCarbs(50)
-            homeViewModel.addProtein(30)
-            homeViewModel.addFat(10)
-            homeViewModel.addCalories(100)
-        }
-
         binding.btnCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
         }
@@ -68,24 +69,29 @@ class HomeFragment : Fragment() {
         }
 
         binding.addBreakfast.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("breakfast")
-            findNavController().navigate(action)
+            dietViewModel.setMealType("breakfast")
+            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDiet("breakfast"))
         }
 
         binding.addLunch.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("lunch")
-            findNavController().navigate(action)
+            dietViewModel.setMealType("lunch")
+            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDiet("lunch"))
         }
 
         binding.addDinner.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("dinner")
-            findNavController().navigate(action)
+            dietViewModel.setMealType("dinner")
+            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDiet("dinner"))
         }
 
         binding.addSnack.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("snack")
-            findNavController().navigate(action)
+            dietViewModel.setMealType("snack")
+            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
+            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDiet("snack"))
         }
+
 
     }
 

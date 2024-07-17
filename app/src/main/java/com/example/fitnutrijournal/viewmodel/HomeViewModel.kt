@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.viewmodel
 
+import com.example.fitnutrijournal.data.database.FoodDatabase // 여기에 import 추가
 import android.app.Application
 import android.os.Build
 import android.util.Log
@@ -9,9 +10,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.model.DailyIntakeGoal
+import com.example.fitnutrijournal.data.model.DailyIntakeRecord
+import com.example.fitnutrijournal.data.model.Food
+import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.repository.DailyIntakeGoalRepository
+import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
+import com.example.fitnutrijournal.data.repository.DietRepository
+import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -19,8 +25,15 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
 
+
+    private val dietRepository: DietRepository
+    private val mealRepository: MealRepository
+    private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
+    private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
+
+
+    // 하루 섭취 목표
     private val _todayGoal = MutableLiveData<DailyIntakeGoal?>()
     val todayGoal: LiveData<DailyIntakeGoal?> get() = _todayGoal
 
@@ -28,12 +41,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _todayDate = MutableLiveData<String>().apply {
         value = LocalDate.now().format(dateFormatter)
     }
-    val todayDate: LiveData<String>
+    private val todayDate: LiveData<String>
         get() = _todayDate
 
     // 현재 날짜 = 오늘 날짜 기본값
     private val _currentDate = MutableLiveData<String>().apply {
-        value = _todayDate.value
+        value = todayDate.value
     }
     val currentDate: LiveData<String>
         get() = _currentDate
@@ -42,18 +55,29 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val selectedDate: LiveData<String>
         get() = _selectedDate
 
+    // 하루 섭취 기록
+    private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
+    val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
+
 
     init {
         val database = FoodDatabase.getDatabase(application)
         val dailyIntakeGoalDao = database.dailyIntakeGoalDao()
+        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
+        val foodDao = database.foodDao()
+        val mealDao = database.mealDao()
+
         dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
+        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
+        dietRepository = DietRepository(foodDao)
+        mealRepository = MealRepository(mealDao)
 
         // 현재 날짜의 섭취 목표를 로드합니다.
         loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
     }
 
 
-    // 하루 섭취 목표 저장
+    // 하루 섭취 목표 저장 ( 아침, 점심, 저녁, 간식 칼로리 + 탄단지 목표는 아직 구현 안함 )
     fun saveDailyIntakeGoal(
         date: String,
         targetCalories: Int,
@@ -96,6 +120,48 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     _todayGoal.value = goal
                 }
             }
+        }
+    }
+
+    // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord를 업데이트하는 메소드
+    fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
+        viewModelScope.launch {
+            val meals = checkedItems.map { food ->
+                Meal(
+                    date = date,
+                    mealType = mealType,
+                    dietFoodCode = food.foodCd,
+                    quantity = food.servingSize.toFloat()
+                )
+            }
+
+            addMealsAndUpdateIntakeRecord(meals)
+        }
+    }
+
+    private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>) {
+        for (meal in meals) {
+            // Meal 데이터를 추가
+            mealRepository.insert(meal)
+
+            // Food 데이터를 조회
+            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+
+            // DailyIntakeRecord 데이터를 가져오기
+            val dailyIntakeRecord = dailyIntakeRecordRepository.getRecordByDate(meal.date).value
+                ?: DailyIntakeRecord(meal.date)
+
+            // Food의 영양성분을 이용해 DailyIntakeRecord의 값 증가
+            val updatedRecord = dailyIntakeRecord.copy(
+                currentCalories = dailyIntakeRecord.currentCalories + (food.calories * meal.quantity / food.servingSize).toInt(),
+                currentCarbs = dailyIntakeRecord.currentCarbs + (food.carbohydrate * meal.quantity / food.servingSize).toInt(),
+                currentProtein = dailyIntakeRecord.currentProtein + (food.protein * meal.quantity / food.servingSize).toInt(),
+                currentFat = dailyIntakeRecord.currentFat + (food.fat * meal.quantity / food.servingSize).toInt()
+            )
+
+            // DailyIntakeRecord 업데이트
+            dailyIntakeRecordRepository.insert(updatedRecord)
+            _dailyIntakeRecord.value = updatedRecord
         }
     }
 
@@ -257,183 +323,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val max = _targetCalories.value ?: 0
         val current = _currentCalories.value ?: 0
         _remainingCalories.value = max - current
-    }
-
-
-
-
-    fun setCarbIntake(intake: Int) {
-        _currentCarbIntake.value = intake
-    }
-
-    fun setTargetCarbIntake(intake: Int) {
-        _targetCarbIntake.value = intake
-    }
-
-    // 섭취량 증가시키는 테스트 코드
-    fun addCarbs(carbs: Int) {
-        _currentCarbIntake.value = (_currentCarbIntake.value ?: 0) + carbs
-//        if (_currentCarbIntake.value!! > _targetCarbIntake.value!!) {
-//            _currentCarbIntake.value = _targetCarbIntake.value
-//        }
-    }
-
-    fun addProtein(protein: Int) {
-        _currentProteinIntake.value = (_currentProteinIntake.value ?: 0) + protein
-        if (_currentProteinIntake.value!! > _targetProteinIntake.value!!) {
-            _currentProteinIntake.value = _targetProteinIntake.value
-        }
-    }
-
-    fun addFat(fat: Int) {
-        _currentFatIntake.value = (_currentFatIntake.value ?: 0) + fat
-        if (_currentFatIntake.value!! > _targetFatIntake.value!!) {
-            _currentFatIntake.value = _targetFatIntake.value
-        }
-    }
-
-    fun addCalories(calories: Int) {
-        _currentCalories.value = (_currentCalories.value ?: 0) + calories
-        if (_currentCalories.value!! > _targetCalories.value!!) {
-            _currentCalories.value = _targetCalories.value
-        }
-    }
-
-    fun addCarbsBreakfast(carbs: Int) {
-        _currentCarbIntakeBreakfast.value = (_currentCarbIntakeBreakfast.value ?: 0) + carbs
-        if (_currentCarbIntakeBreakfast.value!! > _targetCarbIntakeBreakfast.value!!) {
-            _currentCarbIntakeBreakfast.value = _targetCarbIntakeBreakfast.value
-        }
-    }
-
-    fun addProteinBreakfast(protein: Int) {
-        _currentProteinIntakeBreakfast.value = (_currentProteinIntakeBreakfast.value ?: 0) + protein
-        if (_currentProteinIntakeBreakfast.value!! > _targetProteinIntakeBreakfast.value!!) {
-            _currentProteinIntakeBreakfast.value = _targetProteinIntakeBreakfast.value
-        }
-    }
-
-    fun addFatBreakfast(fat: Int) {
-        _currentFatIntakeBreakfast.value = (_currentFatIntakeBreakfast.value ?: 0) + fat
-        if (_currentFatIntakeBreakfast.value!! > _targetFatIntakeBreakfast.value!!) {
-            _currentFatIntakeBreakfast.value = _targetFatIntakeBreakfast.value
-        }
-    }
-
-    fun addCaloriesBreakfast(calories: Int) {
-        _currentCaloriesBreakfast.value = (_currentCaloriesBreakfast.value ?: 0) + calories
-        if (_currentCaloriesBreakfast.value!! > _targetCaloriesBreakfast.value!!) {
-            _currentCaloriesBreakfast.value = _targetCaloriesBreakfast.value
-        }
-    }
-
-    fun addCarbsLunch(carbs: Int) {
-        _currentCarbIntakeLunch.value = (_currentCarbIntakeLunch.value ?: 0) + carbs
-        if (_currentCarbIntakeLunch.value!! > _targetCarbIntakeLunch.value!!) {
-            _currentCarbIntakeLunch.value = _targetCarbIntakeLunch.value
-        }
-    }
-
-    fun addProteinLunch(protein: Int) {
-        _currentProteinIntakeLunch.value = (_currentProteinIntakeLunch.value ?: 0) + protein
-        if (_currentProteinIntakeLunch.value!! > _targetProteinIntakeLunch.value!!) {
-            _currentProteinIntakeLunch.value = _targetProteinIntakeLunch.value
-        }
-    }
-
-    fun addFatLunch(fat: Int) {
-        _currentFatIntakeLunch.value = (_currentFatIntakeLunch.value ?: 0) + fat
-        if (_currentFatIntakeLunch.value!! > _targetFatIntakeLunch.value!!) {
-            _currentFatIntakeLunch.value = _targetFatIntakeLunch.value
-        }
-    }
-
-    fun addCaloriesLunch(calories: Int) {
-        _currentCaloriesLunch.value = (_currentCaloriesLunch.value ?: 0) + calories
-        if (_currentCaloriesLunch.value!! > _targetCaloriesLunch.value!!) {
-            _currentCaloriesLunch.value = _targetCaloriesLunch.value
-        }
-    }
-
-    // 목표값을 설정하는 테스트 코드
-    fun setMaxCarbs(max: Int) {
-        _targetCarbIntake.value = max
-    }
-
-    fun setMaxProtein(max: Int) {
-        _targetProteinIntake.value = max
-    }
-
-    fun setMaxFat(max: Int) {
-        _targetFatIntake.value = max
-    }
-
-    fun setMaxCalories(max: Int) {
-        _targetCalories.value = max
-    }
-
-    fun setMaxCarbsBreakfast(max: Int) {
-        _targetCarbIntakeBreakfast.value = max
-    }
-
-    fun setMaxProteinBreakfast(max: Int) {
-        _targetProteinIntakeBreakfast.value = max
-    }
-
-    fun setMaxFatBreakfast(max: Int) {
-        _targetFatIntakeBreakfast.value = max
-    }
-
-    fun setMaxCaloriesBreakfast(max: Int) {
-        _targetCaloriesBreakfast.value = max
-    }
-
-    fun setMaxCarbsLunch(max: Int) {
-        _targetCarbIntakeLunch.value = max
-    }
-
-    fun setMaxProteinLunch(max: Int) {
-        _targetProteinIntakeLunch.value = max
-    }
-
-    fun setMaxFatLunch(max: Int) {
-        _targetFatIntakeLunch.value = max
-    }
-
-    fun setMaxCaloriesLunch(max: Int) {
-        _targetCaloriesLunch.value = max
-    }
-
-    fun setMaxCarbsDinner(max: Int) {
-        _targetCarbIntakeDinner.value = max
-    }
-
-    fun setMaxProteinDinner(max: Int) {
-        _targetProteinIntakeDinner.value = max
-    }
-
-    fun setMaxFatDinner(max: Int) {
-        _targetFatIntakeDinner.value = max
-    }
-
-    fun setMaxCaloriesDinner(max: Int) {
-        _targetCaloriesDinner.value = max
-    }
-
-    fun setMaxCarbsSnack(max: Int) {
-        _targetCarbIntakeSnack.value = max
-    }
-
-    fun setMaxProteinSnack(max: Int) {
-        _targetProteinIntakeSnack.value = max
-    }
-
-    fun setMaxFatSnack(max: Int) {
-        _targetFatIntakeSnack.value = max
-    }
-
-    fun setMaxCaloriesSnack(max: Int) {
-        _targetCaloriesSnack.value = max
     }
 
 

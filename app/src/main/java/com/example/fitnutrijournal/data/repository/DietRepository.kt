@@ -10,21 +10,25 @@ class DietRepository(private val foodDao: FoodDao) {
     val favoriteFoods: LiveData<List<Food>> = foodDao.getFavoriteFoods()
     val userAddedFoods: LiveData<List<Food>> = foodDao.getUserAddedFoods()
 
+    // 주어진 Food 객체를 삽입
     suspend fun insert(food: Food) {
         foodDao.insert(food)
         Log.d("DietRepository", "Food inserted: $food")
     }
 
+    // 주어진 Food 객체를 업데이트
     suspend fun update(food: Food) {
         foodDao.update(food)
         Log.d("DietRepository", "Food updated: $food")
     }
 
+    // 주어진 Food 리스트를 삽입
     private suspend fun insertAll(foods: List<Food>) {
         foodDao.insertAll(foods)
         Log.d("DietRepository", "Foods inserted: $foods")
     }
 
+    // 특정 foodCode에 해당하는 Food 객체를 반환
     suspend fun getFoodByFoodCode(foodCode: String): Food {
         return foodDao.getFoodByFoodCode(foodCode)
     }
