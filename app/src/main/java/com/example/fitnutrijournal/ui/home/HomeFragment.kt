@@ -68,22 +68,22 @@ class HomeFragment : Fragment() {
         }
 
         binding.addBreakfast.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("breakfast")
             findNavController().navigate(action)
         }
 
         binding.addLunch.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("lunch")
             findNavController().navigate(action)
         }
 
         binding.addDinner.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("dinner")
             findNavController().navigate(action)
         }
 
         binding.addSnack.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("home")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationDiet("snack")
             findNavController().navigate(action)
         }
 

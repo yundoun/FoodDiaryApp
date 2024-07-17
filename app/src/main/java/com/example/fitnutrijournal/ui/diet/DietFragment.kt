@@ -74,20 +74,14 @@ class DietFragment : Fragment() {
 
     private fun handleArgs(source: String) {
         when (source) {
-            "home" -> {
-                // 음식 추가 관련 UI 조정
-                (activity as MainActivity).showBottomNavigation(false)
-                binding.btnAddFood.text = "선택된 1개 추가"
-
-                val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
-                layoutParams.bottomMargin = 50
-                binding.btnAddFood.layoutParams = layoutParams
-
-                dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
+            "breakfast", "lunch", "dinner", "snack" -> {
+                setUi()
+                dietViewModel.setSaveButtonVisibility(true)
             }
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
+                dietViewModel.setSaveButtonVisibility(false)
             }
         }
     }
@@ -105,6 +99,19 @@ class DietFragment : Fragment() {
                 )
             }
         })
+    }
+
+    private fun setUi(){
+        // 음식 추가 관련 UI 조정
+        (activity as MainActivity).showBottomNavigation(false)
+        binding.btnAddFood.text = "선택된 1개 추가"
+
+        val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.bottomMargin = 50
+        binding.btnAddFood.layoutParams = layoutParams
+
+        dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
+        dietViewModel.setSaveButtonVisibility(true) // 저장 버튼 표시
     }
 
     override fun onDestroyView() {

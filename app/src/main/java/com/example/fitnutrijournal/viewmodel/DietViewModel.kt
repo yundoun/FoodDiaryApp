@@ -59,6 +59,13 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         _isCheckboxVisible.value = isVisible
     }
 
+    private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
+    val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
+
+    fun setSaveButtonVisibility(isVisible: Boolean) {
+        _isSaveButtonVisible.value = isVisible
+    }
+
     init {
         val foodDao = FoodDatabase.getDatabase(application).foodDao()
         repository = DietRepository(foodDao)

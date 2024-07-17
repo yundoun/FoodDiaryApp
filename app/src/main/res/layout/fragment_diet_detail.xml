@@ -112,6 +112,7 @@
                 android:layout_height="49dp"
                 android:background="@drawable/border_section_light_green"
                 android:text="영양 성분 저장하기"
+                android:visibility="@{viewModel.isSaveButtonVisible ? android.view.View.VISIBLE : android.view.View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
