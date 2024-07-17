@@ -28,9 +28,9 @@ class DietTabAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(item: Diet) {
             binding.foodName.text = item.foodName
-            binding.foodTotalContent.text = "${item.totalContent} g"
+            binding.foodTotalContent.text = "${item.servingSize} g"
             binding.foodCalories.text = "${item.calories} kcal"
-            updateFavoriteButton(binding.favoriteBtn, item.foodCode)
+            updateFavoriteButton(binding.favoriteBtn, item.foodCd)
 
             binding.favoriteBtn.setOnClickListener {
                 toggleFavorite(item)

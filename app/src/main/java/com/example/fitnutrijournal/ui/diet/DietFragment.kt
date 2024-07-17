@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.data.database.DietDatabase
+import com.example.fitnutrijournal.data.repository.DietRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
@@ -82,9 +84,7 @@ class DietFragment : Fragment() {
                 binding.btnAddFood.layoutParams = layoutParams
 
                 dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
-
             }
-
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
@@ -92,19 +92,20 @@ class DietFragment : Fragment() {
         }
     }
 
-
     private fun observeFoodInfo() {
-        val repository = FoodApiRepository()
-        repository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
+        val dietDao = DietDatabase.getDatabase(requireContext()).dietDao()
+        val dietRepository = DietRepository(dietDao)
+        val foodApiRepository = FoodApiRepository(dietRepository)
+
+        foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
             foodResponse?.i2790?.rows?.forEach { item ->
                 Log.d(
                     "DietFragment",
-                    "식품코드: ${item.foodCd}, 식품군: ${item.groupName}, 식품이름: ${item.descKor}, 총내용량: ${item.servingSize}, 단위: ${item.servingUnit}, 열량: ${item.nutrCont1}, 탄수화물: ${item.nutrCont2}, 단백질: ${item.nutrCont3}, 지방: ${item.nutrCont4}, 당류: ${item.nutrCont5}, 나트륨: ${item.nutrCont6}, 콜레스테롤: ${item.nutrCont7}, 포화지방산: ${item.nutrCont8}, 트랜스지방: ${item.nutrCont9}"
+                    "식품코드: ${item.foodCd}, 식품군: ${item.groupName}, 식품이름: ${item.foodName}, 총내용량: ${item.servingSize}, 단위: ${item.servingUnit}, 열량: ${item.calories}, 탄수화물: ${item.carbohydrate}, 단백질: ${item.protein}, 지방: ${item.fat}, 당류: ${item.nutrCont5}, 나트륨: ${item.nutrCont6}, 콜레스테롤: ${item.nutrCont7}, 포화지방산: ${item.nutrCont8}, 트랜스지방: ${item.nutrCont9}"
                 )
             }
         })
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -27,7 +27,7 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val diet = repository.getDietByFoodCode(foodCode)
             _selectedDiet.value = diet
-            updateNutrientValues(diet.totalContent) // 초기값으로 기본 중량 설정
+            updateNutrientValues(diet.servingSize) // 초기값으로 기본 중량 설정
         }
     }
 
@@ -68,11 +68,9 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
         // Load initial favorites from the database
         favoriteDiets.observeForever { favoriteList ->
-            _favorites.value = favoriteList.map { it.foodCode }.toSet()
+            _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
 
-        // Insert dummy data
-        insertDummyData()
     }
 
     fun updateTotalContent(value: String) {
@@ -84,9 +82,9 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun updateNutrientValues(totalContent: Int) {
         val diet = _selectedDiet.value ?: return
-        if (diet.totalContent == 0) return
+        if (diet.servingSize == 0) return
 
-        val factor = totalContent.toFloat() / diet.totalContent
+        val factor = totalContent.toFloat() / diet.servingSize
         _calculatedCalories.value = (diet.calories * factor).toString()
         _calculatedCarbohydrate.value = (diet.carbohydrate * factor).toString()
         _calculatedProtein.value = (diet.protein * factor).toString()
@@ -132,31 +130,16 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     fun toggleFavorite(item: Diet) {
         viewModelScope.launch {
             val currentFavorites = _favorites.value ?: emptySet()
-            if (currentFavorites.contains(item.foodCode)) {
-                _favorites.value = currentFavorites - item.foodCode
+            if (currentFavorites.contains(item.foodCd)) {
+                _favorites.value = currentFavorites - item.foodCd
                 item.isFavorite = false
             } else {
-                _favorites.value = currentFavorites + item.foodCode
+                _favorites.value = currentFavorites + item.foodCd
                 item.isFavorite = true
             }
             repository.update(item)
         }
     }
 
-    private fun insertDummyData() {
-        val dummyData = listOf(
-            Diet("D00001", "구이류", "가자미구이", 200, 314f, 3.5f, 43.2f, 14.2f, 314f / 200, true,true),
-            Diet("D00002", "구이류", "갈치구이", 250, 481.32f, 0.35f, 61.99f, 14.2f, 481.32f / 250),
-            Diet("D00003", "구이류", "고등어구이", 180, 400f, 4.0f, 30.0f, 25.0f, 400f / 180),
-            Diet("D00004", "구이류", "연어구이", 220, 350f, 2.0f, 40.0f, 20.0f, 350f / 220),
-            Diet("D00005", "구이류", "삼치구이", 200, 300f, 5.0f, 35.0f, 10.0f, 300f / 200)
-        )
-        viewModelScope.launch {
-            dummyData.forEach {
-                repository.insert(it)
-            }
-            //Log.d("DietViewModel", "Dummy data inserted")
-        }
-    }
 
 }

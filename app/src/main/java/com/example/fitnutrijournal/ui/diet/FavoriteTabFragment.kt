@@ -33,7 +33,7 @@ class FavoriteTabFragment : Fragment() {
                 dietViewModel.favorites,
                 { diet ->
                     // 아이템 클릭 이벤트
-                    dietViewModel.selectDiet(diet.foodCode)
+                    dietViewModel.selectDiet(diet.foodCd)
                     findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
                 },
                 dietViewModel // DietViewModel 전달

@@ -15,6 +15,9 @@ interface DietDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(diet: Diet)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(diets: List<Diet>)
+
     @Update
     suspend fun update(diet: Diet)
 
@@ -28,6 +31,6 @@ interface DietDao {
     fun getUserAddedDiets(): LiveData<List<Diet>>
 
     // RecyclerView에서 선택한 아이템을 음식 코드로 검색
-    @Query("SELECT * FROM diet_table WHERE foodCode = :foodCode")
+    @Query("SELECT * FROM diet_table WHERE foodCd = :foodCode")
     suspend fun getDietByFoodCode(foodCode: String): Diet
 }

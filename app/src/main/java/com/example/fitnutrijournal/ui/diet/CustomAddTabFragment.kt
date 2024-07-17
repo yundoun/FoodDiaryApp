@@ -37,7 +37,7 @@ class CustomAddTabFragment : Fragment() {
             dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
-                dietViewModel.selectDiet(diet.foodCode)
+                dietViewModel.selectDiet(diet.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
             },
             dietViewModel

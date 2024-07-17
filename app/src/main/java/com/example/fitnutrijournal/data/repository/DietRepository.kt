@@ -24,4 +24,10 @@ class DietRepository(private val dietDao: DietDao) {
     suspend fun getDietByFoodCode(foodCode: String): Diet {
         return dietDao.getDietByFoodCode(foodCode)
     }
+
+    suspend fun insertAll(diets: List<Diet>) {
+        dietDao.insertAll(diets)
+        Log.d("DietRepository", "Diets inserted: $diets")
+    }
+
 }
