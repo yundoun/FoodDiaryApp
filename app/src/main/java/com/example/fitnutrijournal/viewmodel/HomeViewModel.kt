@@ -1,18 +1,103 @@
 package com.example.fitnutrijournal.viewmodel
 
+import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.fitnutrijournal.data.database.FoodDatabase
+import com.example.fitnutrijournal.data.model.DailyIntakeGoal
+import com.example.fitnutrijournal.data.repository.DailyIntakeGoalRepository
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
+
+    private val _todayGoal = MutableLiveData<DailyIntakeGoal?>()
+    val todayGoal: LiveData<DailyIntakeGoal?> get() = _todayGoal
+
+    // 날짜
+    private val _todayDate = MutableLiveData<String>().apply {
+        value = LocalDate.now().format(dateFormatter)
+    }
+    val todayDate: LiveData<String>
+        get() = _todayDate
+
+    // 현재 날짜 = 오늘 날짜 기본값
+    private val _currentDate = MutableLiveData<String>().apply {
+        value = _todayDate.value
+    }
+    val currentDate: LiveData<String>
+        get() = _currentDate
+
+    private val _selectedDate = MutableLiveData<String>()
+    val selectedDate: LiveData<String>
+        get() = _selectedDate
+
+
+    init {
+        val database = FoodDatabase.getDatabase(application)
+        val dailyIntakeGoalDao = database.dailyIntakeGoalDao()
+        dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
+
+        // 현재 날짜의 섭취 목표를 로드합니다.
+        loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
+    }
+
+
+    // 하루 섭취 목표 저장
+    fun saveDailyIntakeGoal(
+        date: String,
+        targetCalories: Int,
+        targetBreakfast: Int,
+        targetLunch: Int,
+        targetDinner: Int,
+        targetSnack: Int
+    ) {
+        viewModelScope.launch {
+            val goal = DailyIntakeGoal(
+                date,
+                targetCalories,
+                targetBreakfast,
+                targetLunch,
+                targetDinner,
+                targetSnack
+            )
+            dailyIntakeGoalRepository.insertOrUpdate(goal)
+            Log.d("HomeViewModel", "Daily intake goal saved: $goal")
+            _todayGoal.value = goal // 저장된 목표를 LiveData에 반영합니다.
+        }
+    }
+
+    // 하루 섭취 목표 가져오기
+    private fun loadDailyIntakeGoal(date: String) {
+        viewModelScope.launch {
+            dailyIntakeGoalRepository.getDailyIntakeGoal(date).observeForever { goal ->
+                if (goal == null) {
+                    // 기본값 설정
+                    val defaultGoal = DailyIntakeGoal(
+                        date = date,
+                        targetCalories = 0,
+                        targetBreakfast = 0,
+                        targetLunch = 0,
+                        targetDinner = 0,
+                        targetSnack = 0
+                    )
+                    _todayGoal.value = defaultGoal
+                } else {
+                    _todayGoal.value = goal
+                }
+            }
+        }
+    }
 
     // 오늘 하루 Total
     private val _targetCarbIntake = MutableLiveData(0)
@@ -174,23 +259,6 @@ class HomeViewModel : ViewModel() {
         _remainingCalories.value = max - current
     }
 
-
-    // 날짜
-    private val _todayDate = MutableLiveData<String>().apply {
-        value = LocalDate.now().format(dateFormatter)
-    }
-    val todayDate: LiveData<String>
-        get() = _todayDate
-
-    private val _currentDate = MutableLiveData<String>().apply {
-        value = _todayDate.value
-    }
-    val currentDate: LiveData<String>
-        get() = _currentDate
-
-    private val _selectedDate = MutableLiveData<String>()
-    val selectedDate: LiveData<String>
-        get() = _selectedDate
 
 
 
@@ -367,8 +435,6 @@ class HomeViewModel : ViewModel() {
     fun setMaxCaloriesSnack(max: Int) {
         _targetCaloriesSnack.value = max
     }
-
-
 
 
     fun updateCurrentDate(date: LocalDate) {

@@ -21,6 +21,8 @@ import com.example.fitnutrijournal.ui.home.Tab.ViewPagerAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 class TodaySummaryDetailFragment : Fragment() {
@@ -29,6 +31,7 @@ class TodaySummaryDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,6 +70,18 @@ class TodaySummaryDetailFragment : Fragment() {
 
         binding.targetEdit.setOnClickListener {
             showCalorieInputDialog()
+        }
+
+        // 목표 데이터를 관찰하여 UI 업데이트
+        homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
+            goal?.let {
+                // 필요한 경우 UI 업데이트 코드 작성
+                binding.tvTargetCalories.text = "목표 칼로리\n${it.targetCalories} kcal"
+                binding.breakfast.text = "${it.targetBreakfast} kcal"
+                binding.lunch.text = "${it.targetLunch} kcal"
+                binding.dinner.text = "${it.targetDinner} kcal"
+                binding.snack.text = "${it.targetSnack} kcal"
+            }
         }
 
         return binding.root
@@ -114,11 +129,16 @@ class TodaySummaryDetailFragment : Fragment() {
 
                 val totalCalories = morningCalories + lunchCalories + dinnerCalories + snackCalories
 
-                homeViewModel.setMaxCalories(totalCalories)
-                homeViewModel.setMaxCaloriesBreakfast(morningCalories)
-                homeViewModel.setMaxCaloriesLunch(lunchCalories)
-                homeViewModel.setMaxCaloriesDinner(dinnerCalories)
-                homeViewModel.setMaxCaloriesSnack(snackCalories)
+                val date = homeViewModel.selectedDate.value ?: LocalDate.now().format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                homeViewModel.saveDailyIntakeGoal(
+                    date,
+                    totalCalories,
+                    morningCalories,
+                    lunchCalories,
+                    dinnerCalories,
+                    snackCalories
+                )
             }
             .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()

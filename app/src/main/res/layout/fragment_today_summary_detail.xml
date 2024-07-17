@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{"목표 칼로리"+ "\n" + viewModel.targetCalories + "kcal"}'
+                    android:text='@{"목표 칼로리\n" + (viewModel.todayGoal != null ? viewModel.todayGoal.targetCalories : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.501"
@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{viewModel.targetCaloriesBreakfast + "kcal"}'
+                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetBreakfast : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/lunch"
                     app:layout_constraintStart_toStartOf="parent"
@@ -142,7 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{viewModel.targetCaloriesLunch + "kcal"}'
+                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetLunch : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/dinner"
                     app:layout_constraintStart_toEndOf="@+id/breakfast"
@@ -154,26 +154,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{viewModel.targetCaloriesDinner + "kcal"}'
+                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetDinner : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/snack"
                     app:layout_constraintStart_toEndOf="@+id/lunch"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.8" />
 
-
-
                 <TextView
                     android:id="@+id/snack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text='@{viewModel.targetCaloriesSnack + "kcal"}'
+                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetSnack : 0) + " kcal"}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/dinner"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.8"/>
+                    app:layout_constraintVertical_bias="0.8" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -199,7 +197,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/todayTargetSection">
-
 
                 <TextView
                     android:id="@+id/calroie"

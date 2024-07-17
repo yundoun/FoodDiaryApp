@@ -19,18 +19,18 @@ interface FoodDao {
     @Update
     suspend fun update(food: Food)
 
-    @Query("SELECT * FROM food_table")
-    fun getAllFoods(): LiveData<List<Food>>
-
-    @Query("SELECT * FROM food_table WHERE isFavorite = 1")
-    fun getFavoriteFoods(): LiveData<List<Food>>
-
-    @Query("SELECT * FROM food_table WHERE isAddedByUser = 1")
-    fun getUserAddedFoods(): LiveData<List<Food>>
-
-    @Query("SELECT * FROM food_table WHERE foodCd = :foodCode")
+    @Query("SELECT * FROM Food WHERE foodCd = :foodCode")
     suspend fun getFoodByFoodCode(foodCode: String): Food
 
-    @Query("SELECT * FROM food_table")
+    @Query("SELECT * FROM Food")
+    fun getAllFoods(): LiveData<List<Food>>
+
+    @Query("SELECT * FROM Food WHERE isFavorite = 1")
+    fun getFavoriteFoods(): LiveData<List<Food>>
+
+    @Query("SELECT * FROM Food WHERE isAddedByUser = 1")
+    fun getUserAddedFoods(): LiveData<List<Food>>
+
+    @Query("SELECT * FROM Food")
     suspend fun getAllFoodsList(): List<Food>
 }

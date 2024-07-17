@@ -9,10 +9,35 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.model.Food
+import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.repository.DietRepository
+import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
 
 class DietViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val mealRepository: MealRepository
+    private val dietRepository: DietRepository
+
+    init {
+        val database = FoodDatabase.getDatabase(application)
+        val foodDao = database.foodDao()
+        val mealDao = database.mealDao()
+
+        dietRepository = DietRepository(foodDao)
+        mealRepository = MealRepository(mealDao)
+    }
+
+    // 식단 기록 관련 메서드
+    fun addMeal(meal: Meal) {
+        viewModelScope.launch {
+            mealRepository.insert(meal)
+        }
+    }
+
+    fun getMealsByDate(date: String): LiveData<List<Meal>> {
+        return mealRepository.getMealsByDate(date)
+    }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
     val favorites: LiveData<Set<String>> get() = _favorites
@@ -26,7 +51,7 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     val selectedFood: LiveData<Food> get() = _selectedFood
     fun selectFood(foodCode: String) {
         viewModelScope.launch {
-            val food = repository.getFoodByFoodCode(foodCode)
+            val food = dietRepository.getFoodByFoodCode(foodCode)
             _selectedFood.value = food
             updateNutrientValues(food.servingSize) // 초기값으로 기본 중량 설정
         }
@@ -47,10 +72,9 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     private val _calculatedFat = MutableLiveData<String>("")
     val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
-    private val repository: DietRepository
-    private val allFoods: LiveData<List<Food>>
-    val favoriteFoods: LiveData<List<Food>>
-    val userAddedFoods: LiveData<List<Food>>
+    val allFoods: LiveData<List<Food>> = dietRepository.allFoods
+    val favoriteFoods: LiveData<List<Food>> = dietRepository.favoriteFoods
+    val userAddedFoods: LiveData<List<Food>> = dietRepository.userAddedFoods
 
     private val _isCheckboxVisible = MutableLiveData<Boolean>()
     val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
@@ -73,18 +97,12 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        val foodDao = FoodDatabase.getDatabase(application).foodDao()
-        repository = DietRepository(foodDao)
-        allFoods = repository.allFoods
-        favoriteFoods = repository.favoriteFoods
-        userAddedFoods = repository.userAddedFoods
-
         // Load initial favorites from the database
         favoriteFoods.observeForever { favoriteList ->
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
-
     }
+
 
     // 체크 상태 업데이트 메서드
     fun toggleCheckedItem(item: Food) {
@@ -174,7 +192,7 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
                 _favorites.value = currentFavorites + item.foodCd
                 item.isFavorite = true
             }
-            repository.update(item)
+            dietRepository.update(item)
         }
     }
 
