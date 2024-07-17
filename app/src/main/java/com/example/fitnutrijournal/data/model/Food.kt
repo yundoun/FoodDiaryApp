@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 // Room 데이터베이스의 Entity로 사용 -> 데이터 정의
-@Entity(tableName = "diet_table")
-data class Diet(
+@Entity(tableName = "food_table")
+data class Food(
     @PrimaryKey val foodCd: String,
     val foodName: String,
     val servingSize: Int,

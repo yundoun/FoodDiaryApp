@@ -27,8 +27,8 @@ class DietDetailFragment : Fragment() {
 
         (activity as MainActivity).showBottomNavigation(false)
 
-        dietViewModel.selectedDiet.observe(viewLifecycleOwner) { diet ->
-            binding.totalContentInput.setText(diet?.servingSize?.toString() ?: "")
+        dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
+            binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
             binding.unit.setText("g")
         }
 

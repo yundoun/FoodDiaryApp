@@ -26,14 +26,14 @@ class FavoriteTabFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
 
-        dietViewModel.favoriteDiets.observe(viewLifecycleOwner) { favorites ->
+        dietViewModel.favoriteFoods.observe(viewLifecycleOwner) { favorites ->
             recyclerView.adapter = DietTabAdapter(
                 favorites,
                 dietViewModel::toggleFavorite,
                 dietViewModel.favorites,
                 { diet ->
                     // 아이템 클릭 이벤트
-                    dietViewModel.selectDiet(diet.foodCd)
+                    dietViewModel.selectFood(diet.foodCd)
                     findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
                 },
                 dietViewModel // DietViewModel 전달

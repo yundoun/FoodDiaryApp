@@ -6,27 +6,28 @@ import android.widget.ImageButton
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
-import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.databinding.ItemDietBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 
 class DietTabAdapter(
-    private var diets: List<Diet>,
-    private val toggleFavorite: (Diet) -> Unit,
+    private var diets: List<Food>,
+    private val toggleFavorite: (Food) -> Unit,
     private val favorites: LiveData<Set<String>>,
-    private val onItemClick: (Diet) -> Unit,
+    private val onItemClick: (Food) -> Unit,
     private val viewModel: DietViewModel
 ) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateDiets(newDiets: List<Diet>) {
+    fun updateDiets(newDiets: List<Food>) {
         diets = newDiets
         notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
     }
 
-    inner class DietViewHolder(private val binding: ItemDietBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class DietViewHolder(private val binding: ItemDietBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(item: Diet) {
+        fun bind(item: Food) {
             binding.foodName.text = item.foodName
             binding.foodTotalContent.text = "${item.servingSize} g"
             binding.foodCalories.text = "${item.calories} kcal"
@@ -70,7 +71,6 @@ class DietTabAdapter(
             else R.drawable.ic_star_border
         )
     }
-
 
 
     override fun getItemCount(): Int = diets.size

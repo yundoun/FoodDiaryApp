@@ -36,15 +36,16 @@ class CustomAddTabFragment : Fragment() {
             emptyList(),
             dietViewModel::toggleFavorite,
             dietViewModel.favorites,
-            { diet ->
-                dietViewModel.selectDiet(diet.foodCd)
+            { food ->
+                dietViewModel.selectFood(food.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
             },
             dietViewModel
         )
         recyclerView.adapter = adapter
 
-        dietViewModel.userAddedDiets.observe(viewLifecycleOwner) { diets ->
+        dietViewModel.userAddedFoods.observe(viewLifecycleOwner) { diets ->
+
             Log.d("UserAddedTabFragment", "Updating adapter with user added diets: $diets")
             adapter.updateDiets(diets)
         }

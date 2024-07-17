@@ -49,7 +49,7 @@ class DietTabFragment : Fragment() {
             dietViewModel.favorites,
             { diet ->
                 // Handle item click
-                dietViewModel.selectDiet(diet.foodCd)
+                dietViewModel.selectFood(diet.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
             },
             dietViewModel // DietViewModel 전달
@@ -58,9 +58,9 @@ class DietTabFragment : Fragment() {
 
 
 
-        dietViewModel.filteredDiets.observe(viewLifecycleOwner) { diets ->
-            Log.d("DietTabFragment", "Updating adapter with diets: $diets")
-            adapter.updateDiets(diets)
+        dietViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
+            Log.d("DietTabFragment", "Updating adapter with diets: $foods")
+            adapter.updateDiets(foods)
         }
 
         dietViewModel.isCheckboxVisible.observe(viewLifecycleOwner) {

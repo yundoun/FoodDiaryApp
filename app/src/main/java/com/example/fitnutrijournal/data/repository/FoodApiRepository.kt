@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.fitnutrijournal.data.api.RetrofitClient
 import com.example.fitnutrijournal.data.model.FoodResponse
-import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.data.model.Food
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,8 +20,8 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
     private val apiKey = "2faba1329d85403c85cc"
     private val serviceId = "I2790"
     private val dataType = "json"
-    private val startIdx = 1000
-    private val endIdx = 2000
+    private val startIdx = 0
+    private val endIdx = 1000
 
     fun fetchFoodInfo(query: String? = null): LiveData<FoodResponse> {
         val call = RetrofitClient.foodApiService.getFoodInfo(
@@ -39,7 +39,7 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                     response.body()?.let {
                         _foodInfo.postValue(it)
                         CoroutineScope(Dispatchers.IO).launch {
-                            val diets = it.i2790.rows.mapNotNull { item ->
+                            val foods = it.i2790.rows.mapNotNull { item ->
                                 val foodCd = item.foodCd ?: return@mapNotNull null
                                 val foodName = item.foodName ?: return@mapNotNull null
                                 val servingSize = item.servingSize?.toIntOrNull() ?: return@mapNotNull null
@@ -48,7 +48,7 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                                 val protein = item.protein?.toFloatOrNull() ?: return@mapNotNull null
                                 val fat = item.fat?.toFloatOrNull() ?: return@mapNotNull null
 
-                                Diet(
+                                Food(
                                     foodCd = foodCd,
                                     foodName = foodName,
                                     servingSize = servingSize,
@@ -61,7 +61,7 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                                     isAddedByUser = false
                                 )
                             }
-                            dietRepository.insertAll(diets)
+                            dietRepository.mergeAndInsertAll(foods)
                         }
                     }
                 } else {

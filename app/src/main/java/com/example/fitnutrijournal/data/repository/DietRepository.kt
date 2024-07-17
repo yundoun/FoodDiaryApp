@@ -2,32 +2,43 @@ package com.example.fitnutrijournal.data.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.example.fitnutrijournal.data.dao.DietDao
-import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.data.dao.FoodDao
+import com.example.fitnutrijournal.data.model.Food
 
-// 데이터 소스를 관리하고, 데이터베이스와 ViewModel간의 통신 담당
-class DietRepository(private val dietDao: DietDao) {
-    val allDiets: LiveData<List<Diet>> = dietDao.getAllDiets()
-    val favoriteDiets: LiveData<List<Diet>> = dietDao.getFavoriteDiets()
-    val userAddedDiets: LiveData<List<Diet>> = dietDao.getUserAddedDiets()
+class DietRepository(private val foodDao: FoodDao) {
+    val allFoods: LiveData<List<Food>> = foodDao.getAllFoods()
+    val favoriteFoods: LiveData<List<Food>> = foodDao.getFavoriteFoods()
+    val userAddedFoods: LiveData<List<Food>> = foodDao.getUserAddedFoods()
 
-    suspend fun insert(diet: Diet) {
-        dietDao.insert(diet)
-        Log.d("DietRepository", "Diet inserted: $diet")
+    suspend fun insert(food: Food) {
+        foodDao.insert(food)
+        Log.d("DietRepository", "Food inserted: $food")
     }
 
-    suspend fun update(diet: Diet) {
-        dietDao.update(diet)
-        Log.d("DietRepository", "Diet updated: $diet")
+    suspend fun update(food: Food) {
+        foodDao.update(food)
+        Log.d("DietRepository", "Food updated: $food")
     }
 
-    suspend fun getDietByFoodCode(foodCode: String): Diet {
-        return dietDao.getDietByFoodCode(foodCode)
+    private suspend fun insertAll(foods: List<Food>) {
+        foodDao.insertAll(foods)
+        Log.d("DietRepository", "Foods inserted: $foods")
     }
 
-    suspend fun insertAll(diets: List<Diet>) {
-        dietDao.insertAll(diets)
-        Log.d("DietRepository", "Diets inserted: $diets")
+    suspend fun getFoodByFoodCode(foodCode: String): Food {
+        return foodDao.getFoodByFoodCode(foodCode)
     }
 
+    suspend fun mergeAndInsertAll(apiFoods: List<Food>) {
+        val currentFoods = foodDao.getAllFoodsList() // 모든 데이터를 리스트 형태로 가져오기 위한 메소드 필요
+        val mergedFoods = apiFoods.map { apiFood ->
+            currentFoods.find { it.foodCd == apiFood.foodCd }?.let { currentFood ->
+                apiFood.copy(
+                    isFavorite = currentFood.isFavorite,
+                    isAddedByUser = currentFood.isAddedByUser
+                )
+            } ?: apiFood
+        }
+        insertAll(mergedFoods)
+    }
 }

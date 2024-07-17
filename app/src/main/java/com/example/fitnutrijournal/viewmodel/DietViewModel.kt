@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.fitnutrijournal.data.database.DietDatabase
-import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.data.database.FoodDatabase
+import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.repository.DietRepository
 import kotlinx.coroutines.launch
 
@@ -21,13 +21,13 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     private val searchQuery: LiveData<String> get() = _searchQuery
 
     // 아이템 선택
-    private val _selectedDiet = MutableLiveData<Diet>()
-    val selectedDiet: LiveData<Diet> get() = _selectedDiet
-    fun selectDiet(foodCode: String) {
+    private val _selectedFood = MutableLiveData<Food>()
+    val selectedFood: LiveData<Food> get() = _selectedFood
+    fun selectFood(foodCode: String) {
         viewModelScope.launch {
-            val diet = repository.getDietByFoodCode(foodCode)
-            _selectedDiet.value = diet
-            updateNutrientValues(diet.servingSize) // 초기값으로 기본 중량 설정
+            val food = repository.getFoodByFoodCode(foodCode)
+            _selectedFood.value = food
+            updateNutrientValues(food.servingSize) // 초기값으로 기본 중량 설정
         }
     }
 
@@ -47,9 +47,9 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
     private val repository: DietRepository
-    private val allDiets: LiveData<List<Diet>>
-    val favoriteDiets: LiveData<List<Diet>>
-    val userAddedDiets: LiveData<List<Diet>>
+    private val allFoods: LiveData<List<Food>>
+    val favoriteFoods: LiveData<List<Food>>
+    val userAddedFoods: LiveData<List<Food>>
 
 
     private val _isCheckboxVisible = MutableLiveData<Boolean>()
@@ -60,14 +60,14 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        val dietDao = DietDatabase.getDatabase(application).dietDao()
-        repository = DietRepository(dietDao)
-        allDiets = repository.allDiets
-        favoriteDiets = repository.favoriteDiets
-        userAddedDiets = repository.userAddedDiets
+        val foodDao = FoodDatabase.getDatabase(application).foodDao()
+        repository = DietRepository(foodDao)
+        allFoods = repository.allFoods
+        favoriteFoods = repository.favoriteFoods
+        userAddedFoods = repository.userAddedFoods
 
         // Load initial favorites from the database
-        favoriteDiets.observeForever { favoriteList ->
+        favoriteFoods.observeForever { favoriteList ->
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
 
@@ -75,59 +75,54 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateTotalContent(value: String) {
         _totalContent.value = value
-        val diet = _selectedDiet.value ?: return
+        val food = _selectedFood.value ?: return
         val totalContent = value.toIntOrNull() ?: 0
         updateNutrientValues(totalContent)
     }
 
     private fun updateNutrientValues(totalContent: Int) {
-        val diet = _selectedDiet.value ?: return
-        if (diet.servingSize == 0) return
+        val food = _selectedFood.value ?: return
+        if (food.servingSize == 0) return
 
-        val factor = totalContent.toFloat() / diet.servingSize
-        _calculatedCalories.value = (diet.calories * factor).toString()
-        _calculatedCarbohydrate.value = (diet.carbohydrate * factor).toString()
-        _calculatedProtein.value = (diet.protein * factor).toString()
-        _calculatedFat.value = (diet.fat * factor).toString()
+        val factor = totalContent.toFloat() / food.servingSize
+        _calculatedCalories.value = (food.calories * factor).toString()
+        _calculatedCarbohydrate.value = (food.carbohydrate * factor).toString()
+        _calculatedProtein.value = (food.protein * factor).toString()
+        _calculatedFat.value = (food.fat * factor).toString()
     }
 
-
-    val filteredDiets = MediatorLiveData<List<Diet>>().apply {
-        addSource(allDiets) { diets ->
-            //Log.d("DietViewModel", "allDiets source changed, diets: $diets")
-            if (diets.isNotEmpty()) {
-                value = filterDiets(diets, searchQuery.value.orEmpty())
+    val filteredFoods = MediatorLiveData<List<Food>>().apply {
+        addSource(allFoods) { foods ->
+            if (foods.isNotEmpty()) {
+                value = filterFoods(foods, searchQuery.value.orEmpty())
             } else {
                 value = emptyList()
             }
         }
         addSource(searchQuery) { query ->
-            //Log.d("DietViewModel", "searchQuery source changed, query: $query")
-            val currentDiets = allDiets.value.orEmpty()
-            if (currentDiets.isNotEmpty()) {
-                value = filterDiets(currentDiets, query)
+            val currentFoods = allFoods.value.orEmpty()
+            if (currentFoods.isNotEmpty()) {
+                value = filterFoods(currentFoods, query)
             } else {
                 value = emptyList()
             }
         }
     }
 
-    private fun filterDiets(diets: List<Diet>, query: String): List<Diet> {
+    private fun filterFoods(foods: List<Food>, query: String): List<Food> {
         val filtered = if (query.isEmpty()) {
-            diets
+            foods
         } else {
-            diets.filter { it.foodName.contains(query, ignoreCase = true) }
+            foods.filter { it.foodName.contains(query, ignoreCase = true) }
         }
-        //Log.d("DietViewModel", "Filtered diets with query \"$query\": $filtered")
         return filtered
     }
 
     fun setSearchQuery(query: String) {
-       // Log.d("DietViewModel", "Setting search query: $query")
         _searchQuery.value = query
     }
 
-    fun toggleFavorite(item: Diet) {
+    fun toggleFavorite(item: Food) {
         viewModelScope.launch {
             val currentFavorites = _favorites.value ?: emptySet()
             if (currentFavorites.contains(item.foodCd)) {

@@ -4,23 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.fitnutrijournal.data.dao.DietDao
-import com.example.fitnutrijournal.data.model.Diet
+import com.example.fitnutrijournal.data.dao.FoodDao
+import com.example.fitnutrijournal.data.model.Food
 
-@Database(entities = [Diet::class], version = 4, exportSchema = false) // 버전 번호를 3로 증가시킴
-abstract class DietDatabase : RoomDatabase() {
-    abstract fun dietDao(): DietDao
+@Database(entities = [Food::class], version = 4, exportSchema = false)
+abstract class FoodDatabase : RoomDatabase() {
+    abstract fun foodDao(): FoodDao
 
     companion object {
         @Volatile
-        private var INSTANCE: DietDatabase? = null
+        private var INSTANCE: FoodDatabase? = null
 
-        fun getDatabase(context: Context): DietDatabase {
+        fun getDatabase(context: Context): FoodDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    DietDatabase::class.java,
-                    "diet_database"
+                    FoodDatabase::class.java,
+                    "food_database"
                 ).fallbackToDestructiveMigration() // 스키마 변경 시 데이터베이스를 재생성
                     .build()
                 INSTANCE = instance

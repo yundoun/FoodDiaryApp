@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.fitnutrijournal.data.database.DietDatabase
+import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.repository.DietRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
@@ -93,8 +93,8 @@ class DietFragment : Fragment() {
     }
 
     private fun observeFoodInfo() {
-        val dietDao = DietDatabase.getDatabase(requireContext()).dietDao()
-        val dietRepository = DietRepository(dietDao)
+        val foodDao = FoodDatabase.getDatabase(requireContext()).foodDao()
+        val dietRepository = DietRepository(foodDao)
         val foodApiRepository = FoodApiRepository(dietRepository)
 
         foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
