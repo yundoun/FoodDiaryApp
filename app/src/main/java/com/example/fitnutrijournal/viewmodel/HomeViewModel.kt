@@ -22,8 +22,15 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
+data class NutrientData(
+    var calories: Int = 0,
+    var carbs: Float = 0f,
+    var protein: Float = 0f,
+    var fat: Float = 0f,
+    var quantity: Float = 0f
+)
 
+@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -32,9 +39,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
 
-    // 하루 섭취 목표
-    private val _todayGoal = MutableLiveData<DailyIntakeGoal?>()
-    val todayGoal: LiveData<DailyIntakeGoal?> get() = _todayGoal
+
 
     // 날짜
     private val _todayDate = MutableLiveData<String>().apply {
@@ -54,15 +59,21 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val selectedDate: LiveData<String>
         get() = _selectedDate
 
-    fun setCurrentDate(date: String) {
+    private fun setCurrentDate(date: String) {
         _currentDate.value = date
     }
 
-    // 하루 섭취 기록
+
+    // ============================== Database에서 가져온 데이터 ==============================
+    // 하루 섭취 목표 ( 날짜, 총 칼로리, 아침, 점심, 저녁, 간식 칼로리 )
+    private val _todayGoal = MutableLiveData<DailyIntakeGoal?>()
+    val todayGoal: LiveData<DailyIntakeGoal?> get() = _todayGoal
+
+    // 하루 섭취 기록 ( 날짜, 현재 칼로리, 탄수화물, 단백질, 지방 )
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
     val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
 
-    // 각 식사 유형별로 섭취한 영양소 데이터를 저장할 변수들
+    // 각 식사 유형별로 섭취한 영양소 데이터를 저장할 변수들 (칼로리, 탄수화물, 단백질, 지방, 수량)
     private val _breakfastNutrients = MutableLiveData<NutrientData>()
     val breakfastNutrients: LiveData<NutrientData> get() = _breakfastNutrients
 
@@ -75,14 +86,207 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _snackNutrients = MutableLiveData<NutrientData>()
     val snackNutrients: LiveData<NutrientData> get() = _snackNutrients
 
-    // 데이터를 저장할 클래스
-    data class NutrientData(
-        var calories: Int = 0,
-        var carbs: Float = 0f,
-        var protein: Float = 0f,
-        var fat: Float = 0f,
-        var quantity: Float = 0f
-    )
+    // ========================= 목표 섭취량 데이터 =========================
+
+    // 매크로 비율 설정
+    private val carbRatio = 0.5
+    private val proteinRatio = 0.3
+    private val fatRatio = 0.2
+
+    // 매크로 목표 계산 함수
+    private fun calculateMacros(calories: Int): Triple<Int, Int, Int> {
+        val carbs = (calories * carbRatio / 4).toInt()
+        val protein = (calories * proteinRatio / 4).toInt()
+        val fat = (calories * fatRatio / 9).toInt()
+        return Triple(carbs, protein, fat)
+    }
+
+    // 오늘 하루 목표 섭취량
+    private val _targetCalories = MutableLiveData(0)
+    private val _targetCarbIntake = MediatorLiveData<Int>().apply {
+        addSource(_targetCalories) { calories ->
+            val (carbs, _, _) = calculateMacros(calories)
+            value = carbs
+        }
+    }
+    private val _targetProteinIntake = MediatorLiveData<Int>().apply {
+        addSource(_targetCalories) { calories ->
+            val (_, protein, _) = calculateMacros(calories)
+            value = protein
+        }
+    }
+    private val _targetFatIntake = MediatorLiveData<Int>().apply {
+        addSource(_targetCalories) { calories ->
+            val (_, _, fat) = calculateMacros(calories)
+            value = fat
+        }
+    }
+    val targetCalories: LiveData<Int>
+        get() = _todayGoal.value?.targetCalories?.let { MutableLiveData(it) } ?: _targetCalories
+    val targetCarbIntake: LiveData<Int>
+        get() = _targetCarbIntake
+    val targetProteinIntake: LiveData<Int>
+        get() = _targetProteinIntake
+    val targetFatIntake: LiveData<Int>
+        get() = _targetFatIntake
+
+
+    // 아침 목표 섭취량
+    private val _targetCaloriesBreakfast = MutableLiveData(0)
+    private val _targetCarbIntakeBreakfast = MediatorLiveData<Int>().apply {
+        addSource(_targetCaloriesBreakfast) { calories ->
+            val (carbs, _, _) = calculateMacros(calories)
+            value = carbs
+        }
+    }
+    private val _targetProteinIntakeBreakfast = MediatorLiveData<Int>().apply {
+        addSource(_targetCaloriesBreakfast) { calories ->
+            val (_, protein, _) = calculateMacros(calories)
+            value = protein
+        }
+    }
+    private val _targetFatIntakeBreakfast = MediatorLiveData<Int>().apply {
+        addSource(_targetCaloriesBreakfast) { calories ->
+            val (_, _, fat) = calculateMacros(calories)
+            value = fat
+        }
+    }
+    val targetCaloriesBreakfast: LiveData<Int>
+        get() = _todayGoal.value?.targetBreakfast?.let { MutableLiveData(it) } ?: _targetCaloriesBreakfast
+    val targetCarbIntakeBreakfast: LiveData<Int>
+        get() = _targetCarbIntakeBreakfast
+    val targetProteinIntakeBreakfast: LiveData<Int>
+        get() = _targetProteinIntakeBreakfast
+    val targetFatIntakeBreakfast: LiveData<Int>
+        get() = _targetFatIntakeBreakfast
+
+    // 점심 목표 섭취량
+    private val _targetCaloriesLunch = MutableLiveData(0)
+    private val _targetCarbIntakeLunch = MutableLiveData(0)
+    private val _targetProteinIntakeLunch = MutableLiveData(0)
+    private val _targetFatIntakeLunch = MutableLiveData(0)
+    val targetCaloriesLunch: LiveData<Int>
+        get() = _todayGoal.value?.targetLunch?.let { MutableLiveData(it) } ?: _targetCaloriesLunch
+    val targetCarbIntakeLunch: LiveData<Int>
+        get() = _targetCaloriesLunch.value?.let { MutableLiveData(calculateMacros(it).first) } ?: _targetCarbIntakeLunch
+    val targetProteinIntakeLunch: LiveData<Int>
+        get() = _targetCaloriesLunch.value?.let { MutableLiveData(calculateMacros(it).second) } ?: _targetProteinIntakeLunch
+    val targetFatIntakeLunch: LiveData<Int>
+        get() = _targetCaloriesLunch.value?.let { MutableLiveData(calculateMacros(it).third) } ?: _targetFatIntakeLunch
+
+    // 저녁 목표 섭취량
+    private val _targetCaloriesDinner = MutableLiveData(0)
+    private val _targetCarbIntakeDinner = MutableLiveData(0)
+    private val _targetProteinIntakeDinner = MutableLiveData(0)
+    private val _targetFatIntakeDinner = MutableLiveData(0)
+    val targetCaloriesDinner: LiveData<Int>
+        get() = _todayGoal.value?.targetDinner?.let { MutableLiveData(it) } ?: _targetCaloriesDinner
+    val targetCarbIntakeDinner: LiveData<Int>
+        get() = _targetCaloriesDinner.value?.let { MutableLiveData(calculateMacros(it).first) } ?: _targetCarbIntakeDinner
+    val targetProteinIntakeDinner: LiveData<Int>
+        get() = _targetCaloriesDinner.value?.let { MutableLiveData(calculateMacros(it).second) } ?: _targetProteinIntakeDinner
+    val targetFatIntakeDinner: LiveData<Int>
+        get() = _targetCaloriesDinner.value?.let { MutableLiveData(calculateMacros(it).third) } ?: _targetFatIntakeDinner
+
+    // 간식 목표 섭취량
+    private val _targetCaloriesSnack = MutableLiveData(0)
+    private val _targetCarbIntakeSnack = MutableLiveData(0)
+    private val _targetProteinIntakeSnack = MutableLiveData(0)
+    private val _targetFatIntakeSnack = MutableLiveData(0)
+    val targetCaloriesSnack: LiveData<Int>
+        get() = _todayGoal.value?.targetSnack?.let { MutableLiveData(it) } ?: _targetCaloriesSnack
+    val targetCarbIntakeSnack: LiveData<Int>
+        get() = _targetCaloriesSnack.value?.let { MutableLiveData(calculateMacros(it).first) } ?: _targetCarbIntakeSnack
+    val targetProteinIntakeSnack: LiveData<Int>
+        get() = _targetCaloriesSnack.value?.let { MutableLiveData(calculateMacros(it).second) } ?: _targetProteinIntakeSnack
+    val targetFatIntakeSnack: LiveData<Int>
+        get() = _targetCaloriesSnack.value?.let { MutableLiveData(calculateMacros(it).third) } ?: _targetFatIntakeSnack
+
+    // ====================================================================
+
+
+    // ================================== 섭취한 영양소 데이터 ==================================
+
+    // 현재 섭취한 모든 영양소의 합 (칼로리, 탄수화물, 단백질, 지방)
+    private val _currentTotalCalories = MutableLiveData<Int>(0)
+    private val _currentCarbIntake = MutableLiveData(0)
+    private val _currentProteinIntake = MutableLiveData(0)
+    private val _currentFatIntake = MutableLiveData(0)
+    private val _remainingCalories = MediatorLiveData<Int>()
+    val currentTotalCalories: LiveData<Int>
+        get() = _dailyIntakeRecord.value?.currentCalories?.let { MutableLiveData(it) } ?: _currentTotalCalories
+    val currentCarbIntake: LiveData<Int>
+        get() = _dailyIntakeRecord.value?.currentCarbs?.let { MutableLiveData(it) } ?: _currentCarbIntake
+    val currentProteinIntake: LiveData<Int>
+        get() = _dailyIntakeRecord.value?.currentProtein?.let { MutableLiveData(it) } ?: _currentProteinIntake
+    val currentFatIntake: LiveData<Int>
+        get() = _dailyIntakeRecord.value?.currentFat?.let { MutableLiveData(it) } ?: _currentFatIntake
+    val remainingCalories: LiveData<Int>
+        get() = _remainingCalories
+
+    // 섭취한 영양소 : 아침
+    private val _currentCarbIntakeBreakfast = MutableLiveData(0)
+    private val _currentProteinIntakeBreakfast = MutableLiveData(0)
+    private val _currentFatIntakeBreakfast = MutableLiveData(0)
+    private val _currentCaloriesBreakfast = MutableLiveData(0)
+    private val _remainingCaloriesBreakfast = MediatorLiveData<Int>()
+    val currentCaloriesBreakfast: LiveData<Int>
+        get() = _breakfastNutrients.value?.calories?.let { MutableLiveData(it) } ?: _currentCaloriesBreakfast
+    val currentCarbIntakeBreakfast: LiveData<Int>
+        get() = _breakfastNutrients.value?.carbs?.let { MutableLiveData(it.toInt()) } ?: _currentCarbIntakeBreakfast
+    val currentProteinIntakeBreakfast: LiveData<Int>
+        get() = _breakfastNutrients.value?.protein?.let { MutableLiveData(it.toInt()) } ?: _currentProteinIntakeBreakfast
+    val currentFatIntakeBreakfast: LiveData<Int>
+        get() = _breakfastNutrients.value?.fat?.let { MutableLiveData(it.toInt()) } ?: _currentFatIntakeBreakfast
+
+    // 섭취한 영양소 : 점심
+    private val _currentCarbIntakeLunch = MutableLiveData(0)
+    private val _currentProteinIntakeLunch = MutableLiveData(0)
+    private val _currentFatIntakeLunch = MutableLiveData(0)
+    private val _currentCaloriesLunch = MutableLiveData(0)
+    private val _remainingCaloriesLunch = MediatorLiveData<Int>()
+    val currentCaloriesLunch: LiveData<Int>
+        get() = _lunchNutrients.value?.calories?.let { MutableLiveData(it) } ?: _currentCaloriesLunch
+    val currentCarbIntakeLunch: LiveData<Int>
+        get() = _lunchNutrients.value?.carbs?.let { MutableLiveData(it.toInt()) } ?: _currentCarbIntakeLunch
+    val currentProteinIntakeLunch: LiveData<Int>
+        get() = _lunchNutrients.value?.protein?.let { MutableLiveData(it.toInt()) } ?: _currentProteinIntakeLunch
+    val currentFatIntakeLunch: LiveData<Int>
+        get() = _lunchNutrients.value?.fat?.let { MutableLiveData(it.toInt()) } ?: _currentFatIntakeLunch
+
+    // 섭취한 영양소 : 저녁
+    private val _currentCarbIntakeDinner = MutableLiveData(0)
+    private val _currentProteinIntakeDinner = MutableLiveData(0)
+    private val _currentFatIntakeDinner = MutableLiveData(0)
+    private val _currentCaloriesDinner = MutableLiveData(0)
+    private val _remainingCaloriesDinner = MediatorLiveData<Int>()
+    val currentCaloriesDinner: LiveData<Int>
+        get() = _dinnerNutrients.value?.calories?.let { MutableLiveData(it) } ?: _currentCaloriesDinner
+    val currentCarbIntakeDinner: LiveData<Int>
+        get() = _dinnerNutrients.value?.carbs?.let { MutableLiveData(it.toInt()) } ?: _currentCarbIntakeDinner
+    val currentProteinIntakeDinner: LiveData<Int>
+        get() = _dinnerNutrients.value?.protein?.let { MutableLiveData(it.toInt()) } ?: _currentProteinIntakeDinner
+    val currentFatIntakeDinner: LiveData<Int>
+        get() = _dinnerNutrients.value?.fat?.let { MutableLiveData(it.toInt()) } ?: _currentFatIntakeDinner
+
+    // 섭취한 영양소 : 간식
+    private val _currentCarbIntakeSnack = MutableLiveData(0)
+    private val _currentProteinIntakeSnack = MutableLiveData(0)
+    private val _currentFatIntakeSnack = MutableLiveData(0)
+    private val _currentCaloriesSnack = MutableLiveData(0)
+    private val _remainingCaloriesSnack = MediatorLiveData<Int>()
+    val currentCaloriesSnack: LiveData<Int>
+        get() = _snackNutrients.value?.calories?.let { MutableLiveData(it) } ?: _currentCaloriesSnack
+    val currentCarbIntakeSnack: LiveData<Int>
+        get() = _snackNutrients.value?.carbs?.let { MutableLiveData(it.toInt()) } ?: _currentCarbIntakeSnack
+    val currentProteinIntakeSnack: LiveData<Int>
+        get() = _snackNutrients.value?.protein?.let { MutableLiveData(it.toInt()) } ?: _currentProteinIntakeSnack
+    val currentFatIntakeSnack: LiveData<Int>
+        get() = _snackNutrients.value?.fat?.let { MutableLiveData(it.toInt()) } ?: _currentFatIntakeSnack
+
+    // ====================================================================
+
+
 
     // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트하는 메소드
     fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
@@ -101,6 +305,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>, mealType: String) {
+        var totalCalories = 0
         for (meal in meals) {
             // Meal 데이터를 추가
             mealRepository.insert(meal)
@@ -124,9 +329,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             dailyIntakeRecordRepository.insert(updatedRecord)
             _dailyIntakeRecord.value = updatedRecord
 
+            totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
+
             // 각 식사 유형별로 섭취한 영양소 데이터 업데이트
             updateNutrientData(mealType, food, meal.quantity)
         }
+        _currentTotalCalories.postValue(totalCalories)
     }
 
     private fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
@@ -155,13 +363,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // 현재 날짜에 대한 식사 기록을 불러오는 메소드
-    fun loadDailyIntakeForDate(date: String) {
+    private fun loadDailyIntakeForDate(date: String) {
         viewModelScope.launch {
             val meals = mealRepository.getMealsByDate(date).value ?: return@launch
+            var totalCalories = 0
             meals.forEach { meal ->
                 val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
                 updateNutrientData(meal.mealType, food, meal.quantity)
             }
+            _currentTotalCalories.postValue(totalCalories)
         }
     }
 
@@ -234,162 +444,20 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // 오늘 하루 Total
-    private val _targetCarbIntake = MutableLiveData(0)
-    private val _currentCarbIntake = MutableLiveData(0)
-    private val _targetProteinIntake = MutableLiveData(0)
-    private val _currentProteinIntake = MutableLiveData(0)
-    private val _targetFatIntake = MutableLiveData(0)
-    private val _currentFatIntake = MutableLiveData(0)
-    private val _targetCalories = MutableLiveData(0)
-    private val _currentCalories = MutableLiveData(0)
-    private val _remainingCalories = MediatorLiveData<Int>()
 
-    // 아침
-    private val _targetCarbIntakeBreakfast = MutableLiveData(0)
-    private val _currentCarbIntakeBreakfast = MutableLiveData(0)
-    private val _targetProteinIntakeBreakfast = MutableLiveData(0)
-    private val _currentProteinIntakeBreakfast = MutableLiveData(0)
-    private val _targetFatIntakeBreakfast = MutableLiveData(0)
-    private val _currentFatIntakeBreakfast = MutableLiveData(0)
-    private val _targetCaloriesBreakfast = MutableLiveData(0)
-    private val _currentCaloriesBreakfast = MutableLiveData(0)
-    private val _remainingCaloriesBreakfast = MediatorLiveData<Int>()
 
-    // 점심
-    private val _targetCarbIntakeLunch = MutableLiveData(0)
-    private val _currentCarbIntakeLunch = MutableLiveData(0)
-    private val _targetProteinIntakeLunch = MutableLiveData(0)
-    private val _currentProteinIntakeLunch = MutableLiveData(0)
-    private val _targetFatIntakeLunch = MutableLiveData(0)
-    private val _currentFatIntakeLunch = MutableLiveData(0)
-    private val _targetCaloriesLunch = MutableLiveData(0)
-    private val _currentCaloriesLunch = MutableLiveData(0)
-    private val _remainingCaloriesLunch = MediatorLiveData<Int>()
 
-    // 저녁
-    private val _targetCarbIntakeDinner = MutableLiveData(0)
-    private val _currentCarbIntakeDinner = MutableLiveData(0)
-    private val _targetProteinIntakeDinner = MutableLiveData(0)
-    private val _currentProteinIntakeDinner = MutableLiveData(0)
-    private val _targetFatIntakeDinner = MutableLiveData(0)
-    private val _currentFatIntakeDinner = MutableLiveData(0)
-    private val _targetCaloriesDinner = MutableLiveData(0)
-    private val _currentCaloriesDinner = MutableLiveData(0)
-    private val _remainingCaloriesDinner = MediatorLiveData<Int>()
 
-    // 간식
-    private val _targetCarbIntakeSnack = MutableLiveData(0)
-    private val _currentCarbIntakeSnack = MutableLiveData(0)
-    private val _targetProteinIntakeSnack = MutableLiveData(0)
-    private val _currentProteinIntakeSnack = MutableLiveData(0)
-    private val _targetFatIntakeSnack = MutableLiveData(0)
-    private val _currentFatIntakeSnack = MutableLiveData(0)
-    private val _targetCaloriesSnack = MutableLiveData(0)
-    private val _currentCaloriesSnack = MutableLiveData(0)
-    private val _remainingCaloriesSnack = MediatorLiveData<Int>()
-
-    // 오늘 하루 Total getter
-    val targetCarbIntake: LiveData<Int>
-        get() = _targetCarbIntake
-    val currentCarbIntake: LiveData<Int>
-        get() = _currentCarbIntake
-    val targetProteinIntake: LiveData<Int>
-        get() = _targetProteinIntake
-    val currentProteinIntake: LiveData<Int>
-        get() = _currentProteinIntake
-    val targetFatIntake: LiveData<Int>
-        get() = _targetFatIntake
-    val currentFatIntake: LiveData<Int>
-        get() = _currentFatIntake
-    val targetCalories: LiveData<Int>
-        get() = _targetCalories
-    val currentCalories: LiveData<Int>
-        get() = _currentCalories
-    val remainingCalories: LiveData<Int>
-        get() = _remainingCalories
-
-    // 아침 getter
-    val targetCarbIntakeBreakfast: LiveData<Int>
-        get() = _targetCarbIntakeBreakfast
-    val currentCarbIntakeBreakfast: LiveData<Int>
-        get() = _currentCarbIntakeBreakfast
-    val targetProteinIntakeBreakfast: LiveData<Int>
-        get() = _targetProteinIntakeBreakfast
-    val currentProteinIntakeBreakfast: LiveData<Int>
-        get() = _currentProteinIntakeBreakfast
-    val targetFatIntakeBreakfast: LiveData<Int>
-        get() = _targetFatIntakeBreakfast
-    val currentFatIntakeBreakfast: LiveData<Int>
-        get() = _currentFatIntakeBreakfast
-    val targetCaloriesBreakfast: LiveData<Int>
-        get() = _targetCaloriesBreakfast
-    val currentCaloriesBreakfast: LiveData<Int>
-        get() = _currentCaloriesBreakfast
-
-    // 점심 getter
-    val targetCarbIntakeLunch: LiveData<Int>
-        get() = _targetCarbIntakeLunch
-    val currentCarbIntakeLunch: LiveData<Int>
-        get() = _currentCarbIntakeLunch
-    val targetProteinIntakeLunch: LiveData<Int>
-        get() = _targetProteinIntakeLunch
-    val currentProteinIntakeLunch: LiveData<Int>
-        get() = _currentProteinIntakeLunch
-    val targetFatIntakeLunch: LiveData<Int>
-        get() = _targetFatIntakeLunch
-    val currentFatIntakeLunch: LiveData<Int>
-        get() = _currentFatIntakeLunch
-    val targetCaloriesLunch: LiveData<Int>
-        get() = _targetCaloriesLunch
-    val currentCaloriesLunch: LiveData<Int>
-        get() = _currentCaloriesLunch
-
-    // 저녁 getter
-    val targetCarbIntakeDinner: LiveData<Int>
-        get() = _targetCarbIntakeDinner
-    val currentCarbIntakeDinner: LiveData<Int>
-        get() = _currentCarbIntakeDinner
-    val targetProteinIntakeDinner: LiveData<Int>
-        get() = _targetProteinIntakeDinner
-    val currentProteinIntakeDinner: LiveData<Int>
-        get() = _currentProteinIntakeDinner
-    val targetFatIntakeDinner: LiveData<Int>
-        get() = _targetFatIntakeDinner
-    val currentFatIntakeDinner: LiveData<Int>
-        get() = _currentFatIntakeDinner
-    val targetCaloriesDinner: LiveData<Int>
-        get() = _targetCaloriesDinner
-    val currentCaloriesDinner: LiveData<Int>
-        get() = _currentCaloriesDinner
-
-    // 간식 getter
-    val targetCarbIntakeSnack: LiveData<Int>
-        get() = _targetCarbIntakeSnack
-    val currentCarbIntakeSnack: LiveData<Int>
-        get() = _currentCarbIntakeSnack
-    val targetProteinIntakeSnack: LiveData<Int>
-        get() = _targetProteinIntakeSnack
-    val currentProteinIntakeSnack: LiveData<Int>
-        get() = _currentProteinIntakeSnack
-    val targetFatIntakeSnack: LiveData<Int>
-        get() = _targetFatIntakeSnack
-    val currentFatIntakeSnack: LiveData<Int>
-        get() = _currentFatIntakeSnack
-    val targetCaloriesSnack: LiveData<Int>
-        get() = _targetCaloriesSnack
-    val currentCaloriesSnack: LiveData<Int>
-        get() = _currentCaloriesSnack
 
     // 잔여 칼로리 계산
     init {
-        _remainingCalories.addSource(_currentCalories) { updateRemainingCalories() }
+        _remainingCalories.addSource(_currentTotalCalories) { updateRemainingCalories() }
         _remainingCalories.addSource(_targetCalories) { updateRemainingCalories() }
     }
 
     private fun updateRemainingCalories() {
         val max = _targetCalories.value ?: 0
-        val current = _currentCalories.value ?: 0
+        val current = _currentTotalCalories.value ?: 0
         _remainingCalories.value = max - current
     }
 

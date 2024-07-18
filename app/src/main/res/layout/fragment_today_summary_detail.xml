@@ -217,7 +217,7 @@
                     android:layout_marginTop="50dp"
                     android:layout_marginEnd="30dp"
                     android:max="@{viewModel.targetCalories}"
-                    android:progress="@{viewModel.currentCalories}"
+                    android:progress="@{viewModel.currentTotalCalories}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="10dp"
-                    android:text='@{viewModel.currentCalories + " / " + viewModel.targetCalories + " kcal"}'
+                    android:text='@{viewModel.currentTotalCalories + " / " + viewModel.targetCalories + " kcal"}'
                     app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -263,7 +263,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="10dp"
-                    android:text='@{viewModel.currentCarbIntake + " / " + viewModel.targetCarbIntake + " g"}'
+                    android:text='@{String.valueOf(viewModel.currentCarbIntake) + "/" + String.valueOf(viewModel.targetCarbIntake) + "g"}'
                     app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
                     app:layout_constraintEnd_toEndOf="parent" />
 

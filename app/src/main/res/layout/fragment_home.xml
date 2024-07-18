@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:gravity="center"
-                        android:text='@{viewModel.currentCalories + "\n" + "섭취량"}'
+                        android:text='@{viewModel.currentTotalCalories + "\n" + "섭취량"}'
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvTargetCalories"
@@ -124,7 +124,7 @@
                             android:layout_height="0dp"
                             android:indeterminate="false"
                             android:max="@{viewModel.targetCalories}"
-                            android:progress="@{viewModel.currentCalories}"
+                            android:progress="@{viewModel.currentTotalCalories}"
                             android:progressDrawable="@drawable/circular_progress_bar"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -141,7 +141,7 @@
                         android:layout_marginEnd="70dp"
                         android:gravity="center"
                         android:maxLines="2"
-                        android:text='@{viewModel.targetCalories + "\n" + "목표칼로리"}'
+                        android:text='@{String.valueOf(viewModel.targetCalories) + "\n목표칼로리"}'
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/remainingCalories"
