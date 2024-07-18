@@ -45,6 +45,7 @@ abstract class FoodDatabase : RoomDatabase() {
                     "food_database"
                 )
                     .addMigrations(MIGRATION_3_4) // 마이그레이션 추가
+                    // .fallbackToDestructiveMigration() // 모든 데이터를 초기화하고 새로 시작
                     .build()
                 INSTANCE = instance
                 instance

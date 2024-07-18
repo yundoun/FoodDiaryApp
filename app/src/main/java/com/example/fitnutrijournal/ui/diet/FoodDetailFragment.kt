@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.home
+package com.example.fitnutrijournal.ui.diet
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,20 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.fitnutrijournal.databinding.FragmentDietDetailBinding
+import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 
-class DietDetailFragment : Fragment() {
+class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
-    private lateinit var binding: FragmentDietDetailBinding
+    private lateinit var binding: FragmentFoodDetailBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDietDetailBinding.inflate(inflater, container, false)
+        binding = FragmentFoodDetailBinding.inflate(inflater, container, false)
         binding.viewModel = dietViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 

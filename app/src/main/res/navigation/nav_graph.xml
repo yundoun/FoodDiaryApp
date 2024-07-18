@@ -55,7 +55,7 @@
         android:label="TodaySummaryDetailFragment" />
     <fragment
         android:id="@+id/dietDetailFragment"
-        android:name="com.example.fitnutrijournal.ui.home.DietDetailFragment"
+        android:name="com.example.fitnutrijournal.ui.diet.FoodDetailFragment"
         android:label="fragment_diet_detail"
-        tools:layout="@layout/fragment_diet_detail" />
+        tools:layout="@layout/fragment_food_detail" />
 </navigation>
