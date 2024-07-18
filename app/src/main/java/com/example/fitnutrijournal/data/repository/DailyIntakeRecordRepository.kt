@@ -16,8 +16,8 @@ class DailyIntakeRecordRepository(private val dailyIntakeRecordDao: DailyIntakeR
         dailyIntakeRecordDao.update(record)
     }
 
-    // 특정 날짜(date)에 해당하는 DailyIntakeRecord 데이터를 LiveData 형태로 반환
-    fun getRecordByDate(date: String): LiveData<DailyIntakeRecord?> {
-        return dailyIntakeRecordDao.getRecordByDate(date)
+    // 특정 날짜(date)에 해당하는 DailyIntakeRecord 데이터를 반환
+    suspend fun getRecordByDate(date: String): DailyIntakeRecord? {
+        return dailyIntakeRecordDao.getRecordByDateSync(date)
     }
 }

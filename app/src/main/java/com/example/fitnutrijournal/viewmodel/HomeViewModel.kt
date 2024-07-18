@@ -451,7 +451,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>, mealType: String) {
-        var totalCalories = 0
+        // 첫 번째 meal의 날짜를 사용하여 DailyIntakeRecord를 가져옵니다.
+        val date = meals.first().date
+        val initialRecord = dailyIntakeRecordRepository.getRecordByDate(date)
+            ?: DailyIntakeRecord(date)
+
+        // 초기 값을 가져와서 누적합니다.
+        var totalCalories = initialRecord.currentCalories
+        var totalCarbs = initialRecord.currentCarbs
+        var totalProtein = initialRecord.currentProtein
+        var totalFat = initialRecord.currentFat
+
         for (meal in meals) {
             // Meal 데이터를 추가
             mealRepository.insert(meal)
@@ -459,29 +469,31 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             // Food 데이터를 조회
             val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
 
-            // DailyIntakeRecord 데이터를 가져오기
-            val dailyIntakeRecord = dailyIntakeRecordRepository.getRecordByDate(meal.date).value
-                ?: DailyIntakeRecord(meal.date)
-
-            // Food의 영양성분을 이용해 DailyIntakeRecord의 값 증가
-            val updatedRecord = dailyIntakeRecord.copy(
-                currentCalories = dailyIntakeRecord.currentCalories + (food.calories * meal.quantity / food.servingSize).toInt(),
-                currentCarbs = dailyIntakeRecord.currentCarbs + (food.carbohydrate * meal.quantity / food.servingSize).toInt(),
-                currentProtein = dailyIntakeRecord.currentProtein + (food.protein * meal.quantity / food.servingSize).toInt(),
-                currentFat = dailyIntakeRecord.currentFat + (food.fat * meal.quantity / food.servingSize).toInt()
-            )
-
-            Log.d("HomeViewModel", "Updated record: $updatedRecord")
-
-            // DailyIntakeRecord 업데이트
-            dailyIntakeRecordRepository.insert(updatedRecord)
-            _dailyIntakeRecord.value = updatedRecord
-
+            // Food의 영양성분을 이용해 값을 누적합니다.
             totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
+            totalCarbs += (food.carbohydrate * meal.quantity / food.servingSize).toInt()
+            totalProtein += (food.protein * meal.quantity / food.servingSize).toInt()
+            totalFat += (food.fat * meal.quantity / food.servingSize).toInt()
 
             // 각 식사 유형별로 섭취한 영양소 데이터 업데이트
             updateNutrientData(mealType, food, meal.quantity)
         }
+
+        // 누적된 값을 사용하여 DailyIntakeRecord 업데이트
+        val updatedRecord = initialRecord.copy(
+            currentCalories = totalCalories,
+            currentCarbs = totalCarbs,
+            currentProtein = totalProtein,
+            currentFat = totalFat
+        )
+
+        Log.d("HomeViewModel", "Updated record: $updatedRecord")
+
+        // DailyIntakeRecord 업데이트
+        dailyIntakeRecordRepository.insert(updatedRecord)
+        _dailyIntakeRecord.postValue(updatedRecord)
+
+        // 총 섭취 칼로리 업데이트
         _currentTotalCalories.postValue(totalCalories)
     }
 

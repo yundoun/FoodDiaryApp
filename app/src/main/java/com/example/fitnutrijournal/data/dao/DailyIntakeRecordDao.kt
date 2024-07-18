@@ -16,6 +16,6 @@ interface DailyIntakeRecordDao {
     @Update
     suspend fun update(record: DailyIntakeRecord)
 
-    @Query("SELECT * FROM daily_intake_record WHERE date = :date")
-    fun getRecordByDate(date: String): LiveData<DailyIntakeRecord?>
+    @Query("SELECT * FROM daily_intake_record WHERE date = :date LIMIT 1")
+    suspend fun getRecordByDateSync(date: String): DailyIntakeRecord?
 }
