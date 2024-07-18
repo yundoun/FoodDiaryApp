@@ -56,6 +56,23 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
         }
 
+        // 아침, 점심, 저녁, 간식 레이아웃 클릭 이벤트 설정
+        binding.breakfastLayout.setOnClickListener {
+            navigateToMealDetail("breakfast")
+        }
+
+        binding.lunchLayout.setOnClickListener {
+            navigateToMealDetail("lunch")
+        }
+
+        binding.dinnerLayout.setOnClickListener {
+            navigateToMealDetail("dinner")
+        }
+
+        binding.snackLayout.setOnClickListener {
+            navigateToMealDetail("snack")
+        }
+
         binding.addBreakfast.setOnClickListener {
             dietViewModel.setMealType("breakfast")
             dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
@@ -95,6 +112,13 @@ class HomeFragment : Fragment() {
                 )
             )
         }
+    }
+
+    private fun navigateToMealDetail(mealType: String) {
+        homeViewModel.selectMealType(mealType)
+        findNavController().navigate(
+            HomeFragmentDirections.actionNavigationHomeToMealDetailFragment()
+        )
     }
 
     override fun onDestroyView() {

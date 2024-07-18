@@ -430,8 +430,45 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val currentFatIntakeSnack: LiveData<Int>
         get() = _currentFatIntakeSnack
 
+    // 식단 자세히 보기
+    private val _mealType = MutableLiveData<String>("")
+    val mealType: LiveData<String> get() = _mealType
+    fun selectMealType(type: String){
+        _mealType.value = type
+    }
+
     // ====================================================================
 
+    init {
+        val database = FoodDatabase.getDatabase(application)
+        val dailyIntakeGoalDao = database.dailyIntakeGoalDao()
+        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
+        val foodDao = database.foodDao()
+        val mealDao = database.mealDao()
+
+        dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
+        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
+        dietRepository = DietRepository(foodDao)
+        mealRepository = MealRepository(mealDao)
+
+        // 현재 날짜의 섭취 목표를 로드합니다.
+        loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
+
+        // 데이터 로드
+        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        setCurrentDate(currentDate)
+        loadDailyIntakeForDate(currentDate)
+
+        // 앱 시작 시 오늘 날짜의 dailyIntakeRecord 값을 불러와 초기화하고 바인딩
+        viewModelScope.launch {
+            initializeDailyIntake(todayDate = currentDate)
+        }
+
+        // 잔여 칼로리 계산
+        _remainingCalories.addSource(_currentTotalCalories) { updateRemainingCalories() }
+        _remainingCalories.addSource(_targetCalories) { updateRemainingCalories() }
+
+    }
 
 
     // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트하는 메소드
@@ -450,6 +487,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // Meal 객체를 이용해서 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트
     private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>, mealType: String) {
         // 첫 번째 meal의 날짜를 사용하여 DailyIntakeRecord를 가져옵니다.
         val date = meals.first().date
@@ -497,13 +535,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         _currentTotalCalories.postValue(totalCalories)
     }
 
-
-
     // 현재 날짜에 대한 식사 기록을 불러오는 메소드
     private fun loadDailyIntakeForDate(date: String) {
         viewModelScope.launch {
             val meals = mealRepository.getMealsByDate(date).value ?: return@launch
-            var totalCalories = 0
+            val totalCalories = 0
             meals.forEach { meal ->
                 val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
                 updateNutrientData(meal.mealType, food, meal.quantity)
@@ -511,34 +547,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             _currentTotalCalories.postValue(totalCalories)
         }
     }
-
-    init {
-        val database = FoodDatabase.getDatabase(application)
-        val dailyIntakeGoalDao = database.dailyIntakeGoalDao()
-        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
-        val foodDao = database.foodDao()
-        val mealDao = database.mealDao()
-
-        dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
-        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
-        dietRepository = DietRepository(foodDao)
-        mealRepository = MealRepository(mealDao)
-
-        // 현재 날짜의 섭취 목표를 로드합니다.
-        loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
-
-        // 데이터 로드
-        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        setCurrentDate(currentDate)
-        loadDailyIntakeForDate(currentDate)
-
-        // 앱 시작 시 오늘 날짜의 dailyIntakeRecord 값을 불러와 초기화하고 바인딩
-        viewModelScope.launch {
-            initializeDailyIntake(todayDate = currentDate)
-        }
-
-    }
-
 
     private suspend fun initializeDailyIntake(todayDate: String) {
         val record = dailyIntakeRecordRepository.getRecordByDate(todayDate)
@@ -652,13 +660,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
-    }
-
-
-    // 잔여 칼로리 계산
-    init {
-        _remainingCalories.addSource(_currentTotalCalories) { updateRemainingCalories() }
-        _remainingCalories.addSource(_targetCalories) { updateRemainingCalories() }
     }
 
     private fun updateRemainingCalories() {

@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_diet"
             app:destination="@id/navigation_diet" />
+        <action
+            android:id="@+id/action_navigation_home_to_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/navigation_diet"
@@ -58,4 +62,12 @@
         android:name="com.example.fitnutrijournal.ui.diet.FoodDetailFragment"
         android:label="fragment_diet_detail"
         tools:layout="@layout/fragment_food_detail" />
+    <fragment
+        android:id="@+id/mealDetailFragment"
+        android:name="com.example.fitnutrijournal.ui.home.MealDetailFragment"
+        android:label="MealDetailFragment" >
+        <argument
+            android:name="mealType"
+            android:defaultValue="navigation" />
+    </fragment>
 </navigation>
