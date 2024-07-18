@@ -35,20 +35,6 @@ class HomeFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         }
         ( activity as MainActivity).showBottomNavigation(true)
-        // 로그 추가
-        homeViewModel.targetCalories.observe(viewLifecycleOwner) { value ->
-            Log.d("HomeFragment", "Observed targetCalories: $value")
-        }
-        homeViewModel.targetCarbIntake.observe(viewLifecycleOwner) { value ->
-            Log.d("HomeFragment", "Observed targetCarbIntake: $value")
-        }
-        homeViewModel.targetProteinIntake.observe(viewLifecycleOwner) { value ->
-            Log.d("HomeFragment", "Observed targetProteinIntake: $value")
-        }
-        homeViewModel.targetFatIntake.observe(viewLifecycleOwner) { value ->
-            Log.d("HomeFragment", "Observed targetFatIntake: $value")
-        }
-
         return binding.root
     }
 
