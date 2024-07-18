@@ -15,4 +15,9 @@ class MealRepository(private val mealDao: MealDao) {
     fun getMealsByDate(date: String): LiveData<List<Meal>> {
         return mealDao.getMealsByDate(date)
     }
+
+    // 특정 날짜(date)에 해당하는 Meal 객체 리스트를 반환
+    suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal> {
+        return mealDao.getMealsByDateAndTypeSync(date, mealType)
+    }
 }

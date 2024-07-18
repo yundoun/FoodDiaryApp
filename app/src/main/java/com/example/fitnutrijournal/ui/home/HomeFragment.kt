@@ -41,36 +41,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
-            goal?.let {
-                binding.tvTargetCalories.text = "목표 칼로리\n${it.targetCalories} kcal"
-            }
-        }
-
-
-        homeViewModel.breakfastNutrients.observe(viewLifecycleOwner) { nutrients ->
-            // update UI with breakfast nutrients
-//            binding.tvBreakfastCalories.text = "아침 칼로리: ${nutrients.calories}"
-//            binding.tvBreakfastCarbs.text = "아침 탄수화물: ${nutrients.carbs}"
-//            binding.tvBreakfastProtein.text = "아침 단백질: ${nutrients.protein}"
-//            binding.tvBreakfastFat.text = "아침 지방: ${nutrients.fat}"
-            binding.tvBreakfastCalories.text = "아침 칼로리: ${nutrients.calories} kcal"
-        }
-
-
-        homeViewModel.lunchNutrients.observe(viewLifecycleOwner) { nutrients ->
-            binding.tvLunchCalories.text = "점심 칼로리: ${nutrients.calories} kcal"
-        }
-
-        homeViewModel.dinnerNutrients.observe(viewLifecycleOwner) { nutrients ->
-            binding.tvDinnerCalories.text = "저녁 칼로리: ${nutrients.calories} kcal"
-        }
-
-        homeViewModel.snackNutrients.observe(viewLifecycleOwner) { nutrients ->
-            binding.tvSnackCalories.text = "간식 칼로리: ${nutrients.calories} kcal"
-        }
-
         binding.btnCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
         }

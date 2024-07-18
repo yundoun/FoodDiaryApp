@@ -497,30 +497,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         _currentTotalCalories.postValue(totalCalories)
     }
 
-    private fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
-        val nutrientData = when (mealType) {
-            "breakfast" -> _breakfastNutrients.value ?: NutrientData()
-            "lunch" -> _lunchNutrients.value ?: NutrientData()
-            "dinner" -> _dinnerNutrients.value ?: NutrientData()
-            "snack" -> _snackNutrients.value ?: NutrientData()
-            else -> NutrientData()
-        }
 
-        nutrientData.apply {
-            calories += (food.calories * quantity / food.servingSize).toInt()
-            carbs += (food.carbohydrate * quantity / food.servingSize)
-            protein += (food.protein * quantity / food.servingSize)
-            fat += (food.fat * quantity / food.servingSize)
-            this.quantity += quantity
-        }
-
-        when (mealType) {
-            "breakfast" -> _breakfastNutrients.value = nutrientData
-            "lunch" -> _lunchNutrients.value = nutrientData
-            "dinner" -> _dinnerNutrients.value = nutrientData
-            "snack" -> _snackNutrients.value = nutrientData
-        }
-    }
 
     // 현재 날짜에 대한 식사 기록을 불러오는 메소드
     private fun loadDailyIntakeForDate(date: String) {
@@ -555,8 +532,81 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         setCurrentDate(currentDate)
         loadDailyIntakeForDate(currentDate)
 
+        // 앱 시작 시 오늘 날짜의 dailyIntakeRecord 값을 불러와 초기화하고 바인딩
+        viewModelScope.launch {
+            initializeDailyIntake(todayDate = currentDate)
+        }
+
     }
 
+
+    private suspend fun initializeDailyIntake(todayDate: String) {
+        val record = dailyIntakeRecordRepository.getRecordByDate(todayDate)
+        _dailyIntakeRecord.value = record
+        _currentTotalCalories.value = record?.currentCalories ?: 0
+
+        // 각 식사 유형별로 섭취한 영양소 데이터를 초기화합니다.
+        initializeMealNutrients(todayDate, "breakfast")
+        initializeMealNutrients(todayDate, "lunch")
+        initializeMealNutrients(todayDate, "dinner")
+        initializeMealNutrients(todayDate, "snack")
+    }
+
+    private suspend fun initializeMealNutrients(date: String, mealType: String) {
+        val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
+        var totalCalories = 0
+        var totalCarbs = 0f
+        var totalProtein = 0f
+        var totalFat = 0f
+
+        val foods = mutableListOf<String>()
+
+        for (meal in meals) {
+            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+            val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
+            foods.add(foodDetails)
+            totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
+            totalCarbs += food.carbohydrate * meal.quantity / food.servingSize
+            totalProtein += food.protein * meal.quantity / food.servingSize
+            totalFat += food.fat * meal.quantity / food.servingSize
+        }
+
+        Log.d("HomeViewModel", "Date: $date, Meal Type: $mealType, Foods: ${foods.joinToString(", ")}")
+
+        val nutrientData = NutrientData(totalCalories, totalCarbs, totalProtein, totalFat)
+
+        when (mealType) {
+            "breakfast" -> _breakfastNutrients.value = nutrientData
+            "lunch" -> _lunchNutrients.value = nutrientData
+            "dinner" -> _dinnerNutrients.value = nutrientData
+            "snack" -> _snackNutrients.value = nutrientData
+        }
+    }
+
+    private fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
+        val nutrientData = when (mealType) {
+            "breakfast" -> _breakfastNutrients.value ?: NutrientData()
+            "lunch" -> _lunchNutrients.value ?: NutrientData()
+            "dinner" -> _dinnerNutrients.value ?: NutrientData()
+            "snack" -> _snackNutrients.value ?: NutrientData()
+            else -> NutrientData()
+        }
+
+        nutrientData.apply {
+            calories += (food.calories * quantity / food.servingSize).toInt()
+            carbs += (food.carbohydrate * quantity / food.servingSize)
+            protein += (food.protein * quantity / food.servingSize)
+            fat += (food.fat * quantity / food.servingSize)
+            this.quantity += quantity
+        }
+
+        when (mealType) {
+            "breakfast" -> _breakfastNutrients.value = nutrientData
+            "lunch" -> _lunchNutrients.value = nutrientData
+            "dinner" -> _dinnerNutrients.value = nutrientData
+            "snack" -> _snackNutrients.value = nutrientData
+        }
+    }
 
     // 하루 섭취 목표 저장 ( 아침, 점심, 저녁, 간식 칼로리 + 탄단지 목표는 아직 구현 안함 )
     fun saveDailyIntakeGoal(
@@ -621,7 +671,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val newDate = date.format(dateFormatter)
         if (_currentDate.value != newDate) {
             _currentDate.value = newDate
-            Log.d("HomeViewModel", "Current date updated to: $newDate")
+            viewModelScope.launch {
+                initializeDailyIntake(newDate)
+                loadDailyIntakeGoal(newDate)
+            }
         }
     }
 
@@ -629,7 +682,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val newDate = date.format(dateFormatter)
         if (_selectedDate.value != newDate) {
             _selectedDate.value = newDate
-            Log.d("HomeViewModel", "Selected date updated to: $newDate")
         }
     }
 

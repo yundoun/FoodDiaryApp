@@ -14,4 +14,7 @@ interface MealDao {
 
     @Query("SELECT * FROM Meal WHERE date = :date")
     fun getMealsByDate(date: String): LiveData<List<Meal>>
+
+    @Query("SELECT * FROM Meal WHERE date = :date AND mealType = :mealType")
+    suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal>
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -80,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:gravity="center"
-                        android:text='@{viewModel.currentTotalCalories + "\n" + "섭취량"}'
+                        android:text='@{viewModel.dailyIntakeRecord.currentCalories + "\n" + "섭취량"}'
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvTargetCalories"
@@ -141,7 +140,7 @@
                         android:layout_marginEnd="70dp"
                         android:gravity="center"
                         android:maxLines="2"
-                        android:text='@{String.valueOf(viewModel.targetCalories) + "\n목표칼로리"}'
+                        android:text='@{viewModel.todayGoal.targetCalories + "\n목표칼로리"}'
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/remainingCalories"
@@ -189,7 +188,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="50dp"
                         android:gravity="center"
-                        android:text='@{viewModel.currentCarbIntake + "/" + viewModel.targetCarbIntake + "g"}'
+                        android:text='@{viewModel.dailyIntakeRecord.currentCarbs + "/" + viewModel.targetCarbIntake + "g"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvProtein"
@@ -231,7 +230,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text='@{viewModel.currentProteinIntake + "/" + viewModel.targetProteinIntake + "g"}'
+                        android:text='@{viewModel.dailyIntakeRecord.currentProtein + "/" + viewModel.targetProteinIntake + "g"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tvFat"
@@ -278,7 +277,7 @@
                         android:layout_marginStart="50dp"
                         android:layout_marginEnd="20dp"
                         android:gravity="center"
-                        android:text='@{viewModel.currentFatIntake + "/" + viewModel.targetFatIntake + "g"}'
+                        android:text='@{viewModel.dailyIntakeRecord.currentFat + "/" + viewModel.targetFatIntake + "g"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -453,6 +452,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:text='@{"아침 칼로리: " + viewModel.breakfastNutrients.calories + "kcal"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view1"
                         app:layout_constraintStart_toEndOf="@+id/ivBreakfast"
@@ -463,7 +463,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-
+                        android:text='@{"점심 칼로리: " + viewModel.lunchNutrients.calories + "kcal"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view2"
                         app:layout_constraintStart_toEndOf="@+id/ivLunch"
@@ -474,7 +474,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-
+                        android:text='@{"저녁 칼로리: " + viewModel.dinnerNutrients.calories + "kcal"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/view3"
                         app:layout_constraintStart_toEndOf="@+id/ivDinner"
@@ -485,7 +485,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-
+                        android:text='@{"간식 칼로리: " + viewModel.snackNutrients.calories + "kcal"}'
                         android:textSize="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ivSnack"
