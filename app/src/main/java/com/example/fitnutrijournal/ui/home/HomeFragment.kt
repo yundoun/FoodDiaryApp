@@ -3,6 +3,7 @@ package com.example.fitnutrijournal.ui.home
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,8 +34,27 @@ class HomeFragment : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
-
         ( activity as MainActivity).showBottomNavigation(true)
+        // 로그 추가
+        homeViewModel.targetCalories.observe(viewLifecycleOwner) { value ->
+            Log.d("HomeFragment", "Observed targetCalories: $value")
+        }
+        homeViewModel.targetCarbIntake.observe(viewLifecycleOwner) { value ->
+            Log.d("HomeFragment", "Observed targetCarbIntake: $value")
+        }
+        homeViewModel.targetProteinIntake.observe(viewLifecycleOwner) { value ->
+            Log.d("HomeFragment", "Observed targetProteinIntake: $value")
+        }
+        homeViewModel.targetFatIntake.observe(viewLifecycleOwner) { value ->
+            Log.d("HomeFragment", "Observed targetFatIntake: $value")
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
             goal?.let {
@@ -42,9 +62,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-//        homeViewModel.dailyIntakeRecord.observe(viewLifecycleOwner) { record ->
-//            // update UI with daily intake record
-//        }
 
         homeViewModel.breakfastNutrients.observe(viewLifecycleOwner) { nutrients ->
             // update UI with breakfast nutrients
@@ -57,37 +74,16 @@ class HomeFragment : Fragment() {
 
 
         homeViewModel.lunchNutrients.observe(viewLifecycleOwner) { nutrients ->
-            // update UI with lunch nutrients
-//            binding.tvLunchCalories.text = "점심 칼로리: ${nutrients.calories}"
-//            binding.tvLunchCarbs.text = "점심 탄수화물: ${nutrients.carbs}"
-//            binding.tvLunchProtein.text = "점심 단백질: ${nutrients.protein}"
-//            binding.tvLunchFat.text = "점심 지방: ${nutrients.fat}"
             binding.tvLunchCalories.text = "점심 칼로리: ${nutrients.calories} kcal"
         }
 
         homeViewModel.dinnerNutrients.observe(viewLifecycleOwner) { nutrients ->
-            // update UI with dinner nutrients
-//            binding.tvDinnerCalories.text = "저녁 칼로리: ${nutrients.calories}"
-//            binding.tvDinnerCarbs.text = "저녁 탄수화물: ${nutrients.carbs}"
-//            binding.tvDinnerProtein.text = "저녁 단백질: ${nutrients.protein}"
-//            binding.tvDinnerFat.text = "저녁 지방: ${nutrients.fat}"
             binding.tvDinnerCalories.text = "저녁 칼로리: ${nutrients.calories} kcal"
         }
 
         homeViewModel.snackNutrients.observe(viewLifecycleOwner) { nutrients ->
-            // update UI with snack nutrients
-//            binding.tvSnackCalories.text = "간식 칼로리: ${nutrients.calories}"
-//            binding.tvSnackCarbs.text = "간식 탄수화물: ${nutrients.carbs}"
-//            binding.tvSnackProtein.text = "간식 단백질: ${nutrients.protein}"
-//            binding.tvSnackFat.text = "간식 지방: ${nutrients.fat}"
             binding.tvSnackCalories.text = "간식 칼로리: ${nutrients.calories} kcal"
         }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         binding.btnCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
@@ -128,8 +124,6 @@ class HomeFragment : Fragment() {
             dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
             findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationDiet("snack"))
         }
-
-
     }
 
     override fun onDestroyView() {
