@@ -2,7 +2,9 @@ package com.example.fitnutrijournal.viewmodel
 
 import com.example.fitnutrijournal.data.database.FoodDatabase // 여기에 import 추가
 import android.app.Application
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -25,27 +27,15 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
     val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
 
-
     init {
         val database = FoodDatabase.getDatabase(application)
+        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
         val foodDao = database.foodDao()
         val mealDao = database.mealDao()
-        val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
 
+        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         dietRepository = DietRepository(foodDao)
         mealRepository = MealRepository(mealDao)
-        dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
-    }
-
-    // 식단 기록 관련 메서드
-    fun addMeal(meal: Meal) {
-        viewModelScope.launch {
-            mealRepository.insert(meal)
-        }
-    }
-
-    fun getMealsByDate(date: String): LiveData<List<Meal>> {
-        return mealRepository.getMealsByDate(date)
     }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
@@ -116,9 +106,12 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         _currentDate.value = date
     }
 
-
     private val _selectedCountFoodItem = MutableLiveData<Int>(0)
     val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
+
+    fun clearSelectedCountFoodItem() {
+        _selectedCountFoodItem.value = 0
+    }
 
     fun setSaveButtonVisibility(isVisible: Boolean) {
         _isSaveButtonVisible.value = isVisible
@@ -130,7 +123,6 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
     }
-
 
     // 체크 상태 업데이트 메서드
     fun toggleCheckedItem(item: Food) {
@@ -149,7 +141,6 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         _checkedItems.value = emptySet()
         _checkedItems.value = _checkedItems.value // 트리거
     }
-
 
     // 체크된 아이템 로그 출력 메서드
     private fun logCheckedItems() {
@@ -227,5 +218,53 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun saveCurrentFoodIntake() {
+        viewModelScope.launch {
+            val food = _selectedFood.value ?: return@launch
+            val date = _currentDate.value ?: return@launch
+            val mealType = _mealType.value ?: return@launch
+            val totalContent = _totalContent.value?.toFloatOrNull() ?: return@launch
 
+            val meal = Meal(
+                date = date,
+                mealType = mealType,
+                dietFoodCode = food.foodCd,
+                quantity = totalContent
+            )
+
+            val calories = _calculatedCalories.value?.toFloatOrNull() ?: 0f
+            val carbs = _calculatedCarbohydrate.value?.toFloatOrNull() ?: 0f
+            val protein = _calculatedProtein.value?.toFloatOrNull() ?: 0f
+            val fat = _calculatedFat.value?.toFloatOrNull() ?: 0f
+
+            val initialRecord = dailyIntakeRecordRepository.getRecordByDate(date)
+                ?: DailyIntakeRecord(date)
+
+            val updatedRecord = initialRecord.copy(
+                currentCalories = (initialRecord.currentCalories + calories).toInt(),
+                currentCarbs = (initialRecord.currentCarbs + carbs).toInt(),
+                currentProtein = (initialRecord.currentProtein + protein).toInt(),
+                currentFat = (initialRecord.currentFat + fat).toInt()
+            )
+
+            mealRepository.insert(meal)
+            dailyIntakeRecordRepository.insert(updatedRecord)
+            _dailyIntakeRecord.postValue(updatedRecord)
+
+            Log.d(
+                "DietViewModel",
+                "Saved meal: ${meal.dietFoodCode}, Date: ${meal.date}, Meal type: ${meal.mealType}, Quantity: ${meal.quantity}"
+            )
+
+            Log.d(
+                "DietViewModel",
+                "Updated record: ${updatedRecord.date}, Calories: ${updatedRecord.currentCalories}, Carbs: ${updatedRecord.currentCarbs}, Protein: ${updatedRecord.currentProtein}, Fat: ${updatedRecord.currentFat}"
+            )
+
+            // Force LiveData to re-emit the current value
+            _dailyIntakeRecord.value = _dailyIntakeRecord.value
+
+        }
+    }
 }

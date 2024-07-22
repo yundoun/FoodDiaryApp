@@ -104,6 +104,7 @@ class DietFragment : Fragment() {
         super.onResume()
         // Fragment가 다시 생성될 때 체크된 항목 초기화
         dietViewModel.clearCheckedItems()
+        dietViewModel.clearSelectedCountFoodItem()
     }
 
     private fun handleArgs(source: String) {
@@ -111,13 +112,14 @@ class DietFragment : Fragment() {
             "breakfast", "lunch", "dinner", "snack" -> {
                 setUi()
                 dietViewModel.setSaveButtonVisibility(true)
-
+                binding.btnAddCustomFood.visibility = View.GONE
             }
 
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
                 dietViewModel.setSaveButtonVisibility(false)
+                binding.btnAddFood.visibility = View.GONE
             }
         }
     }
@@ -142,9 +144,6 @@ class DietFragment : Fragment() {
         // 음식 추가 관련 UI 조정
         (activity as MainActivity).showBottomNavigation(false)
 
-        val layoutParams = binding.btnAddFood.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.bottomMargin = 50
-        binding.btnAddFood.layoutParams = layoutParams
 
         // 체크된 항목 개수 관찰
         dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->

@@ -523,6 +523,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         for (meal in meals) {
             // Meal 데이터를 추가
             mealRepository.insert(meal)
+            Log.d("HomeViewModel", "Inserted meal: $meal")
 
             // Food 데이터를 조회
             val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
@@ -611,7 +612,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
+    fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
         val nutrientData = when (mealType) {
             "breakfast" -> _breakfastNutrients.value ?: NutrientData()
             "lunch" -> _lunchNutrients.value ?: NutrientData()
