@@ -3,6 +3,7 @@ package com.example.fitnutrijournal.ui.home
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +60,10 @@ class HomeFragment : Fragment() {
         // 아침, 점심, 저녁, 간식 레이아웃 클릭 이벤트 설정
         binding.breakfastLayout.setOnClickListener {
             navigateToMealDetail("breakfast")
+            Log.d(
+                "HomeFragment",
+                "breakfastLayout clicked" + homeViewModel.currentDate.value + " " + homeViewModel.mealType.value
+            )
         }
 
         binding.lunchLayout.setOnClickListener {
@@ -116,6 +121,7 @@ class HomeFragment : Fragment() {
 
     private fun navigateToMealDetail(mealType: String) {
         homeViewModel.selectMealType(mealType)
+        Log.d("HomeFragment", "navigateToMealDetail: " + homeViewModel.mealType.value)
         findNavController().navigate(
             HomeFragmentDirections.actionNavigationHomeToMealDetailFragment()
         )

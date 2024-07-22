@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -8,55 +9,103 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
-import com.example.fitnutrijournal.R
+import androidx.fragment.app.activityViewModels
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MealDetailFragment : Fragment() {
 
     private var _binding: FragmentMealDetailBinding? = null
     private val binding get() = _binding!!
-    private val args: MealDetailFragmentArgs by navArgs()
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMealDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentMealDetailBinding.inflate(inflater, container, false).apply {
+            viewModel = homeViewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Safe Args로 전달된 인자 사용
-        val mealType = args.mealType
-        Log.d("MealDetailFragment", "Selected meal type: $mealType")
-
-        // BottomSheetBehavior 설정
-        val bottomSheet: View = binding.root.findViewById(R.id.bottomSheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        Log.d("MealDetailFragment", "Bottom Sheet Expanded")
+        homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
+            val mealText = when (mealType) {
+                "breakfast" -> {
+                    homeViewModel.currentCaloriesBreakfast.observe(viewLifecycleOwner) { calories ->
+                        binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
                     }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        Log.d("MealDetailFragment", "Bottom Sheet Collapsed")
+                    homeViewModel.currentCarbIntakeBreakfast.observe(viewLifecycleOwner) { carb ->
+                        binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
                     }
-                    else -> { /* Do something for other states if needed */ }
+                    homeViewModel.currentProteinIntakeBreakfast.observe(viewLifecycleOwner) { protein ->
+                        binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
+                    }
+                    homeViewModel.currentFatIntakeBreakfast.observe(viewLifecycleOwner) { fat ->
+                        binding.fat.text = fat.toString() + "g" + "\n" + "지방"
+                    }
+                    "아침"
                 }
-            }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // Do something for slide offset changes if needed
+                "lunch" -> {
+                    homeViewModel.currentCaloriesLunch.observe(viewLifecycleOwner) { calories ->
+                        binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
+                    }
+                    homeViewModel.currentCarbIntakeLunch.observe(viewLifecycleOwner) { carb ->
+                        binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
+                    }
+                    homeViewModel.currentProteinIntakeLunch.observe(viewLifecycleOwner) { protein ->
+                        binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
+                    }
+                    homeViewModel.currentFatIntakeLunch.observe(viewLifecycleOwner) { fat ->
+                        binding.fat.text = fat.toString() + "g" + "\n" + "지방"
+                    }
+                    "점심"
+                }
+
+                "dinner" -> {
+                    homeViewModel.currentCaloriesDinner.observe(viewLifecycleOwner) { calories ->
+                        binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
+                    }
+                    homeViewModel.currentCarbIntakeDinner.observe(viewLifecycleOwner) { carb ->
+                        binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
+                    }
+                    homeViewModel.currentProteinIntakeDinner.observe(viewLifecycleOwner) { protein ->
+                        binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
+                    }
+                    homeViewModel.currentFatIntakeDinner.observe(viewLifecycleOwner) { fat ->
+                        binding.fat.text = fat.toString() + "g" + "\n" + "지방"
+                    }
+                    "저녁"
+                }
+                "snack" -> {
+                    homeViewModel.currentCaloriesSnack.observe(viewLifecycleOwner) { calories ->
+                        binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
+                    }
+                    homeViewModel.currentCarbIntakeSnack.observe(viewLifecycleOwner) { carb ->
+                        binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
+                    }
+                    homeViewModel.currentProteinIntakeSnack.observe(viewLifecycleOwner) { protein ->
+                        binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
+                    }
+                    homeViewModel.currentFatIntakeSnack.observe(viewLifecycleOwner) { fat ->
+                        binding.fat.text = fat.toString() + "g" + "\n" + "지방"
+                    }
+                    "간식"
+                }
+                else -> "식사"
             }
-        })
+            binding.mealType.text = mealText
+        }
+
+
+
     }
 
     override fun onDestroyView() {

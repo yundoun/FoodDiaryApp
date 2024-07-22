@@ -431,9 +431,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         get() = _currentFatIntakeSnack
 
     // 식단 자세히 보기
-    private val _mealType = MutableLiveData<String>("")
+    private val _mealType = MutableLiveData<String>()
     val mealType: LiveData<String> get() = _mealType
-    fun selectMealType(type: String){
+
+    fun selectMealType(type: String) {
         _mealType.value = type
     }
 

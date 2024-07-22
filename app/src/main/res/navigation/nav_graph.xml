@@ -66,8 +66,5 @@
         android:id="@+id/mealDetailFragment"
         android:name="com.example.fitnutrijournal.ui.home.MealDetailFragment"
         android:label="MealDetailFragment" >
-        <argument
-            android:name="mealType"
-            android:defaultValue="navigation" />
     </fragment>
 </navigation>
