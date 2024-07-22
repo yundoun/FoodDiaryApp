@@ -69,7 +69,9 @@ class MealDetailFragment : Fragment() {
         }
 
         binding.btnAddFood.setOnClickListener {
-            findNavController().navigate(R.id.action_mealDetailFragment_to_navigation_diet)
+            val source = homeViewModel.mealType.value ?: "breakfast"
+            val action = MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
+            findNavController().navigate(action)
         }
 
 
@@ -143,6 +145,14 @@ class MealDetailFragment : Fragment() {
                 else -> "식사"
             }
             binding.mealType.text = mealText
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 필요한 데이터를 갱신하여 최신 상태 유지
+        homeViewModel.mealType.value?.let {
+            homeViewModel.setMealType(it)
         }
     }
 

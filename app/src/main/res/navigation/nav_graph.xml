@@ -67,11 +67,16 @@
         android:name="com.example.fitnutrijournal.ui.home.MealDetailFragment"
         android:label="MealDetailFragment" >
         <action
+            android:id="@+id/action_mealDetailFragment_to_navigation_diet"
+            app:destination="@id/navigation_diet" >
+            <argument
+                android:name="source"
+                app:argType="string"
+                android:defaultValue="breakfast" />
+        </action>
+        <action
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
             app:destination="@id/dietDetailFragment" />
-        <action
-            android:id="@+id/action_mealDetailFragment_to_navigation_diet"
-            app:destination="@id/navigation_diet" />
     </fragment>
 
 
