@@ -469,6 +469,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         // 현재 날짜의 섭취 목표를 로드합니다.
         loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
 
+
         // 데이터 로드
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         setCurrentDate(currentDate)
@@ -669,11 +670,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     // 기본값 설정
                     val defaultGoal = DailyIntakeGoal(
                         date = date,
-                        targetCalories = 0,
-                        targetBreakfast = 0,
-                        targetLunch = 0,
-                        targetDinner = 0,
-                        targetSnack = 0
+                        targetCalories = 2600,
+                        targetBreakfast = 700,
+                        targetLunch = 800,
+                        targetDinner = 800,
+                        targetSnack = 300
                     )
                     _todayGoal.value = defaultGoal
                 } else {

@@ -69,6 +69,9 @@
         <action
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
             app:destination="@id/dietDetailFragment" />
+        <action
+            android:id="@+id/action_mealDetailFragment_to_navigation_diet"
+            app:destination="@id/navigation_diet" />
     </fragment>
 
 

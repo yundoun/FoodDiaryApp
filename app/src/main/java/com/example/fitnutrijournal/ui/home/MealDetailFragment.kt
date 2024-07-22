@@ -4,6 +4,7 @@ import DietTabAdapter
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,6 +66,10 @@ class MealDetailFragment : Fragment() {
 
         homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             adapter.updateDiets(foods)
+        }
+
+        binding.btnAddFood.setOnClickListener {
+            findNavController().navigate(R.id.action_mealDetailFragment_to_navigation_diet)
         }
 
 
