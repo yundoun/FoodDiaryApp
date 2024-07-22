@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.common
+package com.example.fitnutrijournal.utils
 
 import android.content.Context
 import android.util.AttributeSet

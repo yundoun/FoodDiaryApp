@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.Tab.Breakfast">
 
-        <com.example.fitnutrijournal.ui.common.NutritionProgressView
+        <com.example.fitnutrijournal.utils.NutritionProgressView
             android:id="@+id/nutritionProgressView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

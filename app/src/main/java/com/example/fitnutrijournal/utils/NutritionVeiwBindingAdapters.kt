@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.common
+package com.example.fitnutrijournal.utils
 
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData

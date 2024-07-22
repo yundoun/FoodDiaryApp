@@ -85,10 +85,10 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     val favoriteFoods: LiveData<List<Food>> = dietRepository.favoriteFoods
     val userAddedFoods: LiveData<List<Food>> = dietRepository.userAddedFoods
 
-    private val _isCheckboxVisible = MutableLiveData<Boolean>()
-    val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
+    private val _isCheckboxVisible = MutableLiveData<Boolean?>()
+    val isCheckboxVisible: LiveData<Boolean?> get() = _isCheckboxVisible
 
-    fun setCheckboxVisible(isVisible: Boolean) {
+    fun setCheckboxVisible(isVisible: Boolean?) {
         _isCheckboxVisible.value = isVisible
     }
 
