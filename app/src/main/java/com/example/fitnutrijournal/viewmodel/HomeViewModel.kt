@@ -434,8 +434,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _mealType = MutableLiveData<String>()
     val mealType: LiveData<String> get() = _mealType
 
-    fun selectMealType(type: String) {
+    fun setMealType(type: String) {
         _mealType.value = type
+    }
+
+    private val _filteredFoods = MutableLiveData<List<Food>>()
+    val filteredFoods: LiveData<List<Food>> get() = _filteredFoods
+
+    private fun filterFoodsByMealType(mealType: String) {
+        viewModelScope.launch {
+            val date = currentDate.value ?: LocalDate.now().format(dateFormatter)
+            val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
+            val foods = meals.map { meal ->
+                dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+            }
+            _filteredFoods.postValue(foods)
+        }
     }
 
     // ====================================================================
@@ -459,6 +473,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         setCurrentDate(currentDate)
         loadDailyIntakeForDate(currentDate)
+
+        // 식단 상세보기
+        _mealType.observeForever { mealType ->
+            filterFoodsByMealType(mealType)
+        }
 
         // 앱 시작 시 오늘 날짜의 dailyIntakeRecord 값을 불러와 초기화하고 바인딩
         viewModelScope.launch {

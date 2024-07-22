@@ -1,16 +1,21 @@
 package com.example.fitnutrijournal.ui.home
 
+import DietTabAdapter
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
+import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.utils.setupRecyclerView
+import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -19,6 +24,7 @@ class MealDetailFragment : Fragment() {
     private var _binding: FragmentMealDetailBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val dietViewModel: DietViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +34,7 @@ class MealDetailFragment : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+        (activity as MainActivity).showBottomNavigation(false)
         return binding.root
     }
 
@@ -35,7 +42,29 @@ class MealDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        dietViewModel.setCheckboxVisible(null)
+
+        val recyclerView = binding.foodList
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        val adapter = DietTabAdapter(emptyList(), dietViewModel::toggleFavorite, dietViewModel.favorites, { food ->
+            // 아이템 클릭 시 FoodDetailFragment로 이동
+//            dietViewModel.selectFood(food.foodCd)
+//            val action = MealDetailFragmentDirections.actionMealDetailFragmentToFoodDetailFragment(food.foodCd)
+//            findNavController().navigate(action)
+        }, dietViewModel)
+        recyclerView.adapter = adapter
+
+        homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
+            adapter.updateDiets(foods)
+        }
+
+
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
+            dietViewModel.setMealType(mealType) // HomeViewModel의 mealType을 DietViewModel에 전달
             val mealText = when (mealType) {
                 "breakfast" -> {
                     homeViewModel.currentCaloriesBreakfast.observe(viewLifecycleOwner) { calories ->
@@ -103,9 +132,6 @@ class MealDetailFragment : Fragment() {
             }
             binding.mealType.text = mealText
         }
-
-
-
     }
 
     override fun onDestroyView() {

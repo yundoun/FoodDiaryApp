@@ -37,13 +37,24 @@ class DietTabAdapter(
                 toggleFavorite(item)
             }
 
-            binding.root.setOnClickListener { // Add this line
+            binding.root.setOnClickListener {
                 onItemClick(item)
             }
 
-            val isCheckboxVisible = viewModel.isCheckboxVisible.value == true
-            binding.favoriteBtn.visibility = if (isCheckboxVisible) View.GONE else View.VISIBLE
-            binding.checkbox.visibility = if (isCheckboxVisible) View.VISIBLE else View.GONE
+            when (viewModel.isCheckboxVisible.value) {
+                true -> {
+                    binding.favoriteBtn.visibility = View.GONE
+                    binding.checkbox.visibility = View.VISIBLE
+                }
+                false -> {
+                    binding.favoriteBtn.visibility = View.VISIBLE
+                    binding.checkbox.visibility = View.GONE
+                }
+                else -> {
+                    binding.favoriteBtn.visibility = View.GONE
+                    binding.checkbox.visibility = View.GONE
+                }
+            }
 
             // 체크박스 상태 설정
             binding.checkbox.setOnCheckedChangeListener(null) // Prevents infinite loop

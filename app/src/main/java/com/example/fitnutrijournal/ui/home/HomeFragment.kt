@@ -60,10 +60,6 @@ class HomeFragment : Fragment() {
         // 아침, 점심, 저녁, 간식 레이아웃 클릭 이벤트 설정
         binding.breakfastLayout.setOnClickListener {
             navigateToMealDetail("breakfast")
-            Log.d(
-                "HomeFragment",
-                "breakfastLayout clicked" + homeViewModel.currentDate.value + " " + homeViewModel.mealType.value
-            )
         }
 
         binding.lunchLayout.setOnClickListener {
@@ -120,8 +116,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToMealDetail(mealType: String) {
-        homeViewModel.selectMealType(mealType)
-        Log.d("HomeFragment", "navigateToMealDetail: " + homeViewModel.mealType.value)
+        homeViewModel.setMealType(mealType)
         findNavController().navigate(
             HomeFragmentDirections.actionNavigationHomeToMealDetailFragment()
         )
