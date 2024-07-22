@@ -30,7 +30,7 @@
         android:label="@string/title_diet"
         tools:layout="@layout/fragment_diet" >
         <action
-            android:id="@+id/action_navigation_diet_to_dietDetailFragment"
+            android:id="@+id/action_navigation_diet_to_FoodDetailFragment"
             app:destination="@id/dietDetailFragment" />
         <argument
             android:name="source"
@@ -66,5 +66,11 @@
         android:id="@+id/mealDetailFragment"
         android:name="com.example.fitnutrijournal.ui.home.MealDetailFragment"
         android:label="MealDetailFragment" >
+        <action
+            android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
+            app:destination="@id/dietDetailFragment" />
     </fragment>
+
+
+
 </navigation>

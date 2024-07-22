@@ -33,7 +33,7 @@ class FavoriteTabFragment : Fragment() {
             dietViewModel.favorites,
             { diet ->
                 dietViewModel.selectFood(diet.foodCd)
-                findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+                findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
             },
             dietViewModel
         )

@@ -12,9 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
-import com.example.fitnutrijournal.utils.setupRecyclerView
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
@@ -50,12 +50,17 @@ class MealDetailFragment : Fragment() {
 
         val recyclerView = binding.foodList
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = DietTabAdapter(emptyList(), dietViewModel::toggleFavorite, dietViewModel.favorites, { food ->
-            // 아이템 클릭 시 FoodDetailFragment로 이동
-//            dietViewModel.selectFood(food.foodCd)
-//            val action = MealDetailFragmentDirections.actionMealDetailFragmentToFoodDetailFragment(food.foodCd)
-//            findNavController().navigate(action)
-        }, dietViewModel)
+        val adapter = DietTabAdapter(
+            emptyList(),
+            dietViewModel::toggleFavorite,
+            dietViewModel.favorites,
+            { food ->
+                // 아이템 클릭 시 FoodDetailFragment로 이동
+                dietViewModel.selectFood(food.foodCd)
+                findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
+            },
+            dietViewModel
+        )
         recyclerView.adapter = adapter
 
         homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
@@ -113,6 +118,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "저녁"
                 }
+
                 "snack" -> {
                     homeViewModel.currentCaloriesSnack.observe(viewLifecycleOwner) { calories ->
                         binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
@@ -128,6 +134,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "간식"
                 }
+
                 else -> "식사"
             }
             binding.mealType.text = mealText

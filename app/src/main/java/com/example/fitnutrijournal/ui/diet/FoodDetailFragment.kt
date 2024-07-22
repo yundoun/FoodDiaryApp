@@ -17,7 +17,6 @@ class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
-//    private val args: FoodDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,8 +27,6 @@ class FoodDetailFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         (activity as MainActivity).showBottomNavigation(false)
-
-        //dietViewModel.selectFood(args.foodCd)
 
         dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
             binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
@@ -46,8 +43,6 @@ class FoodDetailFragment : Fragment() {
             }
         })
 
-//        // Ensure that the selected food is updated based on the passed argument
-//        dietViewModel.selectFood(args.foodCd)
 
         return binding.root
     }

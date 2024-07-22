@@ -50,7 +50,7 @@ class DietTabFragment : Fragment() {
             { diet ->
                 // Handle item click
                 dietViewModel.selectFood(diet.foodCd)
-                findNavController().navigate(R.id.action_navigation_diet_to_dietDetailFragment)
+                findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
             },
             dietViewModel // DietViewModel 전달
         )
