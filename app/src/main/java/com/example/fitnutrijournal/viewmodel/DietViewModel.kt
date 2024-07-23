@@ -14,14 +14,14 @@ import com.example.fitnutrijournal.data.model.DailyIntakeRecord
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
-import com.example.fitnutrijournal.data.repository.DietRepository
+import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
 
 class DietViewModel(application: Application, private val homeViewModel: HomeViewModel) : AndroidViewModel(application) {
 
     private val mealRepository: MealRepository
-    private val dietRepository: DietRepository
+    private val foodRepository: FoodRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
 
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
@@ -34,7 +34,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         val mealDao = database.mealDao()
 
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
-        dietRepository = DietRepository(foodDao)
+        foodRepository = FoodRepository(foodDao)
         mealRepository = MealRepository(mealDao)
     }
 
@@ -50,7 +50,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     val selectedFood: LiveData<Food> get() = _selectedFood
     fun selectFood(foodCode: String) {
         viewModelScope.launch {
-            val food = dietRepository.getFoodByFoodCode(foodCode)
+            val food = foodRepository.getFoodByFoodCode(foodCode)
             _selectedFood.value = food
             updateNutrientValues(food.servingSize) // 초기값으로 기본 중량 설정
         }
@@ -71,9 +71,9 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _calculatedFat = MutableLiveData<String>("")
     val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
-    val allFoods: LiveData<List<Food>> = dietRepository.allFoods
-    val favoriteFoods: LiveData<List<Food>> = dietRepository.favoriteFoods
-    val userAddedFoods: LiveData<List<Food>> = dietRepository.userAddedFoods
+    val allFoods: LiveData<List<Food>> = foodRepository.allFoods
+    val favoriteFoods: LiveData<List<Food>> = foodRepository.favoriteFoods
+    val userAddedFoods: LiveData<List<Food>> = foodRepository.userAddedFoods
 
     private val _isCheckboxVisible = MutableLiveData<Boolean?>()
     val isCheckboxVisible: LiveData<Boolean?> get() = _isCheckboxVisible
@@ -94,6 +94,27 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _quantity = MutableLiveData<Float>()
     val quantity: LiveData<Float> get() = _quantity
+
+
+    private suspend fun generateFoodCode(): String {
+        val maxFoodCd = foodRepository.getMaxFoodCd()
+        return if (maxFoodCd != null) {
+            val numberPart = maxFoodCd.substring(1).toInt()
+            val newNumberPart = numberPart + 1
+            "D" + newNumberPart.toString().padStart(5, '0')
+        } else {
+            "D00001"
+        }
+    }
+
+    fun insertFood(food: Food) {
+        viewModelScope.launch {
+            val newFoodCd = generateFoodCode()
+            val newFood = food.copy(foodCd = newFoodCd)
+            foodRepository.insert(newFood)
+        }
+    }
+
 
     fun setMealType(type: String) {
         _mealType.value = type
@@ -207,7 +228,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 _favorites.value = currentFavorites + item.foodCd
                 item.isFavorite = true
             }
-            dietRepository.update(item)
+            foodRepository.update(item)
         }
     }
 

@@ -37,4 +37,9 @@ interface FoodDao {
     // 모든 Food 객체 리스트를 반환
     @Query("SELECT * FROM Food")
     suspend fun getAllFoodsList(): List<Food>
+
+    // Food 객체 중 가장 큰 foodCd를 반환
+    @Query("SELECT MAX(foodCd) FROM Food")
+    suspend fun getMaxFoodCd(): String?
+
 }

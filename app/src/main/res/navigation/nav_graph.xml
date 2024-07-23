@@ -36,6 +36,9 @@
             android:name="source"
             app:argType="string"
             android:defaultValue="navigation" />
+        <action
+            android:id="@+id/action_navigation_diet_to_customAddFragment"
+            app:destination="@id/customAddFragment" />
 
     </fragment>
 
@@ -78,7 +81,10 @@
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
             app:destination="@id/dietDetailFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/customAddFragment"
+        android:name="com.example.fitnutrijournal.ui.diet.CustomAddFragment"
+        android:label="CustomAddFragment" />
 
 
 </navigation>

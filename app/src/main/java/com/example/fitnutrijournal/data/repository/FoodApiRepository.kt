@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class FoodApiRepository(private val dietRepository: DietRepository) {
+class FoodApiRepository(private val foodRepository: FoodRepository) {
     private val _foodInfo = MutableLiveData<FoodResponse>()
     val foodInfo: LiveData<FoodResponse> get() = _foodInfo
 
@@ -62,7 +62,7 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                                 )
                             } ?: listOf() // Add null check for `rows` and provide a default empty list
 
-                            dietRepository.mergeAndInsertAll(foods)
+                            foodRepository.mergeAndInsertAll(foods)
                         }
                     }
                 } else {

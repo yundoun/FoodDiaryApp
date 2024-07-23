@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import com.example.fitnutrijournal.data.dao.FoodDao
 import com.example.fitnutrijournal.data.model.Food
 
-class DietRepository(private val foodDao: FoodDao) {
+class FoodRepository(private val foodDao: FoodDao) {
     val allFoods: LiveData<List<Food>> = foodDao.getAllFoods()
     val favoriteFoods: LiveData<List<Food>> = foodDao.getFavoriteFoods()
     val userAddedFoods: LiveData<List<Food>> = foodDao.getUserAddedFoods()
@@ -44,5 +44,9 @@ class DietRepository(private val foodDao: FoodDao) {
             } ?: apiFood
         }
         insertAll(mergedFoods)
+    }
+
+    suspend fun getMaxFoodCd(): String? {
+        return foodDao.getMaxFoodCd()
     }
 }

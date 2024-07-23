@@ -13,11 +13,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.database.FoodDatabase
-import com.example.fitnutrijournal.data.repository.DietRepository
+import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
@@ -73,6 +72,8 @@ class DietFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+
+
         handleArgs(arguments?.getString("source") ?: "")
 
         //observeFoodInfo() // 추가된 부분
@@ -106,6 +107,10 @@ class DietFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.btnAddCustomFood.setOnClickListener {
+            findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
+        }
+
 
 
     }
@@ -137,8 +142,8 @@ class DietFragment : Fragment() {
 
     private fun observeFoodInfo() {
         val foodDao = FoodDatabase.getDatabase(requireContext()).foodDao()
-        val dietRepository = DietRepository(foodDao)
-        val foodApiRepository = FoodApiRepository(dietRepository)
+        val foodRepository = FoodRepository(foodDao)
+        val foodApiRepository = FoodApiRepository(foodRepository)
 
         foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
             foodResponse?.i2790?.rows?.forEach { item ->

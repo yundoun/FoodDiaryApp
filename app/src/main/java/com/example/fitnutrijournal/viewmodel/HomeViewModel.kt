@@ -16,7 +16,7 @@ import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.repository.DailyIntakeGoalRepository
 import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
-import com.example.fitnutrijournal.data.repository.DietRepository
+import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    private val dietRepository: DietRepository
+    private val foodRepository: FoodRepository
     private val mealRepository: MealRepository
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
@@ -448,7 +448,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
             Log.d("HomeViewModel", "Meals: $meals")
             val foods = meals.map { meal ->
-                dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+                foodRepository.getFoodByFoodCode(meal.dietFoodCode)
             }
             _filteredFoods.postValue(foods)
             Log.d("HomeViewModel", "Filtered foods: ${foods.map { it.foodName }}")
@@ -466,7 +466,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
-        dietRepository = DietRepository(foodDao)
+        foodRepository = FoodRepository(foodDao)
         mealRepository = MealRepository(mealDao)
 
         // 현재 날짜의 섭취 목표를 로드합니다.
@@ -531,7 +531,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Log.d("HomeViewModel", "Inserted meal: $meal")
 
             // Food 데이터를 조회
-            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+            val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
 
             // Food의 영양성분을 이용해 값을 누적합니다.
             totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
@@ -567,7 +567,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val meals = mealRepository.getMealsByDate(date).value ?: return@launch
             val totalCalories = 0
             meals.forEach { meal ->
-                val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+                val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
                 updateNutrientData(meal.mealType, food, meal.quantity)
             }
             _currentTotalCalories.postValue(totalCalories)
@@ -596,7 +596,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val foods = mutableListOf<String>()
 
         for (meal in meals) {
-            val food = dietRepository.getFoodByFoodCode(meal.dietFoodCode)
+            val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
             val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
             foods.add(foodDetails)
             totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
