@@ -156,10 +156,6 @@ class MealDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // 필요한 데이터를 갱신하여 최신 상태 유지
-        homeViewModel.mealType.value?.let {
-            homeViewModel.setMealType(it)
-        }
 
         // RecyclerView에 표시되는 데이터를 관찰하고 변경 사항을 반영
         Log.d("MealDetailFragment", "onResume called, refreshing filtered foods")

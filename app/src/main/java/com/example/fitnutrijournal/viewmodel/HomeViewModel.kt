@@ -446,6 +446,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val date = currentDate.value ?: LocalDate.now().format(dateFormatter)
             Log.d("HomeViewModel", "Filtering foods for date: $date and meal type: $mealType")
             val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
+            Log.d("HomeViewModel", "Meals: $meals")
             val foods = meals.map { meal ->
                 dietRepository.getFoodByFoodCode(meal.dietFoodCode)
             }
@@ -507,6 +508,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             addMealsAndUpdateIntakeRecord(meals, mealType)
+            refreshFilteredFoods()
         }
     }
 
