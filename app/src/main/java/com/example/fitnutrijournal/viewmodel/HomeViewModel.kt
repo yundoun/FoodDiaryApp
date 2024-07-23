@@ -52,7 +52,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val selectedDate: LiveData<String>
         get() = _selectedDate
 
-    private fun setCurrentDate(date: String) {
+    fun setCurrentDate(date: String) {
         _currentDate.value = date
     }
 
@@ -677,8 +677,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                         targetSnack = 300
                     )
                     _todayGoal.value = defaultGoal
+                    Log.d("HomeViewModel", "Default goal set: $defaultGoal")
                 } else {
                     _todayGoal.value = goal
+                    Log.d("HomeViewModel", "Goal loaded: $goal")
                 }
             }
         }

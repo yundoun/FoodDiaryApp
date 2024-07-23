@@ -36,6 +36,10 @@
             android:name="source"
             app:argType="string"
             android:defaultValue="navigation" />
+        <argument
+            android:name="currentDate"
+            app:argType="string"
+            android:defaultValue="" />
 
     </fragment>
 
@@ -73,6 +77,7 @@
                 android:name="source"
                 app:argType="string"
                 android:defaultValue="breakfast" />
+
         </action>
         <action
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"

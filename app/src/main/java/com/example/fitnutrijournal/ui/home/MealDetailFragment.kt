@@ -18,6 +18,8 @@ import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MealDetailFragment : Fragment() {
@@ -70,9 +72,12 @@ class MealDetailFragment : Fragment() {
 
         binding.btnAddFood.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
-            val action = MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
+            val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val action = MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source, currentDate)
             findNavController().navigate(action)
         }
+
 
 
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
