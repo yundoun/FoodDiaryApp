@@ -30,4 +30,9 @@ class MealRepository(private val mealDao: MealDao) {
     suspend fun deleteMealsByDateAndType(date: String, mealType: String) {
         mealDao.deleteMealsByDateAndType(date, mealType)
     }
+
+    // 특정 식품 코드에 해당하는 Meal 객체 리스트를 반환
+    suspend fun getMealsByFoodCode(foodCode: String): List<Meal> {
+        return mealDao.getMealsByFoodCode(foodCode)
+    }
 }

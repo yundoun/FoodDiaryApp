@@ -284,11 +284,27 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
 
     // Food 데이터 삭제
+    @RequiresApi(Build.VERSION_CODES.O)
     fun deleteFood(food: Food) {
         viewModelScope.launch {
+            // 식사에 해당 음식이 포함되어 있는지 확인
+            val mealsWithFood = mealRepository.getMealsByFoodCode(food.foodCd)
+            mealsWithFood.forEach { meal ->
+                val quantity = meal.quantity
+                val mealType = meal.mealType
+                // 섭취량 감소
+                homeViewModel.updateNutrientData(mealType, food, -quantity)
+                // 식사 데이터 삭제
+                mealRepository.deleteMeal(meal)
+            }
+            // 음식 데이터 삭제
             foodRepository.delete(food)
+            // 섭취 기록 업데이트
+            homeViewModel.refreshFilteredFoods()
         }
     }
+
+
 
 
 }

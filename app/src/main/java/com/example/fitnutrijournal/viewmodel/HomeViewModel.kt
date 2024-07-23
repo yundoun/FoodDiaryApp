@@ -659,6 +659,53 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             "dinner" -> _dinnerNutrients.value = nutrientData
             "snack" -> _snackNutrients.value = nutrientData
         }
+
+        updateDailyIntakeRecord()
+    }
+
+
+    // 섭취 기록 업데이트 메서드 추가
+    private fun updateDailyIntakeRecord() {
+        val totalCalories = (_breakfastNutrients.value?.calories ?: 0) +
+                (_lunchNutrients.value?.calories ?: 0) +
+                (_dinnerNutrients.value?.calories ?: 0) +
+                (_snackNutrients.value?.calories ?: 0)
+
+        val totalCarbs = (_breakfastNutrients.value?.carbs ?: 0f) +
+                (_lunchNutrients.value?.carbs ?: 0f) +
+                (_dinnerNutrients.value?.carbs ?: 0f) +
+                (_snackNutrients.value?.carbs ?: 0f)
+
+        val totalProtein = (_breakfastNutrients.value?.protein ?: 0f) +
+                (_lunchNutrients.value?.protein ?: 0f) +
+                (_dinnerNutrients.value?.protein ?: 0f) +
+                (_snackNutrients.value?.protein ?: 0f)
+
+        val totalFat = (_breakfastNutrients.value?.fat ?: 0f) +
+                (_lunchNutrients.value?.fat ?: 0f) +
+                (_dinnerNutrients.value?.fat ?: 0f) +
+                (_snackNutrients.value?.fat ?: 0f)
+
+        _currentTotalCalories.postValue(totalCalories)
+        _currentCarbIntake.postValue(totalCarbs.toInt())
+        _currentProteinIntake.postValue(totalProtein.toInt())
+        _currentFatIntake.postValue(totalFat.toInt())
+
+        // DailyIntakeRecord 업데이트
+        val date = currentDate.value ?: return
+        viewModelScope.launch {
+            val record = dailyIntakeRecordRepository.getRecordByDate(date)
+            val updatedRecord = record?.copy(
+                currentCalories = totalCalories,
+                currentCarbs = totalCarbs.toInt(),
+                currentProtein = totalProtein.toInt(),
+                currentFat = totalFat.toInt()
+            )
+            if (updatedRecord != null) {
+                dailyIntakeRecordRepository.insert(updatedRecord)
+                _dailyIntakeRecord.postValue(updatedRecord)
+            }
+        }
     }
 
     // 하루 섭취 목표 저장 ( 아침, 점심, 저녁, 간식 칼로리 + 탄단지 목표는 아직 구현 안함 )
