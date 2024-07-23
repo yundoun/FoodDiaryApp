@@ -17,4 +17,12 @@ interface MealDao {
 
     @Query("SELECT * FROM Meal WHERE date = :date AND mealType = :mealType")
     suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal>
+
+    // 특정 Meal 삭제
+    @Query("DELETE FROM Meal WHERE date = :date AND mealType = :mealType AND dietFoodCode = :dietFoodCode")
+    suspend fun deleteMeal(date: String, mealType: String, dietFoodCode: String)
+
+    // 특정 날짜와 식사 유형에 해당하는 모든 Meal 삭제
+    @Query("DELETE FROM Meal WHERE date = :date AND mealType = :mealType")
+    suspend fun deleteMealsByDateAndType(date: String, mealType: String)
 }

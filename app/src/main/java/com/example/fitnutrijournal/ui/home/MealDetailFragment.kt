@@ -8,13 +8,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
@@ -68,7 +71,8 @@ class MealDetailFragment : Fragment() {
         )
         recyclerView.adapter = adapter
 
-
+        // ItemTouchHelper 설정
+        setupItemTouchHelper(recyclerView, adapter)
 
         binding.btnAddFood.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
@@ -152,6 +156,30 @@ class MealDetailFragment : Fragment() {
             Log.d("MealDetailFragment", "Filtered foods observed: ${foods.map { it.foodName }}")
             adapter.updateDiets(foods)
         })
+    }
+
+    private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: DietTabAdapter) {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val removedItem = adapter.removeItem(position)
+                dietViewModel.deleteFood(removedItem)
+
+                Log.d("MealDetailFragment", "Deleted item: ${removedItem.foodName}")
+                Toast.makeText(requireContext(), "Deleted ${removedItem.foodName}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     override fun onResume() {

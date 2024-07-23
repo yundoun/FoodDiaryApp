@@ -93,4 +93,13 @@ class DietTabAdapter(
 
 
     override fun getItemCount(): Int = diets.size
+
+    // 아이템 제거 메서드 removeItem 메서드는 해당 아이템을 데이터 소스에서 제거하고, 이를 notifyItemRemoved로 RecyclerView에 알립니다.
+    fun removeItem(position: Int): Food {
+        val removedItem = diets[position]
+        diets = diets.toMutableList().apply { removeAt(position) }
+        notifyItemRemoved(position)
+        return removedItem
+    }
+
 }

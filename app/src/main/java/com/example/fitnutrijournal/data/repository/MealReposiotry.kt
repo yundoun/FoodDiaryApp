@@ -20,4 +20,14 @@ class MealRepository(private val mealDao: MealDao) {
     suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal> {
         return mealDao.getMealsByDateAndTypeSync(date, mealType)
     }
+
+    // 특정 Meal 삭제
+    suspend fun deleteMeal(meal: Meal) {
+        mealDao.deleteMeal(meal.date, meal.mealType, meal.dietFoodCode)
+    }
+
+    // 특정 날짜와 식사 유형에 해당하는 모든 Meal 삭제
+    suspend fun deleteMealsByDateAndType(date: String, mealType: String) {
+        mealDao.deleteMealsByDateAndType(date, mealType)
+    }
 }

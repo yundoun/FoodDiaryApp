@@ -88,7 +88,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
 
-    //
+    // 식사 타입에 따라 데이터 필터링
     private val _mealType = MutableLiveData<String>("")
     val mealType: LiveData<String> get() = _mealType
 
@@ -281,4 +281,14 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         }
     }
+
+
+    // Food 데이터 삭제
+    fun deleteFood(food: Food) {
+        viewModelScope.launch {
+            foodRepository.delete(food)
+        }
+    }
+
+
 }

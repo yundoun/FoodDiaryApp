@@ -115,11 +115,15 @@ class HomeFragment : Fragment() {
         }
     }
 
+
+
     private fun navigateToMealDetail(mealType: String) {
         homeViewModel.setMealType(mealType)
         val action = HomeFragmentDirections.actionNavigationHomeToMealDetailFragment()
         findNavController().navigate(action)
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

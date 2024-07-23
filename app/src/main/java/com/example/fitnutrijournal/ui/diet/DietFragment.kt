@@ -43,8 +43,14 @@ class DietFragment : Fragment() {
             viewModel = dietViewModel
             lifecycleOwner = viewLifecycleOwner
         }
-
         (activity as MainActivity).showBottomNavigation(true)
+        return binding.root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         val viewPager = binding.viewPager
         val adapter = DietPagerAdapter(requireActivity())
@@ -76,17 +82,6 @@ class DietFragment : Fragment() {
 
         handleArgs(arguments?.getString("source") ?: "")
 
-        //observeFoodInfo() // 추가된 부분
-
-
-
-        return binding.root
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         binding.btnAddFood.setOnClickListener {
             val checkedItems = dietViewModel.checkedItems.value ?: emptySet()
             val date = homeViewModel.currentDate.value ?: ""
@@ -112,7 +107,7 @@ class DietFragment : Fragment() {
         }
 
 
-
+        //observeFoodInfo()
     }
 
     override fun onResume() {

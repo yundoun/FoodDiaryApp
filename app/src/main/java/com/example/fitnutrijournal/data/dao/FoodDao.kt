@@ -2,6 +2,7 @@ package com.example.fitnutrijournal.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -41,5 +42,9 @@ interface FoodDao {
     // Food 객체 중 가장 큰 foodCd를 반환
     @Query("SELECT MAX(foodCd) FROM Food")
     suspend fun getMaxFoodCd(): String?
+
+    // Food 데이터 삭제
+    @Delete
+    suspend fun delete(food: Food)
 
 }

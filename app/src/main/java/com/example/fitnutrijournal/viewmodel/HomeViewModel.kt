@@ -447,9 +447,24 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             Log.d("HomeViewModel", "Filtering foods for date: $date and meal type: $mealType")
             val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
             Log.d("HomeViewModel", "Meals: $meals")
-            val foods = meals.map { meal ->
-                foodRepository.getFoodByFoodCode(meal.dietFoodCode)
+            val foods = mutableListOf<Food>()
+            val mealsToDelete = mutableListOf<Meal>()
+
+            for (meal in meals) {
+                val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
+                if (food != null) {
+                    foods.add(food)
+                } else {
+                    mealsToDelete.add(meal)
+                    Log.w("HomeViewModel", "Food not found for dietFoodCode: ${meal.dietFoodCode}, marking meal for deletion.")
+                }
             }
+
+            // Remove meals with null Food data
+            mealsToDelete.forEach { meal ->
+                mealRepository.deleteMeal(meal)
+            }
+
             _filteredFoods.postValue(foods)
             Log.d("HomeViewModel", "Filtered foods: ${foods.map { it.foodName }}")
         }
@@ -597,12 +612,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         for (meal in meals) {
             val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
-            val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
-            foods.add(foodDetails)
-            totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
-            totalCarbs += food.carbohydrate * meal.quantity / food.servingSize
-            totalProtein += food.protein * meal.quantity / food.servingSize
-            totalFat += food.fat * meal.quantity / food.servingSize
+            if (food != null) {
+                val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
+                foods.add(foodDetails)
+                totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
+                totalCarbs += food.carbohydrate * meal.quantity / food.servingSize
+                totalProtein += food.protein * meal.quantity / food.servingSize
+                totalFat += food.fat * meal.quantity / food.servingSize
+            } else {
+                Log.w("HomeViewModel", "Food not found for dietFoodCode: ${meal.dietFoodCode}")
+            }
         }
 
         Log.d("HomeViewModel", "Date: $date, Meal Type: $mealType, Foods: ${foods.joinToString(", ")}")
@@ -610,10 +629,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val nutrientData = NutrientData(totalCalories, totalCarbs, totalProtein, totalFat)
 
         when (mealType) {
-            "breakfast" -> _breakfastNutrients.value = nutrientData
-            "lunch" -> _lunchNutrients.value = nutrientData
-            "dinner" -> _dinnerNutrients.value = nutrientData
-            "snack" -> _snackNutrients.value = nutrientData
+            "breakfast" -> _breakfastNutrients.postValue(nutrientData)
+            "lunch" -> _lunchNutrients.postValue(nutrientData)
+            "dinner" -> _dinnerNutrients.postValue(nutrientData)
+            "snack" -> _snackNutrients.postValue(nutrientData)
         }
     }
 
@@ -727,6 +746,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         if (mealTypeValue != null) {
             Log.d("HomeViewModel", "Refreshing filtered foods for meal type: $mealTypeValue")
             filterFoodsByMealType(mealTypeValue)
+        }
+    }
+
+    // Meal 데이터 삭제
+    fun deleteMeal(meal: Meal) {
+        viewModelScope.launch {
+            mealRepository.deleteMeal(meal)
+            loadDailyIntakeForDate(currentDate.value ?: LocalDate.now().format(dateFormatter))
+        }
+    }
+
+    // 특정 날짜와 식사 유형에 해당하는 모든 Meal 데이터 삭제
+    fun deleteMealsByDateAndType(date: String, mealType: String) {
+        viewModelScope.launch {
+            mealRepository.deleteMealsByDateAndType(date, mealType)
+            loadDailyIntakeForDate(date)
         }
     }
 

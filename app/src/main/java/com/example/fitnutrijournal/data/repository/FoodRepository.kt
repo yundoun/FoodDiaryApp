@@ -49,4 +49,9 @@ class FoodRepository(private val foodDao: FoodDao) {
     suspend fun getMaxFoodCd(): String? {
         return foodDao.getMaxFoodCd()
     }
+
+    // Food 데이터 삭제
+    suspend fun delete(food: Food) {
+        foodDao.delete(food)
+    }
 }
