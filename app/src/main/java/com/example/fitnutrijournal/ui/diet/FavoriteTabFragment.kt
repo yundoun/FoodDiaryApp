@@ -2,6 +2,7 @@ package com.example.fitnutrijournal.ui.diet
 
 import DietTabAdapter
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -57,13 +58,16 @@ class FavoriteTabFragment : Fragment() {
         return view
     }
     private fun showDeleteConfirmationDialog(food: Food) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("삭제 확인")
-            .setMessage("${food.foodName}을(를) 삭제하시겠습니까?")
-            .setNegativeButton("취소", null)
-            .setPositiveButton("확인") { _, _ ->
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle("삭제 확인")
+            setMessage("이 항목을 삭제하시겠습니까?")
+            setPositiveButton("확인") { dialog, _ ->
                 dietViewModel.deleteFood(food)
+                dialog.dismiss()
             }
-            .show()
+            setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }.show()
     }
 }

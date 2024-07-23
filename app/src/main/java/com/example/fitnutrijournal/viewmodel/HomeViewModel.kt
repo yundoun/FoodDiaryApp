@@ -441,6 +441,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _filteredFoods = MutableLiveData<List<Food>>()
     val filteredFoods: LiveData<List<Food>> get() = _filteredFoods
 
+    // 식단 자세히 보기
     private fun filterFoodsByMealType(mealType: String) {
         viewModelScope.launch {
             val date = currentDate.value ?: LocalDate.now().format(dateFormatter)
