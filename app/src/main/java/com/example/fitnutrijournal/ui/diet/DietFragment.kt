@@ -121,6 +121,7 @@ class DietFragment : Fragment() {
         when (source) {
             "breakfast", "lunch", "dinner", "snack" -> {
                 setUi()
+                dietViewModel.setMealType(source)  // mealType 설정
                 dietViewModel.setSaveButtonVisibility(true)
                 binding.btnAddCustomFood.visibility = View.GONE
             }
