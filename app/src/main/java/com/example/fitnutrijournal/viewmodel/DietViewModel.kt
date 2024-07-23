@@ -18,7 +18,7 @@ import com.example.fitnutrijournal.data.repository.DietRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
 import kotlinx.coroutines.launch
 
-class DietViewModel(application: Application) : AndroidViewModel(application) {
+class DietViewModel(application: Application, private val homeViewModel: HomeViewModel) : AndroidViewModel(application) {
 
     private val mealRepository: MealRepository
     private val dietRepository: DietRepository
@@ -95,15 +95,8 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     private val _quantity = MutableLiveData<Float>()
     val quantity: LiveData<Float> get() = _quantity
 
-    private val _currentDate = MutableLiveData<String>("")
-    val currentDate: LiveData<String> get() = _currentDate
-
     fun setMealType(type: String) {
         _mealType.value = type
-    }
-
-    fun setCurrentDate(date: String) {
-        _currentDate.value = date
     }
 
     private val _selectedCountFoodItem = MutableLiveData<Int>(0)
@@ -222,7 +215,7 @@ class DietViewModel(application: Application) : AndroidViewModel(application) {
     fun saveCurrentFoodIntake() {
         viewModelScope.launch {
             val food = _selectedFood.value ?: return@launch
-            val date = _currentDate.value ?: return@launch
+            val date = homeViewModel.currentDate.value ?: return@launch
             val mealType = _mealType.value ?: return@launch
             val totalContent = _totalContent.value?.toFloatOrNull() ?: return@launch
 

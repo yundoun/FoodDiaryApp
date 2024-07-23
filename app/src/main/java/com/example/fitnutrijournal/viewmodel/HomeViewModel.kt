@@ -444,11 +444,13 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private fun filterFoodsByMealType(mealType: String) {
         viewModelScope.launch {
             val date = currentDate.value ?: LocalDate.now().format(dateFormatter)
+            Log.d("HomeViewModel", "Filtering foods for date: $date and meal type: $mealType")
             val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
             val foods = meals.map { meal ->
                 dietRepository.getFoodByFoodCode(meal.dietFoodCode)
             }
             _filteredFoods.postValue(foods)
+            Log.d("HomeViewModel", "Filtered foods: ${foods.map { it.foodName }}")
         }
     }
 
@@ -716,6 +718,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         var quantity: Float = 0f
     )
 
+
+    // 추가해야 할 코드 부분
+    fun refreshFilteredFoods() {
+        val mealTypeValue = _mealType.value
+        if (mealTypeValue != null) {
+            Log.d("HomeViewModel", "Refreshing filtered foods for meal type: $mealTypeValue")
+            filterFoodsByMealType(mealTypeValue)
+        }
+    }
 
 }
 

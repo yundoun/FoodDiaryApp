@@ -11,12 +11,15 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -25,8 +28,9 @@ class MealDetailFragment : Fragment() {
     private var _binding: FragmentMealDetailBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val dietViewModel: DietViewModel by activityViewModels()
-
+    private val dietViewModel: DietViewModel by activityViewModels {
+        DietViewModelFactory(requireActivity().application, homeViewModel)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,9 +68,7 @@ class MealDetailFragment : Fragment() {
         )
         recyclerView.adapter = adapter
 
-        homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
-            adapter.updateDiets(foods)
-        }
+
 
         binding.btnAddFood.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
@@ -146,6 +148,10 @@ class MealDetailFragment : Fragment() {
             }
             binding.mealType.text = mealText
         }
+        homeViewModel.filteredFoods.observe(viewLifecycleOwner, Observer { foods ->
+            Log.d("MealDetailFragment", "Filtered foods observed: ${foods.map { it.foodName }}")
+            adapter.updateDiets(foods)
+        })
     }
 
     override fun onResume() {
@@ -154,6 +160,10 @@ class MealDetailFragment : Fragment() {
         homeViewModel.mealType.value?.let {
             homeViewModel.setMealType(it)
         }
+
+        // RecyclerView에 표시되는 데이터를 관찰하고 변경 사항을 반영
+        Log.d("MealDetailFragment", "onResume called, refreshing filtered foods")
+        homeViewModel.refreshFilteredFoods()
     }
 
     override fun onDestroyView() {

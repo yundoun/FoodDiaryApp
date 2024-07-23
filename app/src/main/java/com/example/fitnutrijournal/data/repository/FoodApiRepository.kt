@@ -39,7 +39,7 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                     response.body()?.let {
                         _foodInfo.postValue(it)
                         CoroutineScope(Dispatchers.IO).launch {
-                            val foods = it.i2790.rows.mapNotNull { item ->
+                            val foods = it.i2790.rows?.mapNotNull { item ->
                                 val foodCd = item.foodCd ?: return@mapNotNull null
                                 val foodName = item.foodName ?: return@mapNotNull null
                                 val servingSize = item.servingSize?.toIntOrNull() ?: return@mapNotNull null
@@ -60,7 +60,8 @@ class FoodApiRepository(private val dietRepository: DietRepository) {
                                     isFavorite = false,
                                     isAddedByUser = false
                                 )
-                            }
+                            } ?: listOf() // Add null check for `rows` and provide a default empty list
+
                             dietRepository.mergeAndInsertAll(foods)
                         }
                     }

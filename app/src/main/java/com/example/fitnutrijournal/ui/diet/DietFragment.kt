@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.database.FoodDatabase
@@ -21,6 +22,7 @@ import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -28,8 +30,10 @@ class DietFragment : Fragment() {
 
     private var _binding: FragmentDietBinding? = null
     private val binding get() = _binding!!
-    private val dietViewModel: DietViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val dietViewModel: DietViewModel by activityViewModels {
+        DietViewModelFactory(requireActivity().application, homeViewModel)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -71,7 +75,7 @@ class DietFragment : Fragment() {
 
         handleArgs(arguments?.getString("source") ?: "")
 
-        observeFoodInfo() // 추가된 부분
+        //observeFoodInfo() // 추가된 부분
 
 
 
@@ -84,7 +88,7 @@ class DietFragment : Fragment() {
 
         binding.btnAddFood.setOnClickListener {
             val checkedItems = dietViewModel.checkedItems.value ?: emptySet()
-            val date = dietViewModel.currentDate.value ?: ""
+            val date = homeViewModel.currentDate.value ?: ""
             val mealType = dietViewModel.mealType.value ?: ""
 
             if (checkedItems.isEmpty()) {

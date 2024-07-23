@@ -10,11 +10,13 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentHomeBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -23,7 +25,9 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val dietViewModel: DietViewModel by activityViewModels()
+    private val dietViewModel: DietViewModel by viewModels {
+        DietViewModelFactory(requireActivity().application, homeViewModel)
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -76,7 +80,6 @@ class HomeFragment : Fragment() {
 
         binding.addBreakfast.setOnClickListener {
             dietViewModel.setMealType("breakfast")
-            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
             findNavController().navigate(
                 HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
                     "breakfast"
@@ -86,7 +89,6 @@ class HomeFragment : Fragment() {
 
         binding.addLunch.setOnClickListener {
             dietViewModel.setMealType("lunch")
-            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
             findNavController().navigate(
                 HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
                     "lunch"
@@ -96,7 +98,6 @@ class HomeFragment : Fragment() {
 
         binding.addDinner.setOnClickListener {
             dietViewModel.setMealType("dinner")
-            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
             findNavController().navigate(
                 HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
                     "dinner"
@@ -106,7 +107,6 @@ class HomeFragment : Fragment() {
 
         binding.addSnack.setOnClickListener {
             dietViewModel.setMealType("snack")
-            dietViewModel.setCurrentDate(homeViewModel.currentDate.value ?: "")
             findNavController().navigate(
                 HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
                     "snack"
