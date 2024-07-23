@@ -67,6 +67,7 @@ class MealDetailFragment : Fragment() {
                 dietViewModel.selectFood(food.foodCd)
                 findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
             },
+            null,  // 롱클릭 리스너를 null로 설정
             dietViewModel
         )
         recyclerView.adapter = adapter

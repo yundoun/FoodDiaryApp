@@ -16,7 +16,8 @@ fun setupRecyclerView(
     recyclerView: RecyclerView,
     lifecycleOwner: LifecycleOwner,
     viewModel: DietViewModel,
-    onItemClick: (Food) -> Unit
+    onItemClick: (Food) -> Unit,
+    onItemLongClick: (Food) -> Unit // Add this parameter
 ): DietTabAdapter {
     recyclerView.layoutManager = LinearLayoutManager(context)
     val adapter = DietTabAdapter(
@@ -24,6 +25,7 @@ fun setupRecyclerView(
         viewModel::toggleFavorite,
         viewModel.favorites,
         onItemClick,
+        onItemLongClick,
         viewModel
     )
     recyclerView.adapter = adapter

@@ -15,6 +15,7 @@ class DietTabAdapter(
     private val toggleFavorite: (Food) -> Unit,
     private val favorites: LiveData<Set<String>>,
     private val onItemClick: (Food) -> Unit,
+    private val onItemLongClick: ((Food) -> Unit)? = null, // 롱클릭 인터페이스 추가
     private val viewModel: DietViewModel
 ) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
@@ -39,6 +40,12 @@ class DietTabAdapter(
 
             binding.root.setOnClickListener {
                 onItemClick(item)
+            }
+
+
+            binding.root.setOnLongClickListener {
+                onItemLongClick?.invoke(item) // Invoke only if non-null
+                true
             }
 
             when (viewModel.isCheckboxVisible.value) {

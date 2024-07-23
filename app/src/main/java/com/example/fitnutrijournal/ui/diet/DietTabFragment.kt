@@ -2,12 +2,15 @@ package com.example.fitnutrijournal.ui.diet
 
 import DietTabAdapter
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -15,8 +18,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.viewmodel.DietViewModel
-
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("NotifyDataSetChanged")
 class DietTabFragment : Fragment() {
 
     companion object {
@@ -39,7 +44,6 @@ class DietTabFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_diet_tab, container, false)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
@@ -53,6 +57,10 @@ class DietTabFragment : Fragment() {
                 // Handle item click
                 dietViewModel.selectFood(diet.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
+            },
+            { diet ->
+                // Handle item long click
+                showDeleteConfirmationDialog(diet)
             },
             dietViewModel // DietViewModel 전달
         )
@@ -74,10 +82,22 @@ class DietTabFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        // ItemTouchHelper 설정
-        setupItemTouchHelper(recyclerView)
 
     }
+
+        private fun showDeleteConfirmationDialog(food: Food) {
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("삭제 확인")
+                setMessage("이 항목을 삭제하시겠습니까?")
+                setPositiveButton("확인") { dialog, _ ->
+                    dietViewModel.deleteFood(food)
+                    dialog.dismiss()
+                }
+                setNegativeButton("취소") { dialog, _ ->
+                    dialog.dismiss()
+                }
+            }.show()
+        }
 
     private fun setupItemTouchHelper(recyclerView: RecyclerView) {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
