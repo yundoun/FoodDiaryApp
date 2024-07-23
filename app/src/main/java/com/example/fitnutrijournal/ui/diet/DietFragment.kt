@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.repository.DietRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
@@ -31,7 +30,6 @@ class DietFragment : Fragment() {
     private val binding get() = _binding!!
     private val dietViewModel: DietViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val args: DietFragmentArgs by navArgs()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -71,15 +69,10 @@ class DietFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        // 인자로 전달된 날짜와 source를 받아서 ViewModel에 설정
-        val currentDate = args.currentDate
-        val source = args.source
+        handleArgs(arguments?.getString("source") ?: "")
 
-        homeViewModel.setCurrentDate(currentDate)
-        dietViewModel.setCurrentDate(currentDate) // currentDate 값을 dietViewModel에 설정
-        dietViewModel.setMealType(source) // source 값을 dietViewModel에 설정
+        observeFoodInfo() // 추가된 부분
 
-        handleArgs(source)
 
 
         return binding.root
@@ -115,11 +108,11 @@ class DietFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Fragment가 다시 보여질 때 음식 데이터를 다시 로드
+        // Fragment가 다시 생성될 때 체크된 항목 초기화
         dietViewModel.clearCheckedItems()
         dietViewModel.clearSelectedCountFoodItem()
-        dietViewModel.loadFilteredFoods() // 음식 데이터를 다시 로드
     }
+
     private fun handleArgs(source: String) {
         when (source) {
             "breakfast", "lunch", "dinner", "snack" -> {
