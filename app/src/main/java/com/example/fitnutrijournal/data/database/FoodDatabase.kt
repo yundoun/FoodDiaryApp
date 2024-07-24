@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.fitnutrijournal.data.dao.*
 import com.example.fitnutrijournal.data.model.*
 
-@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class], version = 4, exportSchema = false)
+@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class], version = 5, exportSchema = false)
 abstract class FoodDatabase : RoomDatabase() {
 
     abstract fun foodDao(): FoodDao
@@ -52,4 +52,5 @@ abstract class FoodDatabase : RoomDatabase() {
             }
         }
     }
+
 }
