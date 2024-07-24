@@ -99,6 +99,8 @@ class DietFragment : Fragment() {
                 Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
             }
 
+            Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
+
             findNavController().popBackStack()
         }
 
@@ -107,7 +109,7 @@ class DietFragment : Fragment() {
         }
 
 
-        //observeFoodInfo()
+        observeFoodInfo()
     }
 
     override fun onResume() {
@@ -167,6 +169,7 @@ class DietFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.searchEditText.text.clear()
         _binding = null
     }
 }
