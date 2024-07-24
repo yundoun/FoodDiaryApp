@@ -1,6 +1,5 @@
 package com.example.fitnutrijournal.ui.diet
 
-import DietTabAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Build
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.viewmodel.DietViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FavoriteTabFragment : Fragment() {

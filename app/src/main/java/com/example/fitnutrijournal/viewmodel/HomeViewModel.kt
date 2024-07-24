@@ -804,21 +804,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Meal 데이터 삭제
-    fun deleteMeal(meal: Meal) {
-        viewModelScope.launch {
-            mealRepository.deleteMeal(meal)
-            loadDailyIntakeForDate(currentDate.value ?: LocalDate.now().format(dateFormatter))
-        }
-    }
 
-    // 특정 날짜와 식사 유형에 해당하는 모든 Meal 데이터 삭제
-    fun deleteMealsByDateAndType(date: String, mealType: String) {
-        viewModelScope.launch {
-            mealRepository.deleteMealsByDateAndType(date, mealType)
-            loadDailyIntakeForDate(date)
-        }
-    }
 
 }
 

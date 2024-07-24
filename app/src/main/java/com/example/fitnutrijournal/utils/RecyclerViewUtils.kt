@@ -1,7 +1,7 @@
 package com.example.fitnutrijournal.utils
 
 
-import DietTabAdapter
+import com.example.fitnutrijournal.ui.diet.DietTabAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner

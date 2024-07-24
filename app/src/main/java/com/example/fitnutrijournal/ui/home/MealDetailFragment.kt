@@ -1,6 +1,6 @@
 package com.example.fitnutrijournal.ui.home
 
-import DietTabAdapter
+
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
+import com.example.fitnutrijournal.ui.diet.DietTabAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
@@ -34,6 +34,7 @@ class MealDetailFragment : Fragment() {
     private val dietViewModel: DietViewModel by activityViewModels {
         DietViewModelFactory(requireActivity().application, homeViewModel)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,7 +79,8 @@ class MealDetailFragment : Fragment() {
         binding.btnAddFood.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
             Log.d("MealDetailFragment", "Adding food to mealType: $source")
-            val action = MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
+            val action =
+                MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
             findNavController().navigate(action)
         }
 
@@ -170,24 +172,29 @@ class MealDetailFragment : Fragment() {
     }
 
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: DietTabAdapter) {
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
+        val itemTouchHelperCallback =
+            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val removedItem = adapter.removeItem(position)
-                Log.d("MealDetailFragment", "onSwiped called for item: ${removedItem.foodName}")
-                dietViewModel.deleteMeal(removedItem)
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.adapterPosition
+                    val removedItem = adapter.removeItem(position)
+                    Log.d("MealDetailFragment", "onSwiped called for item: ${removedItem.foodName}")
+                    dietViewModel.deleteMeal(removedItem)
 
-                Toast.makeText(requireContext(), "${removedItem.foodName}이 삭제 되었습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "${removedItem.foodName}이 삭제 되었습니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)

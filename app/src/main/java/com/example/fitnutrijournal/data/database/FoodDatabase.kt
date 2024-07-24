@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.fitnutrijournal.data.dao.*
 import com.example.fitnutrijournal.data.model.*
 
-@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class], version = 6, exportSchema = false)
+@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class], version = 8, exportSchema = false)
 abstract class FoodDatabase : RoomDatabase() {
 
     abstract fun foodDao(): FoodDao
@@ -43,6 +43,7 @@ abstract class FoodDatabase : RoomDatabase() {
                     "food_database"
                 )
                     .addMigrations(MIGRATION_5_6, MIGRATION_5_6) // 마이그레이션 추가
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
