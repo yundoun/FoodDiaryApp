@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -64,6 +65,7 @@ class CustomAddTabFragment : Fragment() {
             setPositiveButton("확인") { dialog, _ ->
                 dietViewModel.deleteFood(food)
                 dialog.dismiss()
+                Toast.makeText(context, "삭제되었습니다.", Toast.LENGTH_SHORT).show()
             }
             setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()

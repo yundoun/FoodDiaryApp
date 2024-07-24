@@ -514,6 +514,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트하는 메소드
     fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
         viewModelScope.launch {
+            Log.d("HomeViewModel", "Adding checked items: ${checkedItems.map { it.foodName }} to mealType: $mealType on date: $date")
             val meals = checkedItems.map { food ->
                 Meal(
                     date = date,
@@ -548,6 +549,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
             // Food 데이터를 조회
             val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
+            Log.d("HomeViewModel", "Food found: $food for meal: $meal")
+
 
             // Food의 영양성분을 이용해 값을 누적합니다.
             totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
@@ -653,6 +656,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             fat += (food.fat * quantity / food.servingSize)
             this.quantity += quantity
         }
+
+        Log.d("HomeViewModel", "updateNutrientData called for mealType: $mealType, food: ${food.foodName}, quantity: $quantity")
+        Log.d("HomeViewModel", "Updated nutrientData: $nutrientData")
+
 
         when (mealType) {
             "breakfast" -> _breakfastNutrients.value = nutrientData

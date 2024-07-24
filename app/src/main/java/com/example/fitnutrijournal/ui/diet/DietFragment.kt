@@ -138,6 +138,7 @@ class DietFragment : Fragment() {
     }
 
     private fun observeFoodInfo() {
+        Log.d("DietFragment", "observeFoodInfo() 메소드 호출됨")
         val foodDao = FoodDatabase.getDatabase(requireContext()).foodDao()
         val foodRepository = FoodRepository(foodDao)
         val foodApiRepository = FoodApiRepository(foodRepository)

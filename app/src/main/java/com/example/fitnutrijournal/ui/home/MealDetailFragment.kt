@@ -77,25 +77,31 @@ class MealDetailFragment : Fragment() {
 
         binding.btnAddFood.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
+            Log.d("MealDetailFragment", "Adding food to mealType: $source")
             val action = MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
             findNavController().navigate(action)
         }
 
 
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
+            Log.d("MealDetailFragment", "Observed mealType: $mealType")
             dietViewModel.setMealType(mealType) // HomeViewModel의 mealType을 DietViewModel에 전달
             val mealText = when (mealType) {
                 "breakfast" -> {
                     homeViewModel.currentCaloriesBreakfast.observe(viewLifecycleOwner) { calories ->
+                        Log.d("MealDetailFragment", "Breakfast calories updated: $calories")
                         binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
                     }
                     homeViewModel.currentCarbIntakeBreakfast.observe(viewLifecycleOwner) { carb ->
+                        Log.d("MealDetailFragment", "Breakfast carbs updated: $carb")
                         binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
                     }
                     homeViewModel.currentProteinIntakeBreakfast.observe(viewLifecycleOwner) { protein ->
+                        Log.d("MealDetailFragment", "Breakfast protein updated: $protein")
                         binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
                     }
                     homeViewModel.currentFatIntakeBreakfast.observe(viewLifecycleOwner) { fat ->
+                        Log.d("MealDetailFragment", "Breakfast fat updated: $fat")
                         binding.fat.text = fat.toString() + "g" + "\n" + "지방"
                     }
                     "아침"
@@ -103,15 +109,19 @@ class MealDetailFragment : Fragment() {
 
                 "lunch" -> {
                     homeViewModel.currentCaloriesLunch.observe(viewLifecycleOwner) { calories ->
+                        Log.d("MealDetailFragment", "Lunch calories updated: $calories")
                         binding.calories.text = calories.toString() + "kcal" + "\n" + "총 섭취량"
                     }
                     homeViewModel.currentCarbIntakeLunch.observe(viewLifecycleOwner) { carb ->
+                        Log.d("MealDetailFragment", "Lunch carbs updated: $carb")
                         binding.carb.text = carb.toString() + "g" + "\n" + "탄수화물"
                     }
                     homeViewModel.currentProteinIntakeLunch.observe(viewLifecycleOwner) { protein ->
+                        Log.d("MealDetailFragment", "Lunch protein updated: $protein")
                         binding.protein.text = protein.toString() + "g" + "\n" + "단백질"
                     }
                     homeViewModel.currentFatIntakeLunch.observe(viewLifecycleOwner) { fat ->
+                        Log.d("MealDetailFragment", "Lunch fat updated: $fat")
                         binding.fat.text = fat.toString() + "g" + "\n" + "지방"
                     }
                     "점심"
@@ -172,10 +182,10 @@ class MealDetailFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val removedItem = adapter.removeItem(position)
-                dietViewModel.deleteFood(removedItem)
+                Log.d("MealDetailFragment", "onSwiped called for item: ${removedItem.foodName}")
+                dietViewModel.deleteMeal(removedItem)
 
-                Log.d("MealDetailFragment", "Deleted item: ${removedItem.foodName}")
-                Toast.makeText(requireContext(), "Deleted ${removedItem.foodName}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "${removedItem.foodName}이 삭제 되었습니다.", Toast.LENGTH_SHORT).show()
             }
         }
 
