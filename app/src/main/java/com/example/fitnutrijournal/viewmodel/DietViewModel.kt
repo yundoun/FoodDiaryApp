@@ -276,9 +276,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 "Updated record: ${updatedRecord.date}, Calories: ${updatedRecord.currentCalories}, Carbs: ${updatedRecord.currentCarbs}, Protein: ${updatedRecord.currentProtein}, Fat: ${updatedRecord.currentFat}"
             )
 
-            // Force LiveData to re-emit the current value
-            _dailyIntakeRecord.value = _dailyIntakeRecord.value
 
+            homeViewModel.updateNutrientData(mealType, food, totalContent)
         }
     }
 
