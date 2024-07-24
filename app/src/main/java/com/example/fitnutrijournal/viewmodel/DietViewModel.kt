@@ -84,6 +84,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
     val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
+    private val _isUpdateButtonVisible = MutableLiveData<Boolean>(false)
+    val isUpdateButtonVisible: LiveData<Boolean> get() = _isUpdateButtonVisible
 
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
@@ -129,6 +131,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     fun setSaveButtonVisibility(isVisible: Boolean) {
         _isSaveButtonVisible.value = isVisible
+    }
+
+    fun setUpdateButtonVisibility(isVisible: Boolean) {
+        _isUpdateButtonVisible.value = isVisible
     }
 
     init {

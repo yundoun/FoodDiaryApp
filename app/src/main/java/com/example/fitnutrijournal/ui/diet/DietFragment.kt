@@ -125,6 +125,7 @@ class DietFragment : Fragment() {
                 setUi()
                 dietViewModel.setMealType(source)  // mealType 설정
                 dietViewModel.setSaveButtonVisibility(true)
+                dietViewModel.setUpdateButtonVisibility(false)
                 binding.btnAddCustomFood.visibility = View.GONE
             }
 
@@ -132,6 +133,7 @@ class DietFragment : Fragment() {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
                 dietViewModel.setSaveButtonVisibility(false)
+                dietViewModel.setUpdateButtonVisibility(false)
                 binding.btnAddFood.visibility = View.GONE
             }
         }

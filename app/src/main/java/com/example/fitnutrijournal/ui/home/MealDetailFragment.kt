@@ -66,6 +66,8 @@ class MealDetailFragment : Fragment() {
             { food ->
                 // 아이템 클릭 시 FoodDetailFragment로 이동
                 dietViewModel.selectFood(food.foodCd)
+                dietViewModel.setSaveButtonVisibility(false)
+                dietViewModel.setUpdateButtonVisibility(true)
                 findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
             },
             null,  // 롱클릭 리스너를 null로 설정
