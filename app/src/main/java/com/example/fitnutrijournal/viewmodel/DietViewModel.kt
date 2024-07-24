@@ -301,7 +301,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 // 섭취량 감소
                 homeViewModel.updateNutrientData(mealType, food, -quantity)
                 // 식사 데이터 삭제
-                mealRepository.deleteMeal(meal)
+                mealRepository.deleteMealById(meal.id)
             }
             Log.d("DietViewModel", "Deleting food: $food")
 
@@ -324,7 +324,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 // 섭취량 감소
                 homeViewModel.updateNutrientData(mealType, food, -quantity)
                 // 식사 데이터 삭제
-                mealRepository.deleteMeal(meal)
+                mealRepository.deleteMealById(meal.id)
             }
             Log.d("DietViewModel", "Deleting food: $food")
 

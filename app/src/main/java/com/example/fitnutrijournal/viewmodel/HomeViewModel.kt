@@ -463,7 +463,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
             // Remove meals with null Food data
             mealsToDelete.forEach { meal ->
-                mealRepository.deleteMeal(meal)
+                mealRepository.deleteMealById(meal.id)
             }
 
             _filteredFoods.postValue(foods)

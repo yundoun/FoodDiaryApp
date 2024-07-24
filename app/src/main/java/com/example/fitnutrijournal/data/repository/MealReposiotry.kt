@@ -26,9 +26,8 @@ class MealRepository(private val mealDao: MealDao) {
         mealDao.deleteMeal(meal.date, meal.mealType, meal.dietFoodCode)
     }
 
-    // 특정 날짜와 식사 유형에 해당하는 모든 Meal 삭제
-    suspend fun deleteMealsByDateAndType(date: String, mealType: String) {
-        mealDao.deleteMealsByDateAndType(date, mealType)
+    suspend fun deleteMealById(id: Long) {
+        mealDao.deleteMealById(id)
     }
 
     // 특정 식품 코드에 해당하는 Meal 객체 리스트를 반환
