@@ -35,7 +35,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         foodRepository = FoodRepository(foodDao)
-        mealRepository = MealRepository(mealDao)
+        mealRepository = MealRepository(mealDao, foodDao)
     }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
@@ -313,23 +313,27 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun deleteMeal(food: Food) {
+    fun deleteMealById(mealId: Long) {
         viewModelScope.launch {
-            // 식사에 해당 음식이 포함되어 있는지 확인
-            val mealsWithFood = mealRepository.getMealsByFoodCode(food.foodCd)
-            mealsWithFood.forEach { meal ->
-                val quantity = meal.quantity
-                val mealType = meal.mealType
-                Log.d("DietViewModel", "Deleting meal: $meal with food: $food")
-                // 섭취량 감소
-                homeViewModel.updateNutrientData(mealType, food, -quantity)
+            val mealWithFood = mealRepository.getMealWithFood(mealId)
+            if (mealWithFood != null) {
+                val (meal, food) = mealWithFood
+                if (food != null) {
+                    val quantity = meal.quantity
+                    val mealType = meal.mealType
+                    Log.d("DietViewModel", "Deleting meal: $meal with food: $food")
+                    // 섭취량 감소
+                    homeViewModel.updateNutrientData(mealType, food, -quantity)
+                }
                 // 식사 데이터 삭제
-                mealRepository.deleteMealById(meal.id)
-            }
-            Log.d("DietViewModel", "Deleting food: $food")
+                mealRepository.deleteMealById(mealId)
+                Log.d("DietViewModel", "Deleted meal with id: $mealId")
 
-            // 섭취 기록 업데이트
-            homeViewModel.refreshFilteredFoods()
+                // 섭취 기록 업데이트
+                homeViewModel.refreshFilteredFoods()
+            } else {
+                Log.d("DietViewModel", "Meal not found with id: $mealId")
+            }
         }
     }
 

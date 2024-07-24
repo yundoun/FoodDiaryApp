@@ -1,10 +1,12 @@
 package com.example.fitnutrijournal.data.repository
 
 import androidx.lifecycle.LiveData
+import com.example.fitnutrijournal.data.dao.FoodDao
 import com.example.fitnutrijournal.data.dao.MealDao
+import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
 
-class MealRepository(private val mealDao: MealDao) {
+class MealRepository(private val mealDao: MealDao, private val foodDao: FoodDao) {
 
     // 주어진 Meal 객체를 삽입하는 역할
     suspend fun insert(meal: Meal) {
@@ -26,6 +28,13 @@ class MealRepository(private val mealDao: MealDao) {
         mealDao.deleteMeal(meal.date, meal.mealType, meal.dietFoodCode)
     }
 
+
+    suspend fun getMealWithFood(mealId: Long): Pair<Meal, Food?>? {
+        val meal = mealDao.getMealById(mealId)
+        val food = meal?.let { foodDao.getFoodByFoodCode(it.dietFoodCode) }
+        return if (meal != null && food != null) Pair(meal, food) else null
+    }
+
     suspend fun deleteMealById(id: Long) {
         mealDao.deleteMealById(id)
     }
@@ -33,5 +42,9 @@ class MealRepository(private val mealDao: MealDao) {
     // 특정 식품 코드에 해당하는 Meal 객체 리스트를 반환
     suspend fun getMealsByFoodCode(foodCode: String): List<Meal> {
         return mealDao.getMealsByFoodCode(foodCode)
+    }
+
+    suspend fun getMealById(mealId: Long): Meal? {
+        return mealDao.getMealById(mealId)
     }
 }
