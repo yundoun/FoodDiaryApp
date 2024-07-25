@@ -9,111 +9,69 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Food
-import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.databinding.ItemDietBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 
 class DietTabAdapter(
-    private var items: List<Any>,
-    private val toggleFavorite: (Any) -> Unit,
+    private var diets: List<Food>,
+    private val toggleFavorite: (Food) -> Unit,
     private val favorites: LiveData<Set<String>>,
-    private val onItemClick: (Any) -> Unit,
-    private val onItemLongClick: ((Any) -> Unit)? = null,
+    private val onItemClick: (Food) -> Unit,
+    private val onItemLongClick: ((Food) -> Unit)? = null, // 롱클릭 인터페이스 추가
     private val viewModel: DietViewModel
 ) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateItems(newItems: List<Any>) {
-        items = newItems
+    fun updateDiets(newDiets: List<Food>) {
+        diets = newDiets
         notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
     }
 
     inner class DietViewHolder(private val binding: ItemDietBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(item: Any) {
-            when (item) {
-                is Food -> {
-                    binding.foodName.text = item.foodName
-                    binding.foodTotalContent.text = "${item.servingSize} g"
-                    binding.foodCalories.text = "${item.calories} kcal"
-                    updateFavoriteButton(binding.favoriteBtn, item.foodCd)
+        fun bind(item: Food) {
+            binding.foodName.text = item.foodName
+            binding.foodTotalContent.text = "${item.servingSize} g"
+            binding.foodCalories.text = "${item.calories} kcal"
+            updateFavoriteButton(binding.favoriteBtn, item.foodCd)
 
-                    binding.favoriteBtn.setOnClickListener {
-                        toggleFavorite(item)
-                    }
+            binding.favoriteBtn.setOnClickListener {
+                toggleFavorite(item)
+            }
 
-                    binding.root.setOnClickListener {
-                        onItemClick(item)
-                    }
+            binding.root.setOnClickListener {
+                onItemClick(item)
+            }
 
-                    binding.root.setOnLongClickListener {
-                        onItemLongClick?.invoke(item)
-                        true
-                    }
 
-                    when (viewModel.isCheckboxVisible.value) {
-                        true -> {
-                            binding.favoriteBtn.visibility = View.GONE
-                            binding.checkbox.visibility = View.VISIBLE
-                        }
-                        false -> {
-                            binding.favoriteBtn.visibility = View.VISIBLE
-                            binding.checkbox.visibility = View.GONE
-                        }
-                        else -> {
-                            binding.favoriteBtn.visibility = View.GONE
-                            binding.checkbox.visibility = View.GONE
-                        }
-                    }
+            binding.root.setOnLongClickListener {
+                onItemLongClick?.invoke(item) // Invoke only if non-null
+                true
+            }
 
-                    binding.checkbox.setOnCheckedChangeListener(null)
-                    binding.checkbox.isChecked = viewModel.checkedItems.value?.contains(item) == true
-                    binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
-                        viewModel.toggleCheckedItem(item)
-                    }
+            when (viewModel.isCheckboxVisible.value) {
+                true -> {
+                    binding.favoriteBtn.visibility = View.GONE
+                    binding.checkbox.visibility = View.VISIBLE
                 }
-                is Meal -> {
-                    binding.foodName.text = item.dietFoodCode // 식품 코드를 표시하거나 적절한 방법으로 변경
-                    binding.foodTotalContent.text = "${item.quantity} g"
-                    // 칼로리 정보는 별도로 조회하여 설정
-                    updateFavoriteButton(binding.favoriteBtn, item.dietFoodCode)
-
-                    binding.favoriteBtn.setOnClickListener {
-                        toggleFavorite(item)
-                    }
-
-                    binding.root.setOnClickListener {
-                        onItemClick(item)
-                    }
-
-                    binding.root.setOnLongClickListener {
-                        onItemLongClick?.invoke(item)
-                        true
-                    }
-
-                    when (viewModel.isCheckboxVisible.value) {
-                        true -> {
-                            binding.favoriteBtn.visibility = View.GONE
-                            binding.checkbox.visibility = View.VISIBLE
-                        }
-                        false -> {
-                            binding.favoriteBtn.visibility = View.VISIBLE
-                            binding.checkbox.visibility = View.GONE
-                        }
-                        else -> {
-                            binding.favoriteBtn.visibility = View.GONE
-                            binding.checkbox.visibility = View.GONE
-                        }
-                    }
-
-                    binding.checkbox.setOnCheckedChangeListener(null)
-                    binding.checkbox.isChecked = viewModel.checkedItems.value?.contains(item) == true
-                    binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
-                        viewModel.toggleCheckedItem(item)
-                    }
+                false -> {
+                    binding.favoriteBtn.visibility = View.VISIBLE
+                    binding.checkbox.visibility = View.GONE
+                }
+                else -> {
+                    binding.favoriteBtn.visibility = View.GONE
+                    binding.checkbox.visibility = View.GONE
                 }
             }
+
+            // 체크박스 상태 설정
+            binding.checkbox.setOnCheckedChangeListener(null) // Prevents infinite loop
+            binding.checkbox.isChecked = viewModel.checkedItems.value?.contains(item) == true
+            binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.toggleCheckedItem(item)
+            }
+
         }
     }
 
@@ -123,12 +81,15 @@ class DietTabAdapter(
     }
 
     override fun onBindViewHolder(holder: DietViewHolder, position: Int) {
-        val item = items[position]
+        val item = diets[position]
         holder.bind(item)
 
+        // 즐겨찾기 상태 관찰
         favorites.observeForever {
             holder.bind(item)
         }
+
+
     }
 
     private fun updateFavoriteButton(button: ImageButton, foodCode: String) {
@@ -139,20 +100,15 @@ class DietTabAdapter(
         )
     }
 
-    override fun getItemCount(): Int = items.size
 
-    fun removeItemById(id: Long): Meal? {
-        val index = items.indexOfFirst { it is Meal && it.id == id }
-        return if (index != -1) {
-            val removedItem = items.toMutableList().apply { removeAt(index) } as Meal
-            notifyItemRemoved(index)
-            removedItem
-        } else {
-            null
-        }
+    override fun getItemCount(): Int = diets.size
+
+    // 아이템 제거 메서드 removeItem 메서드는 해당 아이템을 데이터 소스에서 제거하고, 이를 notifyItemRemoved로 RecyclerView에 알립니다.
+    fun removeItem(position: Int): Food {
+        val removedItem = diets[position]
+        diets = diets.toMutableList().apply { removeAt(position) }
+        notifyItemRemoved(position)
+        return removedItem
     }
 
-    fun getItem(position: Int): Any {
-        return items[position]
-    }
 }

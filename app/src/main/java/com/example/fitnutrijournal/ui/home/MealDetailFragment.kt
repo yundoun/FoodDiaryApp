@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.home
 
+
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
@@ -17,7 +18,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
-import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.diet.DietTabAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
@@ -60,18 +60,15 @@ class MealDetailFragment : Fragment() {
         val recyclerView = binding.foodList
         recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = DietTabAdapter(
-            emptyList<Meal>(),
-            { item ->
-                if (item is Meal) dietViewModel.toggleFavorite(item)
-            },
+            emptyList(),
+            dietViewModel::toggleFavorite,
             dietViewModel.favorites,
-            { item ->
-                if (item is Meal) {
-                    dietViewModel.selectFood(item.dietFoodCode)
-                    dietViewModel.setSaveButtonVisibility(false)
-                    dietViewModel.setUpdateButtonVisibility(true)
-                    findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
-                }
+            { food ->
+                // 아이템 클릭 시 FoodDetailFragment로 이동
+                dietViewModel.selectFood(food.foodCd)
+                dietViewModel.setSaveButtonVisibility(false)
+                dietViewModel.setUpdateButtonVisibility(true)
+                findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
             },
             null,  // 롱클릭 리스너를 null로 설정
             dietViewModel
@@ -88,6 +85,7 @@ class MealDetailFragment : Fragment() {
                 MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
             findNavController().navigate(action)
         }
+
 
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
             Log.d("MealDetailFragment", "Observed mealType: $mealType")
@@ -169,20 +167,9 @@ class MealDetailFragment : Fragment() {
             }
             binding.mealType.text = mealText
         }
-
-        // Meal 데이터를 관찰하여 RecyclerView 업데이트
         homeViewModel.filteredFoods.observe(viewLifecycleOwner, Observer { foods ->
             Log.d("MealDetailFragment", "Filtered foods observed: ${foods.map { it.foodName }}")
-            val meals = foods.map { food ->
-                Meal(
-                    id = 0L, // 실제 ID를 설정해야 합니다.
-                    date = "", // 실제 날짜를 설정해야 합니다.
-                    mealType = "", // 실제 식사 유형을 설정해야 합니다.
-                    dietFoodCode = food.foodCd,
-                    quantity = food.servingSize
-                )
-            }
-            adapter.updateItems(meals)
+            adapter.updateDiets(foods)
         })
     }
 
@@ -199,20 +186,15 @@ class MealDetailFragment : Fragment() {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
-                    val item = adapter.getItem(position)
-                    if (item is Meal) {
-                        val removedItem = adapter.removeItemById(item.id)
-                        if (removedItem != null) {
-                            Log.d("MealDetailFragment", "onSwiped called for item: ${removedItem.dietFoodCode}")
-                            dietViewModel.deleteMealById(removedItem.id)
+                    val removedItem = adapter.removeItem(position)
+                    Log.d("MealDetailFragment", "onSwiped called for item: ${removedItem.foodName}")
+                    dietViewModel.deleteMeal(removedItem)
 
-                            Toast.makeText(
-                                requireContext(),
-                                "${removedItem.dietFoodCode}이 삭제 되었습니다.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
+                    Toast.makeText(
+                        requireContext(),
+                        "${removedItem.foodName}이 삭제 되었습니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 

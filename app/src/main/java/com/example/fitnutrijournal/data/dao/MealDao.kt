@@ -28,9 +28,6 @@ interface MealDao {
     @Query("DELETE FROM Meal WHERE id = :id")
     suspend fun deleteMealById(id: Long)
 
-    @Query("SELECT * FROM meal WHERE id = :mealId LIMIT 1")
-    suspend fun getMealById(mealId: Long): Meal?
-
     // 특정 날짜와 식사 유형에 해당하는 모든 Meal 삭제
     @Query("DELETE FROM Meal WHERE date = :date AND mealType = :mealType")
     suspend fun deleteMealsByDateAndType(date: String, mealType: String)
