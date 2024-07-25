@@ -34,6 +34,10 @@ class CustomAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.addBtn.setOnClickListener {
             val foodName = binding.inputName.text.toString()
             val servingSize = binding.inputServingSize.text.toString().toIntOrNull() ?: 0

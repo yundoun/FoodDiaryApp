@@ -38,11 +38,12 @@
 
                 <ImageView
                     android:id="@+id/btnCalendar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.886"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.555"
@@ -85,8 +86,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvTargetCalories"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.40" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/remainingCalories"
@@ -101,8 +101,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.68"
                         app:layout_constraintStart_toEndOf="@+id/tvTargetCalories"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.40" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/progressBarLayout"
@@ -159,6 +158,7 @@
                         android:layout_marginEnd="50dp"
                         android:max="@{viewModel.targetCarbIntake}"
                         android:progress="@{viewModel.currentCarbIntake}"
+                        android:progressDrawable="@drawable/progress_bar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/proteinProgressBar"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -207,6 +207,7 @@
                         android:layout_centerInParent="true"
                         android:max="@{viewModel.targetProteinIntake}"
                         android:progress="@{viewModel.currentProteinIntake}"
+                        android:progressDrawable="@drawable/progress_bar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/fatProgressBar"
                         app:layout_constraintStart_toEndOf="@+id/carbProgressBar"
@@ -249,6 +250,7 @@
                         android:layout_marginEnd="20dp"
                         android:max="@{viewModel.targetFatIntake}"
                         android:progress="@{viewModel.currentFatIntake}"
+                        android:progressDrawable="@drawable/progress_bar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1.0"
@@ -287,6 +289,32 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.95" />
 
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="20dp"
+                        android:scaleType="center"
+                        app:layout_constraintBottom_toTopOf="@+id/tvCalorieIntake"
+                        app:layout_constraintEnd_toStartOf="@+id/progressBarLayout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0"
+                        app:srcCompat="@drawable/ic_intake" />
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="20dp"
+                        android:scaleType="center"
+                        app:layout_constraintBottom_toTopOf="@+id/remainingCalories"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/progressBarLayout"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0"
+                        app:srcCompat="@drawable/ic_remaincalories" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -296,6 +324,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
                     android:text="오늘 하루 요약"
+                    android:textSize="16dp"
                     app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -304,12 +333,13 @@
                 <TextView
                     android:id="@+id/btnTodaySummaryDetail"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
                     android:text="상세정보"
                     android:textColor="@color/blue"
-                    android:textSize="12dp"
+                    android:textSize="14dp"
                     app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -318,7 +348,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/todayDietSection"
                     android:layout_width="0dp"
-                    android:layout_height="240dp"
+                    android:layout_height="270dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="100dp"
                     android:layout_marginEnd="10dp"
@@ -353,15 +383,15 @@
 
                         <ImageView
                             android:id="@+id/ivBreakfast"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_diet" />
+                            app:srcCompat="@drawable/ic_breakfast" />
 
                         <TextView
                             android:id="@+id/textView4"
@@ -390,15 +420,15 @@
 
                         <ImageView
                             android:id="@+id/ivLunch"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_diet" />
+                            app:srcCompat="@drawable/ic_lunch" />
 
                         <TextView
                             android:id="@+id/textView5"
@@ -438,15 +468,15 @@
 
                         <ImageView
                             android:id="@+id/ivDinner"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_diet" />
+                            app:srcCompat="@drawable/ic_dinner" />
 
                         <TextView
                             android:id="@+id/textView7"
@@ -487,22 +517,22 @@
 
                         <ImageView
                             android:id="@+id/ivSnack"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="10dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_diet" />
+                            app:srcCompat="@drawable/ic_snack" />
 
                         <TextView
                             android:id="@+id/textView8"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:text="간식"
+                            android:text="간식 및 기타"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/ivSnack"
                             app:layout_constraintTop_toTopOf="parent"
@@ -615,23 +645,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
                     android:text="오늘의 식단"
+                    android:textSize="16dp"
                     app:layout_constraintBottom_toTopOf="@+id/todayDietSection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/dietDetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="상세정보"
-                    android:textColor="@color/blue"
-                    android:textSize="12dp"
-                    app:layout_constraintBottom_toTopOf="@+id/todayDietSection"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout

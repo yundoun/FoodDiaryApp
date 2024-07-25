@@ -11,5 +11,7 @@
     <color name="light_green">#B3E2CD</color>
     <color name="light_blue">#c7e9ff</color>
     <color name="orange">#FF7F0E</color>
+    <color name="progressbar_red">#ed6868</color>
+    <color name="progressbar_green">#6cf096</color>
 
 </resources>

@@ -1,6 +1,9 @@
 package com.example.fitnutrijournal.ui.home
 
 import android.annotation.SuppressLint
+import android.graphics.PorterDuff
+import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +11,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentHomeBinding
@@ -113,9 +118,63 @@ class HomeFragment : Fragment() {
                 )
             )
         }
+
+
+        setProgressbarColor()
+
+
     }
 
+    private fun setProgressbarColor(){
 
+        homeViewModel.currentCarbIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
+            val targetIntake = homeViewModel.targetCarbIntake.value ?: 0 // 기본값을 0으로 설정
+
+            if (currentIntake > targetIntake) {
+                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
+                binding.carbProgressBar.progressDrawable = progressDrawable
+            } else {
+                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
+                binding.carbProgressBar.progressDrawable = progressDrawable
+            }
+        })
+
+        homeViewModel.currentProteinIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
+            val targetIntake = homeViewModel.targetProteinIntake.value ?: 0 // 기본값을 0으로 설정
+
+            if (currentIntake > targetIntake) {
+                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
+                binding.proteinProgressBar.progressDrawable = progressDrawable
+            } else {
+                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
+                binding.proteinProgressBar.progressDrawable = progressDrawable
+            }
+        })
+
+        homeViewModel.currentFatIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
+            val targetIntake = homeViewModel.targetFatIntake.value ?: 0
+
+            if (currentIntake > targetIntake) {
+                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
+                binding.fatProgressBar.progressDrawable = progressDrawable
+            } else {
+                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
+                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
+                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
+                binding.fatProgressBar.progressDrawable = progressDrawable
+            }
+        })
+    }
 
     private fun navigateToMealDetail(mealType: String) {
         homeViewModel.setMealType(mealType)
