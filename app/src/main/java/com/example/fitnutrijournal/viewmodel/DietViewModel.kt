@@ -326,6 +326,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _selectedMealQuantity.value = quantity
     }
 
+    fun clearSelectedMealQuantity() {
+        _selectedMealQuantity.value = null
+    }
+
     fun loadMealsWithFood() {
         viewModelScope.launch {
             val mealWithFoodList = mealRepository.getAllMealsWithFood()

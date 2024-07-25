@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
+    private val homeViewModel: DietViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
 
     override fun onCreateView(
@@ -52,6 +54,12 @@ class FoodDetailFragment : Fragment() {
             val selectedMealQuantity = dietViewModel.selectedMealQuantity.value
             if (selectedMealQuantity != null) {
                 binding.totalContentInput.setText(selectedMealQuantity.toString())
+                Log.d("FoodDetailFragment", "selectedMealQuantity: $selectedMealQuantity")
+//                binding.calories.text = String.format("%.2f kcal", selectedMealQuantity * food.caloriesPerGram)
+//                binding.carbohydrate.text = String.format("%.2f g", selectedMealQuantity * food.carbohydrate / food.servingSize)
+//                binding.protein.text = String.format("%.2f g", selectedMealQuantity * food.protein / food.servingSize)
+//                binding.fat.text = String.format("%.2f g", selectedMealQuantity * food.fat / food.servingSize)
+
             } else {
                 binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
             }
@@ -75,6 +83,11 @@ class FoodDetailFragment : Fragment() {
         }
 
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dietViewModel.clearSelectedMealQuantity()
     }
 
 }
