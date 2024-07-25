@@ -12,6 +12,10 @@ class MealRepository(private val mealDao: MealDao) {
         mealDao.insert(meal)
     }
 
+    suspend fun update(meal: Meal) {
+        mealDao.update(meal)
+    }
+
     // 특정 날짜(date)에 해당하는 Meal 객체 리스트를 LiveData 형태로 반환
     fun getMealsByDate(date: String): LiveData<List<Meal>> {
         return mealDao.getMealsByDate(date)
@@ -22,11 +26,15 @@ class MealRepository(private val mealDao: MealDao) {
         return mealDao.getMealsByDateAndTypeSync(date, mealType)
     }
 
-    // 특정 Meal 삭제
-    suspend fun deleteMeal(meal: Meal) {
-        mealDao.deleteMeal(meal.date, meal.mealType, meal.dietFoodCode)
+
+    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal> {
+        return mealDao.getMealsByFoodCodeAndDate(foodCd, date)
     }
 
+
+    suspend fun getMealByFoodCodeAndDate(foodCode: String, date: String): Meal? {
+        return mealDao.getMealByFoodCodeAndDate(foodCode, date)
+    }
     suspend fun deleteMealById(id: Long) {
         mealDao.deleteMealById(id)
     }

@@ -183,7 +183,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         updateNutrientValues(totalContent)
     }
 
-    private fun updateNutrientValues(totalContent: Int) {
+    // 중량에 맞게 영양성분 계산
+    fun updateNutrientValues(totalContent: Int) {
         val food = _selectedFood.value ?: return
         if (food.servingSize == 0) return
 
@@ -239,13 +240,14 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+    // 사용자가 설정 중량 저장
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveCurrentFoodIntake() {
         viewModelScope.launch {
             val food = _selectedFood.value ?: return@launch
             val date = homeViewModel.currentDate.value ?: return@launch
             val mealType = _mealType.value ?: return@launch
-            val totalContent = _totalContent.value?.toFloatOrNull() ?: return@launch
+            val totalContent = _totalContent.value?.toIntOrNull() ?: return@launch
 
             val meal = Meal(
                 date = date,
@@ -317,6 +319,17 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
     val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
 
+    private val _selectedMealQuantity = MutableLiveData<Int?>()
+    val selectedMealQuantity: LiveData<Int?> get() = _selectedMealQuantity
+
+    fun setSelectedMealQuantity(quantity: Int) {
+        _selectedMealQuantity.value = quantity
+    }
+
+    fun clearSelectedMealQuantity() {
+        _selectedMealQuantity.value = null
+    }
+
     fun loadMealsWithFood() {
         viewModelScope.launch {
             val mealWithFoodList = mealRepository.getAllMealsWithFood()
@@ -344,6 +357,39 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 Log.d("DietViewModel", "Meal not found with id: $mealId")
             }
         }
+    }
+
+
+    suspend fun getMealByFoodCodeAndDate(foodCd: String, date: String): Meal? {
+        return mealRepository.getMealByFoodCodeAndDate(foodCd, date)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateFoodIntake() {
+        val food = _selectedFood.value ?: return
+        val newQuantity = _totalContent.value?.toIntOrNull() ?: return
+        viewModelScope.launch {
+            val date = homeViewModel.currentDate.value ?: return@launch
+            val mealType = _mealType.value ?: return@launch
+
+            val meal = mealRepository.getMealByFoodCodeAndDate(food.foodCd, date)
+            meal?.let {
+                val oldQuantity = it.quantity
+
+                val updatedMeal = it.copy(quantity = newQuantity)
+                mealRepository.update(updatedMeal)
+
+                // 기존 섭취량을 제거하고, 새로운 섭취량을 추가하여 영양성분 업데이트
+                homeViewModel.updateNutrientData(mealType, food, -oldQuantity)
+                homeViewModel.updateNutrientData(mealType, food, newQuantity)
+
+                homeViewModel.refreshFilteredFoods()
+            }
+        }
+    }
+
+    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal> {
+        return mealRepository.getMealsByFoodCodeAndDate(foodCd, date)
     }
 
 
