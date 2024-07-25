@@ -360,6 +360,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     }
 
 
+    suspend fun getMealByFoodCodeAndDate(foodCd: String, date: String): Meal? {
+        return mealRepository.getMealByFoodCodeAndDate(foodCd, date)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateFoodIntake() {
         val food = _selectedFood.value ?: return

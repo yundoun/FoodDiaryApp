@@ -11,17 +11,20 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.diet.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MealDetailFragment : Fragment() {
@@ -147,8 +150,19 @@ class MealDetailFragment : Fragment() {
             binding.mealType.text = mealText
         }
 
-        dietViewModel.mealsWithFood.observe(viewLifecycleOwner, Observer { mealsWithFood ->
-            adapter.updateMealsWithFood(mealsWithFood)
+        homeViewModel.filteredFoods.observe(viewLifecycleOwner, Observer { foods ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                val mealsWithFood = foods.mapNotNull { food ->
+                    dietViewModel.getMealByFoodCodeAndDate(food.foodCd, homeViewModel.currentDate.value!!)
+                        ?.let {
+                            MealWithFood(
+                                meal = it,
+                                food = food
+                            )
+                        }
+                }
+                adapter.updateMealsWithFood(mealsWithFood)
+            }
         })
 
         dietViewModel.loadMealsWithFood()
