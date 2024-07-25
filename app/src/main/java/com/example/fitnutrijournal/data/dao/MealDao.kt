@@ -23,6 +23,10 @@ interface MealDao {
     @Query("SELECT * FROM meal WHERE dietFoodCode = :foodCode AND date = :date LIMIT 1")
     suspend fun getMealByFoodCodeAndDate(foodCode: String, date: String): Meal?
 
+    @Query("SELECT * FROM meal WHERE dietFoodCode = :foodCd AND date = :date")
+    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal>
+
+
     @Update
     suspend fun update(meal: Meal)
 

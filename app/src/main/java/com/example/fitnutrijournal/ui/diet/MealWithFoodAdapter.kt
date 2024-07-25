@@ -1,6 +1,7 @@
 package com.example.fitnutrijournal.ui.diet
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,10 @@ class MealWithFoodAdapter(
     private val viewModel: DietViewModel
 ) : RecyclerView.Adapter<MealWithFoodAdapter.MealViewHolder>() {
 
+    init {
+        setHasStableIds(true)
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun updateMealsWithFood(newMealsWithFood: List<MealWithFood>) {
         mealsWithFood = newMealsWithFood
@@ -25,11 +30,13 @@ class MealWithFoodAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(item: MealWithFood) {
             val food = item.food
+            val meal = item.meal
+            Log.d("MealWithFoodAdapter", "Binding Meal ID: ${meal.id}, Quantity: ${meal.quantity}")
             binding.foodName.text = food.foodName
-            binding.foodTotalContent.text = "${item.meal.quantity} g"
-            binding.foodCalories.text = String.format("%.2f kcal", item.meal.quantity * food.caloriesPerGram)
+            binding.foodTotalContent.text = "${meal.quantity} g"
+            binding.foodCalories.text = String.format("%.2f kcal", meal.quantity * food.caloriesPerGram)
             binding.root.setOnClickListener {
-                viewModel.setSelectedMealQuantity((item.meal.quantity).toInt())
+                viewModel.setSelectedMealQuantity(meal.quantity)
                 onItemClick(item)
             }
         }
@@ -46,6 +53,10 @@ class MealWithFoodAdapter(
     }
 
     override fun getItemCount(): Int = mealsWithFood.size
+
+    override fun getItemId(position: Int): Long { // 추가: 고유 ID 반환
+        return mealsWithFood[position].meal.id
+    }
 
     fun removeItemById(id: Long): MealWithFood? {
         val index = mealsWithFood.indexOfFirst { it.meal.id == id }

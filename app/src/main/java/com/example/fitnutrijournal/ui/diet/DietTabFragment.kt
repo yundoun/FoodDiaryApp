@@ -66,7 +66,6 @@ class DietTabFragment : Fragment() {
 
 
         dietViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
-            Log.d("DietTabFragment", "Updating adapter with diets: $foods")
             adapter.updateDiets(foods)
         }
 

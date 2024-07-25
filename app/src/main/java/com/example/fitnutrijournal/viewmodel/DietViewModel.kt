@@ -388,4 +388,9 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal> {
+        return mealRepository.getMealsByFoodCodeAndDate(foodCd, date)
+    }
+
+
 }

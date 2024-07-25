@@ -3,6 +3,7 @@ package com.example.fitnutrijournal.ui.home
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +52,6 @@ class MealDetailFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
@@ -152,18 +152,25 @@ class MealDetailFragment : Fragment() {
 
         homeViewModel.filteredFoods.observe(viewLifecycleOwner, Observer { foods ->
             viewLifecycleOwner.lifecycleScope.launch {
-                val mealsWithFood = foods.mapNotNull { food ->
-                    dietViewModel.getMealByFoodCodeAndDate(food.foodCd, homeViewModel.currentDate.value!!)
-                        ?.let {
-                            MealWithFood(
-                                meal = it,
-                                food = food
-                            )
+                val uniqueMeals = mutableListOf<MealWithFood>()
+                val addedMealIds = mutableSetOf<Long>()
+
+                for (food in foods) {
+                    val meals = dietViewModel.getMealsByFoodCodeAndDate(food.foodCd, homeViewModel.currentDate.value!!)
+                    meals.forEach { meal ->
+                        if (meal.id !in addedMealIds) {
+                            Log.d("MealDetailFragment", "Mapping Food: ${food.foodCd}, Meal ID: ${meal.id}, Quantity: ${meal.quantity}")
+                            uniqueMeals.add(MealWithFood(meal = meal, food = food))
+                            addedMealIds.add(meal.id)
                         }
+                    }
                 }
-                adapter.updateMealsWithFood(mealsWithFood)
+
+                Log.d("MealDetailFragment", "Updating Adapter with Meals: $uniqueMeals")
+                adapter.updateMealsWithFood(uniqueMeals)
             }
         })
+
 
         dietViewModel.loadMealsWithFood()
     }

@@ -26,6 +26,12 @@ class MealRepository(private val mealDao: MealDao) {
         return mealDao.getMealsByDateAndTypeSync(date, mealType)
     }
 
+
+    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal> {
+        return mealDao.getMealsByFoodCodeAndDate(foodCd, date)
+    }
+
+
     suspend fun getMealByFoodCodeAndDate(foodCode: String, date: String): Meal? {
         return mealDao.getMealByFoodCodeAndDate(foodCode, date)
     }
