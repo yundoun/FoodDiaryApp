@@ -520,7 +520,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     date = date,
                     mealType = mealType,
                     dietFoodCode = food.foodCd,
-                    quantity = food.servingSize.toFloat()
+                    quantity = food.servingSize
                 )
             }
 
@@ -640,7 +640,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateNutrientData(mealType: String, food: Food, quantity: Float) {
+    fun updateNutrientData(mealType: String, food: Food, quantity: Int) {
         val nutrientData = when (mealType) {
             "breakfast" -> _breakfastNutrients.value ?: NutrientData()
             "lunch" -> _lunchNutrients.value ?: NutrientData()

@@ -239,13 +239,14 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+    // 사용자가 설정 중량 저장
     @RequiresApi(Build.VERSION_CODES.O)
     fun saveCurrentFoodIntake() {
         viewModelScope.launch {
             val food = _selectedFood.value ?: return@launch
             val date = homeViewModel.currentDate.value ?: return@launch
             val mealType = _mealType.value ?: return@launch
-            val totalContent = _totalContent.value?.toFloatOrNull() ?: return@launch
+            val totalContent = _totalContent.value?.toIntOrNull() ?: return@launch
 
             val meal = Meal(
                 date = date,
@@ -316,6 +317,13 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     // Load meals with their associated foods using a join query
     private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
     val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
+
+    private val _selectedMealQuantity = MutableLiveData<Int?>()
+    val selectedMealQuantity: LiveData<Int?> get() = _selectedMealQuantity
+
+    fun setSelectedMealQuantity(quantity: Int) {
+        _selectedMealQuantity.value = quantity
+    }
 
     fun loadMealsWithFood() {
         viewModelScope.launch {

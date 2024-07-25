@@ -36,7 +36,12 @@ class FoodDetailFragment : Fragment() {
         (activity as MainActivity).showBottomNavigation(false)
 
         dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
-            binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
+            val selectedMealQuantity = dietViewModel.selectedMealQuantity.value
+            if (selectedMealQuantity != null) {
+                binding.totalContentInput.setText(selectedMealQuantity.toString())
+            } else {
+                binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
+            }
             binding.unit.setText("g")
         }
 

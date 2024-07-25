@@ -27,9 +27,9 @@ class MealWithFoodAdapter(
             val food = item.food
             binding.foodName.text = food.foodName
             binding.foodTotalContent.text = "${item.meal.quantity} g"
-            binding.foodCalories.text = "${food.calories} kcal"
-
+            binding.foodCalories.text = String.format("%.2f kcal", item.meal.quantity * food.caloriesPerGram)
             binding.root.setOnClickListener {
+                viewModel.setSelectedMealQuantity((item.meal.quantity).toInt())
                 onItemClick(item)
             }
         }
