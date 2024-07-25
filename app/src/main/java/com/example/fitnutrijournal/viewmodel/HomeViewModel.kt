@@ -25,14 +25,12 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     private val foodRepository: FoodRepository
     val mealRepository: MealRepository
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
-
-
 
     // 날짜
     private val _todayDate = MutableLiveData<String>().apply {
@@ -327,7 +325,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             value = nutrients.fat.toInt()
         }
     }
-    private val _remainingCaloriesBreakfast = MediatorLiveData<Int>()
+
     val currentCaloriesBreakfast: LiveData<Int>
         get() = _currentCaloriesBreakfast
     val currentCarbIntakeBreakfast: LiveData<Int>
@@ -358,7 +356,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             value = nutrients.calories
         }
     }
-    private val _remainingCaloriesLunch = MediatorLiveData<Int>()
+
     val currentCaloriesLunch: LiveData<Int>
         get() = _currentCaloriesLunch
     val currentCarbIntakeLunch: LiveData<Int>
@@ -389,7 +387,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             value = nutrients.calories
         }
     }
-    private val _remainingCaloriesDinner = MediatorLiveData<Int>()
+
     val currentCaloriesDinner: LiveData<Int>
         get() = _currentCaloriesDinner
     val currentCarbIntakeDinner: LiveData<Int>
@@ -420,7 +418,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             value = nutrients.fat.toInt()
         }
     }
-    private val _remainingCaloriesSnack = MediatorLiveData<Int>()
+
     val currentCaloriesSnack: LiveData<Int>
         get() = _currentCaloriesSnack
     val currentCarbIntakeSnack: LiveData<Int>
