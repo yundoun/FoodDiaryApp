@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fitnutrijournal.data.model.DailyIntakeRecord
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
+import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
 import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
@@ -312,24 +313,36 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun deleteMeal(food: Food) {
-        viewModelScope.launch {
-            // 식사에 해당 음식이 포함되어 있는지 확인
-            val mealsWithFood = mealRepository.getMealsByFoodCode(food.foodCd)
-            mealsWithFood.forEach { meal ->
-                val quantity = meal.quantity
-                val mealType = meal.mealType
-                Log.d("DietViewModel", "Deleting meal: $meal with food: $food")
-                // 섭취량 감소
-                homeViewModel.updateNutrientData(mealType, food, -quantity)
-                // 식사 데이터 삭제
-                mealRepository.deleteMealById(meal.id)
-            }
-            Log.d("DietViewModel", "Deleting food: $food")
+    // Load meals with their associated foods using a join query
+    private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
+    val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
 
-            // 섭취 기록 업데이트
-            homeViewModel.refreshFilteredFoods()
+    fun loadMealsWithFood() {
+        viewModelScope.launch {
+            val mealWithFoodList = mealRepository.getAllMealsWithFood()
+            _mealsWithFood.postValue(mealWithFoodList)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun deleteMealById(mealId: Long) {
+        viewModelScope.launch {
+            val mealWithFood = mealRepository.getMealWithFoodById(mealId)
+            if (mealWithFood != null) {
+                val quantity = mealWithFood.meal.quantity
+                val mealType = mealWithFood.meal.mealType
+                Log.d("DietViewModel", "Deleting meal: ${mealWithFood.meal}")
+                // 섭취량 감소
+                homeViewModel.updateNutrientData(mealType, mealWithFood.food, -quantity)
+                // 식사 데이터 삭제
+                mealRepository.deleteMealById(mealId)
+                Log.d("DietViewModel", "Deleted meal with id: $mealId")
+
+                // 섭취 기록 업데이트
+                homeViewModel.refreshFilteredFoods()
+            } else {
+                Log.d("DietViewModel", "Meal not found with id: $mealId")
+            }
         }
     }
 

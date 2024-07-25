@@ -3,6 +3,7 @@ package com.example.fitnutrijournal.data.repository
 import androidx.lifecycle.LiveData
 import com.example.fitnutrijournal.data.dao.MealDao
 import com.example.fitnutrijournal.data.model.Meal
+import com.example.fitnutrijournal.data.model.MealWithFood
 
 class MealRepository(private val mealDao: MealDao) {
 
@@ -34,4 +35,14 @@ class MealRepository(private val mealDao: MealDao) {
     suspend fun getMealsByFoodCode(foodCode: String): List<Meal> {
         return mealDao.getMealsByFoodCode(foodCode)
     }
+
+
+    suspend fun getMealWithFoodById(mealId: Long): MealWithFood? {
+        return mealDao.getMealWithFoodById(mealId)
+    }
+
+    suspend fun getAllMealsWithFood(): List<MealWithFood> {
+        return mealDao.getAllMealsWithFood()
+    }
+
 }
