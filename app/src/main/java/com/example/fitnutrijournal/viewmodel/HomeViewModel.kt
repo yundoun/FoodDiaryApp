@@ -25,10 +25,10 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     private val foodRepository: FoodRepository
-    private val mealRepository: MealRepository
+    val mealRepository: MealRepository
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
 
@@ -442,7 +442,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val filteredFoods: LiveData<List<Food>> get() = _filteredFoods
 
     // 식단 자세히 보기
-    private fun filterFoodsByMealType(mealType: String) {
+     fun filterFoodsByMealType(mealType: String) {
         viewModelScope.launch {
             val date = currentDate.value ?: LocalDate.now().format(dateFormatter)
             Log.d("HomeViewModel", "Filtering foods for date: $date and meal type: $mealType")
