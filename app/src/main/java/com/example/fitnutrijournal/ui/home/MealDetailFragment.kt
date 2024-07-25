@@ -26,6 +26,7 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MealDetailFragment : Fragment() {
@@ -84,6 +85,7 @@ class MealDetailFragment : Fragment() {
 
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
             dietViewModel.setMealType(mealType)
+            homeViewModel.filterFoodsByMealType(mealType)
             val mealText = when (mealType) {
                 "breakfast" -> {
                     homeViewModel.currentCaloriesBreakfast.observe(viewLifecycleOwner) { calories ->
@@ -150,26 +152,24 @@ class MealDetailFragment : Fragment() {
             binding.mealType.text = mealText
         }
 
-        homeViewModel.filteredFoods.observe(viewLifecycleOwner, Observer { foods ->
+        homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             viewLifecycleOwner.lifecycleScope.launch {
                 val uniqueMeals = mutableListOf<MealWithFood>()
-                val addedMealIds = mutableSetOf<Long>()
+                val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+                val mealType = homeViewModel.mealType.value ?: "breakfast"
+                val meals = homeViewModel.mealRepository.getMealsByDateAndTypeSync(date, mealType) // 필터링된 mealType으로 가져오기
 
-                for (food in foods) {
-                    val meals = dietViewModel.getMealsByFoodCodeAndDate(food.foodCd, homeViewModel.currentDate.value!!)
-                    meals.forEach { meal ->
-                        if (meal.id !in addedMealIds) {
-                            Log.d("MealDetailFragment", "Mapping Food: ${food.foodCd}, Meal ID: ${meal.id}, Quantity: ${meal.quantity}")
-                            uniqueMeals.add(MealWithFood(meal = meal, food = food))
-                            addedMealIds.add(meal.id)
-                        }
+                meals.forEach { meal ->
+                    val food = foods.find { it.foodCd == meal.dietFoodCode }
+                    if (food != null) {
+                        uniqueMeals.add(MealWithFood(meal = meal, food = food))
                     }
                 }
 
                 Log.d("MealDetailFragment", "Updating Adapter with Meals: $uniqueMeals")
                 adapter.updateMealsWithFood(uniqueMeals)
             }
-        })
+        }
 
 
         dietViewModel.loadMealsWithFood()
