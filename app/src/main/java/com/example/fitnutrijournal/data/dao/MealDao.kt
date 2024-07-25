@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.fitnutrijournal.data.model.Meal
+import com.example.fitnutrijournal.data.model.MealWithFood
 
 @Dao
 interface MealDao {
@@ -31,4 +32,21 @@ interface MealDao {
     // 특정 날짜와 식사 유형에 해당하는 모든 Meal 삭제
     @Query("DELETE FROM Meal WHERE date = :date AND mealType = :mealType")
     suspend fun deleteMealsByDateAndType(date: String, mealType: String)
+
+
+    @Query("""
+    SELECT Meal.*, Food.*
+    FROM Meal
+    INNER JOIN Food ON Meal.dietFoodCode = Food.foodCd
+    WHERE Meal.id = :mealId
+""")
+    suspend fun getMealWithFoodById(mealId: Long): MealWithFood?
+
+    @Query("""
+    SELECT Meal.*, Food.*
+    FROM Meal
+    INNER JOIN Food ON Meal.dietFoodCode = Food.foodCd
+""")
+    suspend fun getAllMealsWithFood(): List<MealWithFood>
+
 }
