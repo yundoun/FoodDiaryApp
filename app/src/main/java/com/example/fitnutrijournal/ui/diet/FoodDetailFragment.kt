@@ -55,10 +55,6 @@ class FoodDetailFragment : Fragment() {
             if (selectedMealQuantity != null) {
                 binding.totalContentInput.setText(selectedMealQuantity.toString())
                 Log.d("FoodDetailFragment", "selectedMealQuantity: $selectedMealQuantity")
-//                binding.calories.text = String.format("%.2f kcal", selectedMealQuantity * food.caloriesPerGram)
-//                binding.carbohydrate.text = String.format("%.2f g", selectedMealQuantity * food.carbohydrate / food.servingSize)
-//                binding.protein.text = String.format("%.2f g", selectedMealQuantity * food.protein / food.servingSize)
-//                binding.fat.text = String.format("%.2f g", selectedMealQuantity * food.fat / food.servingSize)
 
             } else {
                 binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")

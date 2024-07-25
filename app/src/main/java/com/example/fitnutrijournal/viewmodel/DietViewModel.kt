@@ -53,7 +53,11 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         viewModelScope.launch {
             val food = foodRepository.getFoodByFoodCode(foodCode)
             _selectedFood.value = food
-            updateNutrientValues(food.servingSize) // 초기값으로 기본 중량 설정
+
+            // 기본 중량으로 설정하지 않고 _selectedMealQuantity 값이 있을 때만 업데이트
+            if (_selectedMealQuantity.value == null) {
+                updateNutrientValues(food.servingSize)
+            }
         }
     }
 
@@ -98,6 +102,11 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _quantity = MutableLiveData<Float>()
     val quantity: LiveData<Float> get() = _quantity
 
+    private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
+    val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
+
+    private val _selectedMealQuantity = MutableLiveData<Int?>()
+    val selectedMealQuantity: LiveData<Int?> get() = _selectedMealQuantity
 
     private suspend fun generateFoodCode(): String {
         val maxFoodCd = foodRepository.getMaxFoodCd()
@@ -178,21 +187,24 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     fun updateTotalContent(value: String) {
         _totalContent.value = value
-        val food = _selectedFood.value ?: return
         val totalContent = value.toIntOrNull() ?: 0
         updateNutrientValues(totalContent)
     }
 
     // 중량에 맞게 영양성분 계산
-    fun updateNutrientValues(totalContent: Int) {
+    private fun updateNutrientValues(totalContent: Int) {
         val food = _selectedFood.value ?: return
         if (food.servingSize == 0) return
+
+        Log.d("DietViewModel", "Calculating nutrients with totalContent: $totalContent and servingSize: ${food.servingSize}")
 
         val factor = totalContent.toFloat() / food.servingSize
         _calculatedCalories.value = (food.calories * factor).toString()
         _calculatedCarbohydrate.value = (food.carbohydrate * factor).toString()
         _calculatedProtein.value = (food.protein * factor).toString()
         _calculatedFat.value = (food.fat * factor).toString()
+
+        Log.d("DietViewModel", "Calculated calories: ${_calculatedCalories.value}, carbs: ${_calculatedCarbohydrate.value}, protein: ${_calculatedProtein.value}, fat: ${_calculatedFat.value}")
     }
 
     val filteredFoods = MediatorLiveData<List<Food>>().apply {
@@ -316,11 +328,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     }
 
     // Load meals with their associated foods using a join query
-    private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
-    val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
 
-    private val _selectedMealQuantity = MutableLiveData<Int?>()
-    val selectedMealQuantity: LiveData<Int?> get() = _selectedMealQuantity
 
     fun setSelectedMealQuantity(quantity: Int) {
         _selectedMealQuantity.value = quantity
@@ -359,10 +367,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-
-    suspend fun getMealByFoodCodeAndDate(foodCd: String, date: String): Meal? {
-        return mealRepository.getMealByFoodCodeAndDate(foodCd, date)
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateFoodIntake() {
