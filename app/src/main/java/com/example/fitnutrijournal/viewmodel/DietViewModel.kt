@@ -183,7 +183,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         updateNutrientValues(totalContent)
     }
 
-    private fun updateNutrientValues(totalContent: Int) {
+    // 중량에 맞게 영양성분 계산
+    fun updateNutrientValues(totalContent: Int) {
         val food = _selectedFood.value ?: return
         if (food.servingSize == 0) return
 
@@ -354,5 +355,29 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateFoodIntake() {
+        val food = _selectedFood.value ?: return
+        val newQuantity = _totalContent.value?.toIntOrNull() ?: return
+        viewModelScope.launch {
+            val date = homeViewModel.currentDate.value ?: return@launch
+            val mealType = _mealType.value ?: return@launch
+
+            val meal = mealRepository.getMealByFoodCodeAndDate(food.foodCd, date)
+            meal?.let {
+                val oldQuantity = it.quantity
+
+                val updatedMeal = it.copy(quantity = newQuantity)
+                mealRepository.update(updatedMeal)
+
+                // 기존 섭취량을 제거하고, 새로운 섭취량을 추가하여 영양성분 업데이트
+                homeViewModel.updateNutrientData(mealType, food, -oldQuantity)
+                homeViewModel.updateNutrientData(mealType, food, newQuantity)
+
+                homeViewModel.refreshFilteredFoods()
+            }
+        }
+    }
 
 }

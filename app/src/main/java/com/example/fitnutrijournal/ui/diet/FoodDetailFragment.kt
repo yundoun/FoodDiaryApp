@@ -12,19 +12,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
-import com.example.fitnutrijournal.viewmodel.HomeViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +31,22 @@ class FoodDetailFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         (activity as MainActivity).showBottomNavigation(false)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnUpdate.setOnClickListener {
+            dietViewModel.updateFoodIntake()
+            Toast.makeText(context, "식사가 업데이트되었습니다.", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+        }
+
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
         dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
             val selectedMealQuantity = dietViewModel.selectedMealQuantity.value
@@ -61,6 +74,7 @@ class FoodDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        return binding.root
+
     }
+
 }

@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.model.MealWithFood
 
@@ -18,6 +19,12 @@ interface MealDao {
 
     @Query("SELECT * FROM Meal WHERE date = :date AND mealType = :mealType")
     suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal>
+
+    @Query("SELECT * FROM meal WHERE dietFoodCode = :foodCode AND date = :date LIMIT 1")
+    suspend fun getMealByFoodCodeAndDate(foodCode: String, date: String): Meal?
+
+    @Update
+    suspend fun update(meal: Meal)
 
     @Query("SELECT * FROM Meal WHERE dietFoodCode = :foodCode")
     suspend fun getMealsByFoodCode(foodCode: String): List<Meal>
