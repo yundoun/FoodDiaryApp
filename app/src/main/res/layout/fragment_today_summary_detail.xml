@@ -35,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="오늘의 목표"
+                android:textColor="@color/text_black"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/todayTargetSection"
@@ -46,19 +47,20 @@
                 android:id="@+id/targetEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/todayTargetSection"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.154"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView3"
                 app:layout_constraintStart_toEndOf="@+id/textView3"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView3"
                 app:srcCompat="@drawable/ic_edit" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/todayTargetSection"
-                android:layout_width="380dp"
-                android:layout_height="150dp"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="100dp"
-                app:cardBackgroundColor="@color/light_green"
+                android:layout_marginEnd="30dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -69,18 +71,60 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <!-- 내부 위젯들 -->
-                    <TextView
-                        android:id="@+id/tvTargetCalories"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.501"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.156" />
+                        app:layout_constraintVertical_bias="0.4">
+
+                        <!-- 내부 위젯들 -->
+
+                        <ImageView
+                            android:id="@+id/icTargetCal"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_marginEnd="20dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvTargetC"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_target_cal" />
+
+                        <TextView
+                            android:id="@+id/tvTargetC"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="목표 칼로리"
+                            android:textColor="@color/text_gray"
+                            android:textSize="22dp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/tvTargetCalories"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/icTargetCal"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvTargetCalories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/black"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/tvTargetC"
+                            app:layout_constraintTop_toBottomOf="@+id/tvTargetC"
+                            app:layout_constraintVertical_bias="0.0" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                         android:id="@+id/tvBreakfast"
@@ -88,11 +132,12 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="아침"
+                        android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvLunch"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                        app:layout_constraintVertical_bias="0.3" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                        app:layout_constraintVertical_bias="0.5" />
 
                     <TextView
                         android:id="@+id/tvLunch"
@@ -100,12 +145,12 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="점심"
+                        android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvDinner"
-                        app:layout_constraintHorizontal_bias="0.393"
                         app:layout_constraintStart_toEndOf="@+id/tvBreakfast"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                        app:layout_constraintVertical_bias="0.3" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                        app:layout_constraintVertical_bias="0.5" />
 
                     <TextView
                         android:id="@+id/tvDinner"
@@ -113,11 +158,12 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="저녁"
+                        android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tvSnack"
                         app:layout_constraintStart_toEndOf="@+id/tvLunch"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                        app:layout_constraintVertical_bias="0.3" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                        app:layout_constraintVertical_bias="0.5" />
 
                     <TextView
                         android:id="@+id/tvSnack"
@@ -125,59 +171,64 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="간식"
+                        android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tvDinner"
-                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                        app:layout_constraintVertical_bias="0.311" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                        app:layout_constraintVertical_bias="0.5" />
 
                     <TextView
                         android:id="@+id/breakfast"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetBreakfast : 0) + " kcal"}'
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/lunch"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.8" />
+                        android:textColor="@color/text_black"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tvBreakfast"
+                        app:layout_constraintStart_toStartOf="@+id/tvBreakfast"
+                        app:layout_constraintTop_toBottomOf="@+id/tvBreakfast" />
 
                     <TextView
                         android:id="@+id/lunch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetLunch : 0) + " kcal"}'
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/dinner"
-                        app:layout_constraintStart_toEndOf="@+id/breakfast"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.8" />
+                        android:textColor="@color/text_black"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tvLunch"
+                        app:layout_constraintStart_toStartOf="@+id/tvLunch"
+                        app:layout_constraintTop_toBottomOf="@+id/tvLunch" />
 
                     <TextView
                         android:id="@+id/dinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetDinner : 0) + " kcal"}'
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/snack"
-                        app:layout_constraintStart_toEndOf="@+id/lunch"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.8" />
+                        android:textColor="@color/text_black"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tvDinner"
+                        app:layout_constraintStart_toStartOf="@+id/tvDinner"
+                        app:layout_constraintTop_toBottomOf="@+id/tvDinner" />
 
                     <TextView
                         android:id="@+id/snack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetSnack : 0) + " kcal"}'
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/dinner"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.8" />
+                        android:textColor="@color/text_black"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tvSnack"
+                        app:layout_constraintStart_toStartOf="@+id/tvSnack"
+                        app:layout_constraintTop_toBottomOf="@+id/tvSnack" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -187,21 +238,20 @@
                 android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="현재 진행 상황"
                 app:layout_constraintBottom_toTopOf="@+id/currentProgressSection"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/currentProgressSection"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="@+id/currentProgressSection" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/currentProgressSection"
                 android:layout_width="0dp"
                 android:layout_height="240dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="100dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="30dp"
                 android:background="@drawable/border_section_light_blue"
                 app:cardBackgroundColor="@color/light_blue"
                 app:cardCornerRadius="16dp"
@@ -363,23 +413,23 @@
                 android:id="@+id/textView32"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="상세 정보"
                 app:layout_constraintBottom_toTopOf="@+id/detailSection"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintEnd_toEndOf="@+id/detailSection"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/detailSection" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/detailSection"
                 android:layout_width="0dp"
                 android:layout_height="310dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="100dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="30dp"
                 android:layout_marginBottom="100dp"
-                android:background="@drawable/border_section_white"
-                app:cardElevation="8dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

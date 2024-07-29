@@ -55,7 +55,7 @@ class TodaySummaryDetailFragment : Fragment() {
         homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
             goal?.let {
                 // 필요한 경우 UI 업데이트 코드 작성
-                binding.tvTargetCalories.text = "목표 칼로리\n${it.targetCalories} kcal"
+                binding.tvTargetCalories.text = "${it.targetCalories} kcal"
                 binding.breakfast.text = "${it.targetBreakfast} kcal"
                 binding.lunch.text = "${it.targetLunch} kcal"
                 binding.dinner.text = "${it.targetDinner} kcal"
