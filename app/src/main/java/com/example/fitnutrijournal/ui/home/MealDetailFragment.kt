@@ -1,6 +1,10 @@
 package com.example.fitnutrijournal.ui.home
 
 import android.annotation.SuppressLint
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -178,6 +183,11 @@ class MealDetailFragment : Fragment() {
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: MealWithFoodAdapter) {
         val itemTouchHelperCallback =
             object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+                private val background = ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
+                private val deleteIcon: Drawable? = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
+                private val iconMargin = resources.getDimension(R.dimen.icon_margin).toInt()
+
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
@@ -197,6 +207,49 @@ class MealDetailFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                }
+
+                override fun onChildDraw(
+                    c: Canvas,
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float,
+                    dY: Float,
+                    actionState: Int,
+                    isCurrentlyActive: Boolean
+                ) {
+                    val itemView = viewHolder.itemView
+                    val iconTop = itemView.top + (itemView.height - deleteIcon!!.intrinsicHeight) / 2
+                    val iconMargin = iconMargin
+                    val iconLeft = itemView.right - iconMargin - deleteIcon.intrinsicWidth
+                    val iconRight = itemView.right - iconMargin
+                    val iconBottom = iconTop + deleteIcon.intrinsicHeight
+
+                    if (dX < 0) { // Swiping to the left
+                        background.setBounds(
+                            itemView.right + dX.toInt(),
+                            itemView.top,
+                            itemView.right,
+                            itemView.bottom
+                        )
+                        deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    } else { // view is unswiped
+                        background.setBounds(0, 0, 0, 0)
+                        deleteIcon.setBounds(0, 0, 0, 0)
+                    }
+
+                    background.draw(c)
+                    c.save()
+
+                    if (dX < 0) {
+                        c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    } else {
+                        c.clipRect(0, 0, 0, 0)
+                    }
+
+                    deleteIcon.draw(c)
+                    c.restore()
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                 }
             }
 

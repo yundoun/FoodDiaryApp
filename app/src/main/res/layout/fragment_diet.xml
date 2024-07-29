@@ -32,15 +32,14 @@
             android:layout_marginStart="40dp"
             android:layout_marginBottom="10dp"
             android:text="음식 검색하기"
+            android:textColor="@color/text_black"
             app:layout_constraintBottom_toTopOf="@+id/searchLayout"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/searchLayout"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:layout_marginStart="40dp"
             android:layout_marginTop="80dp"
             android:layout_marginEnd="60dp"
@@ -59,7 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_search_white" />
+                app:srcCompat="@android:drawable/ic_menu_search" />
 
             <EditText
                 android:id="@+id/searchEditText"
@@ -74,7 +73,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/icSearch"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -83,9 +82,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="80dp"
+            app:layout_constraintBottom_toBottomOf="@+id/searchLayout"
             app:layout_constraintStart_toEndOf="@+id/searchLayout"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/searchLayout"
             app:srcCompat="@drawable/ic_mic" />
 
         <com.google.android.material.tabs.TabLayout
