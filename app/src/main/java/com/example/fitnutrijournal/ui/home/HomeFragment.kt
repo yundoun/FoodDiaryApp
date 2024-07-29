@@ -4,17 +4,27 @@ import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RotateDrawable
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
@@ -23,6 +33,7 @@ import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
@@ -49,132 +60,271 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.btnCalendar.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
-        }
-
-        binding.btnTodaySummaryDetail.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
-        }
-
-        binding.btnCalendar.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
-        }
-
-        binding.btnTodaySummaryDetail.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
-        }
-
-        // 아침, 점심, 저녁, 간식 레이아웃 클릭 이벤트 설정
-        binding.breakfastLayout.setOnClickListener {
-            navigateToMealDetail("breakfast")
-        }
-
-        binding.lunchLayout.setOnClickListener {
-            navigateToMealDetail("lunch")
-        }
-
-        binding.dinnerLayout.setOnClickListener {
-            navigateToMealDetail("dinner")
-        }
-
-        binding.snackLayout.setOnClickListener {
-            navigateToMealDetail("snack")
-        }
-
-        binding.addBreakfast.setOnClickListener {
-            dietViewModel.setMealType("breakfast")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "breakfast"
-                )
-            )
-        }
-
-        binding.addLunch.setOnClickListener {
-            dietViewModel.setMealType("lunch")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "lunch"
-                )
-            )
-        }
-
-        binding.addDinner.setOnClickListener {
-            dietViewModel.setMealType("dinner")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "dinner"
-                )
-            )
-        }
-
-        binding.addSnack.setOnClickListener {
-            dietViewModel.setMealType("snack")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "snack"
-                )
-            )
-        }
-
-
+        setupObservers()
         setProgressbarColor()
-
-
+        setupNavigation()
+        setupCircularProgressBarColorObserver()
     }
 
-    private fun setProgressbarColor(){
+    private fun setupObservers(){
+        homeViewModel.remainingCalories.observe(viewLifecycleOwner) {
+            setRemainingCaloriesText(binding.remainingCalories, it)
+            setCalorieIntakeText(binding.tvCalorieIntake, homeViewModel.dailyIntakeRecord.value?.currentCalories ?: 0)
+            setTargetCaloriesText(binding.tvTargetCalories, homeViewModel.todayGoal.value?.targetCalories ?: 0)
+        }
+    }
 
-        homeViewModel.currentCarbIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetCarbIntake.value ?: 0 // 기본값을 0으로 설정
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
+    @BindingAdapter("calorieIntakeText")
+    fun setCalorieIntakeText(textView: TextView, currentCalories: Int) {
+        val context = textView.context
+        val intakeText = "섭취량"
+        val displayText = "$currentCalories\n$intakeText"
+        val spannable = SpannableString(displayText)
 
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.carbProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.carbProgressBar.progressDrawable = progressDrawable
+        // "섭취량" 텍스트의 색상 변경
+        val grayColor = ContextCompat.getColor(context, R.color.text_gray)
+        spannable.setSpan(
+            ForegroundColorSpan(grayColor),
+            displayText.indexOf(intakeText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // "섭취량" 텍스트의 크기 변경
+        val scale = context.resources.displayMetrics.density
+        val pixelSize = (12 * scale + 0.5f).toInt()
+        spannable.setSpan(
+            AbsoluteSizeSpan(pixelSize),
+            displayText.indexOf(intakeText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannable
+    }
+
+
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
+    @BindingAdapter("targetCaloriesText")
+    fun setTargetCaloriesText(textView: TextView, targetCalories: Int) {
+        val context = textView.context
+        val targetText = "목표"
+        val displayText = "$targetCalories\n$targetText"
+        val spannable = SpannableString(displayText)
+
+        // "목표" 텍스트의 색상 변경
+        val grayColor = ContextCompat.getColor(context, R.color.text_gray)
+        spannable.setSpan(
+            ForegroundColorSpan(grayColor),
+            displayText.indexOf(targetText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // "목표" 텍스트의 크기 변경
+        val scale = context.resources.displayMetrics.density
+        val pixelSize = (12 * scale + 0.5f).toInt()
+        spannable.setSpan(
+            AbsoluteSizeSpan(pixelSize),
+            displayText.indexOf(targetText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannable
+    }
+
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
+    @BindingAdapter("remainingCaloriesText")
+    fun setRemainingCaloriesText(textView: TextView, remainingCalories: Int) {
+        Log.d("HomeFragment", "Remaining Calories: $remainingCalories")
+        val context = textView.context
+        val unitText: String
+        val displayText: String
+
+        if (remainingCalories < 0) {
+            unitText = "초과량"
+            displayText = "${abs(remainingCalories)}\n$unitText"
+            textView.setTextColor(ContextCompat.getColor(context, R.color.progressbar_red))
+        } else {
+            unitText = "잔여량"
+            displayText = "$remainingCalories\n$unitText"
+            textView.setTextColor(ContextCompat.getColor(context, R.color.progressbar_blue))
+        }
+
+        val spannable = SpannableString(displayText)
+
+        // "초과량" 또는 "잔여량" 텍스트의 색상 변경
+        val grayColor = ContextCompat.getColor(context, R.color.text_gray)
+        spannable.setSpan(
+            ForegroundColorSpan(grayColor),
+            displayText.indexOf(unitText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // "초과량" 또는 "잔여량" 텍스트의 크기 변경
+        val scale = context.resources.displayMetrics.density
+        val pixelSize = (12 * scale + 0.5f).toInt()
+        spannable.setSpan(
+            AbsoluteSizeSpan(pixelSize),
+            displayText.indexOf(unitText),
+            displayText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannable
+    }
+
+
+
+    private fun setupNavigation() {
+        binding.apply {
+            btnCalendar.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
             }
-        })
-
-        homeViewModel.currentProteinIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetProteinIntake.value ?: 0 // 기본값을 0으로 설정
-
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.proteinProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.proteinProgressBar.progressDrawable = progressDrawable
+            btnTodaySummaryDetail.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
             }
-        })
-
-        homeViewModel.currentFatIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetFatIntake.value ?: 0
-
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.fatProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.fatProgressBar.progressDrawable = progressDrawable
+            breakfastLayout.setOnClickListener {
+                navigateToMealDetail("breakfast")
             }
+            lunchLayout.setOnClickListener {
+                navigateToMealDetail("lunch")
+            }
+            dinnerLayout.setOnClickListener {
+                navigateToMealDetail("dinner")
+            }
+            snackLayout.setOnClickListener {
+                navigateToMealDetail("snack")
+            }
+            addBreakfast.setOnClickListener {
+                navigateToDiet("breakfast")
+            }
+            addLunch.setOnClickListener {
+                navigateToDiet("lunch")
+            }
+            addDinner.setOnClickListener {
+                navigateToDiet("dinner")
+            }
+            addSnack.setOnClickListener {
+                navigateToDiet("snack")
+            }
+        }
+    }
+
+    private fun setProgressbarColor() {
+        setupCombinedIntakeObserver(
+            homeViewModel.currentCarbIntake,
+            homeViewModel.targetCarbIntake,
+            binding.carbProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentProteinIntake,
+            homeViewModel.targetProteinIntake,
+            binding.proteinProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentFatIntake,
+            homeViewModel.targetFatIntake,
+            binding.fatProgressBar
+        )
+    }
+
+    private fun setupCombinedIntakeObserver(
+        currentIntakeLiveData: LiveData<Int>,
+        targetIntakeLiveData: LiveData<Int>,
+        progressBar: ProgressBar
+    ) {
+        val combinedIntake = MediatorLiveData<Pair<Int, Int>>().apply {
+            var currentIntakeValue = currentIntakeLiveData.value ?: 0
+            var targetIntakeValue = targetIntakeLiveData.value ?: 0
+
+            addSource(currentIntakeLiveData) { currentIntake ->
+                currentIntakeValue = currentIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+
+            addSource(targetIntakeLiveData) { targetIntake ->
+                targetIntakeValue = targetIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+        }
+
+        combinedIntake.observe(viewLifecycleOwner, Observer { (currentIntake, targetIntake) ->
+            Log.d("progressbar", "Intake: $currentIntake Target: $targetIntake")
+            updateProgressBarColor(progressBar, currentIntake, targetIntake)
         })
     }
+
+    private fun updateProgressBarColor(progressBar: ProgressBar, currentIntake: Int, targetIntake: Int) {
+        val progressDrawable = progressBar.progressDrawable.mutate() as LayerDrawable
+        val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+        val colorResId = if (currentIntake > targetIntake) {
+            R.color.progressbar_red
+        } else {
+            R.color.progressbar_green
+        }
+        progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+        progressBar.progressDrawable = progressDrawable
+    }
+
+    private fun setupCircularProgressBarColorObserver() {
+        val combinedIntake = MediatorLiveData<Pair<Int, Int>>().apply {
+            var currentTotalCalories = homeViewModel.currentTotalCalories.value ?: 0
+            var targetCalories = homeViewModel.todayGoal.value?.targetCalories ?: 0
+
+            addSource(homeViewModel.currentTotalCalories) { currentCalories ->
+                currentTotalCalories = currentCalories
+                value = currentTotalCalories to targetCalories
+            }
+
+            addSource(homeViewModel.todayGoal) { todayGoal ->
+                targetCalories = todayGoal?.targetCalories ?: 0
+                value = currentTotalCalories to targetCalories
+            }
+        }
+
+        combinedIntake.observe(viewLifecycleOwner, Observer { (currentTotalCalories, targetCalories) ->
+            Log.d("circularProgressBar", "Current Total Calories: $currentTotalCalories, Target Calories: $targetCalories")
+            updateCircularProgressBarColor(binding.circularProgressBar, currentTotalCalories, targetCalories)
+        })
+    }
+
+    private fun updateCircularProgressBarColor(progressBar: ProgressBar, currentTotalCalories: Int, targetCalories: Int) {
+        val progressDrawable = progressBar.progressDrawable.mutate()
+
+        if (progressDrawable is LayerDrawable) {
+            // 로그를 사용하여 각 레이어의 타입을 확인합니다.
+            for (i in 0 until progressDrawable.numberOfLayers) {
+                val layerDrawable = progressDrawable.getDrawable(i)
+                Log.d("LayerInfo", "Layer $i: ${layerDrawable::class.java.simpleName}")
+            }
+
+            val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress)
+
+            if (progressLayer is RotateDrawable) {
+                val drawable = progressLayer.drawable
+                val colorResId = if (currentTotalCalories > targetCalories) {
+                    R.color.progressbar_orange
+                } else {
+                    R.color.progressbar_blue
+                }
+                drawable?.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+                Log.d("ColorChange", "Changing color to: ${if (currentTotalCalories > targetCalories) "red" else "blue"}")
+                progressBar.progressDrawable = progressDrawable
+            } else {
+                Log.e("HomeFragment", "Progress layer is not a RotateDrawable")
+            }
+        } else {
+            Log.e("HomeFragment", "Progress drawable is not a LayerDrawable")
+        }
+    }
+
+
 
     private fun navigateToMealDetail(mealType: String) {
         homeViewModel.setMealType(mealType)
@@ -182,7 +332,12 @@ class HomeFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-
+    private fun navigateToDiet(mealType: String) {
+        dietViewModel.setMealType(mealType)
+        findNavController().navigate(
+            HomeFragmentDirections.actionNavigationHomeToNavigationDiet(mealType)
+        )
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

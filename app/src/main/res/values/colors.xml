@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#ECECEC</color>
@@ -13,5 +14,11 @@
     <color name="orange">#FF7F0E</color>
     <color name="progressbar_red">#ed6868</color>
     <color name="progressbar_green">#6cf096</color>
+    <color name="progressbar_blue">#477ed6</color>
+    <color name="progressbar_orange">#ffa938</color>
+
+    <color name="text_green">#2ca332</color>
+    <color name="text_black">#000000</color>
+    <color name="text_gray">#7f7f7f</color>
 
 </resources>

@@ -21,7 +21,6 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
-    private val homeViewModel: DietViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
 
     override fun onCreateView(
