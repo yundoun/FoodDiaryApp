@@ -10,11 +10,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
@@ -50,130 +53,101 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnCalendar.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
-        }
-
-        binding.btnTodaySummaryDetail.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
-        }
-
-        binding.btnCalendar.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
-        }
-
-        binding.btnTodaySummaryDetail.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
-        }
-
-        // 아침, 점심, 저녁, 간식 레이아웃 클릭 이벤트 설정
-        binding.breakfastLayout.setOnClickListener {
-            navigateToMealDetail("breakfast")
-        }
-
-        binding.lunchLayout.setOnClickListener {
-            navigateToMealDetail("lunch")
-        }
-
-        binding.dinnerLayout.setOnClickListener {
-            navigateToMealDetail("dinner")
-        }
-
-        binding.snackLayout.setOnClickListener {
-            navigateToMealDetail("snack")
-        }
-
-        binding.addBreakfast.setOnClickListener {
-            dietViewModel.setMealType("breakfast")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "breakfast"
-                )
-            )
-        }
-
-        binding.addLunch.setOnClickListener {
-            dietViewModel.setMealType("lunch")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "lunch"
-                )
-            )
-        }
-
-        binding.addDinner.setOnClickListener {
-            dietViewModel.setMealType("dinner")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "dinner"
-                )
-            )
-        }
-
-        binding.addSnack.setOnClickListener {
-            dietViewModel.setMealType("snack")
-            findNavController().navigate(
-                HomeFragmentDirections.actionNavigationHomeToNavigationDiet(
-                    "snack"
-                )
-            )
-        }
-
-
         setProgressbarColor()
-
-
+        setupNavigation()
     }
 
-    private fun setProgressbarColor(){
-
-        homeViewModel.currentCarbIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetCarbIntake.value ?: 0 // 기본값을 0으로 설정
-
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.carbProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.carbProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.carbProgressBar.progressDrawable = progressDrawable
+    private fun setupNavigation() {
+        binding.apply {
+            btnCalendar.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
             }
-        })
-
-        homeViewModel.currentProteinIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetProteinIntake.value ?: 0 // 기본값을 0으로 설정
-
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.proteinProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.proteinProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.proteinProgressBar.progressDrawable = progressDrawable
+            btnTodaySummaryDetail.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
             }
-        })
-
-        homeViewModel.currentFatIntake.observe(viewLifecycleOwner, Observer { currentIntake ->
-            val targetIntake = homeViewModel.targetFatIntake.value ?: 0
-
-            if (currentIntake > targetIntake) {
-                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_red), PorterDuff.Mode.SRC_IN)
-                binding.fatProgressBar.progressDrawable = progressDrawable
-            } else {
-                val progressDrawable = binding.fatProgressBar.progressDrawable.mutate() as LayerDrawable
-                val progressLayer = progressDrawable.getDrawable(2) as ClipDrawable // findDrawableByLayerId 대신 getDrawable 사용
-                progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), R.color.progressbar_green), PorterDuff.Mode.SRC_IN)
-                binding.fatProgressBar.progressDrawable = progressDrawable
+            breakfastLayout.setOnClickListener {
+                navigateToMealDetail("breakfast")
             }
+            lunchLayout.setOnClickListener {
+                navigateToMealDetail("lunch")
+            }
+            dinnerLayout.setOnClickListener {
+                navigateToMealDetail("dinner")
+            }
+            snackLayout.setOnClickListener {
+                navigateToMealDetail("snack")
+            }
+            addBreakfast.setOnClickListener {
+                navigateToDiet("breakfast")
+            }
+            addLunch.setOnClickListener {
+                navigateToDiet("lunch")
+            }
+            addDinner.setOnClickListener {
+                navigateToDiet("dinner")
+            }
+            addSnack.setOnClickListener {
+                navigateToDiet("snack")
+            }
+        }
+    }
+
+    private fun setProgressbarColor() {
+        setupCombinedIntakeObserver(
+            homeViewModel.currentCarbIntake,
+            homeViewModel.targetCarbIntake,
+            binding.carbProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentProteinIntake,
+            homeViewModel.targetProteinIntake,
+            binding.proteinProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentFatIntake,
+            homeViewModel.targetFatIntake,
+            binding.fatProgressBar
+        )
+    }
+
+    private fun setupCombinedIntakeObserver(
+        currentIntakeLiveData: LiveData<Int>,
+        targetIntakeLiveData: LiveData<Int>,
+        progressBar: ProgressBar
+    ) {
+        val combinedIntake = MediatorLiveData<Pair<Int, Int>>().apply {
+            var currentIntakeValue = currentIntakeLiveData.value ?: 0
+            var targetIntakeValue = targetIntakeLiveData.value ?: 0
+
+            addSource(currentIntakeLiveData) { currentIntake ->
+                currentIntakeValue = currentIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+
+            addSource(targetIntakeLiveData) { targetIntake ->
+                targetIntakeValue = targetIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+        }
+
+        combinedIntake.observe(viewLifecycleOwner, Observer { (currentIntake, targetIntake) ->
+            Log.d("progressbar", "Intake: $currentIntake Target: $targetIntake")
+            updateProgressBarColor(progressBar, currentIntake, targetIntake)
         })
+    }
+
+    private fun updateProgressBarColor(progressBar: ProgressBar, currentIntake: Int, targetIntake: Int) {
+        val progressDrawable = progressBar.progressDrawable.mutate() as LayerDrawable
+        val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+        val colorResId = if (currentIntake > targetIntake) {
+            R.color.progressbar_red
+        } else {
+            R.color.progressbar_green
+        }
+        progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+        progressBar.progressDrawable = progressDrawable
     }
 
     private fun navigateToMealDetail(mealType: String) {
@@ -182,7 +156,12 @@ class HomeFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-
+    private fun navigateToDiet(mealType: String) {
+        dietViewModel.setMealType(mealType)
+        findNavController().navigate(
+            HomeFragmentDirections.actionNavigationHomeToNavigationDiet(mealType)
+        )
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
