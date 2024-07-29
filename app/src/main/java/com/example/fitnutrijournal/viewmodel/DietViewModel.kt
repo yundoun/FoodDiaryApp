@@ -76,7 +76,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _calculatedFat = MutableLiveData<String>("")
     val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
-    val allFoods: LiveData<List<Food>> = foodRepository.allFoods
+
+    private val allFoods: LiveData<List<Food>> = foodRepository.allFoods
     val favoriteFoods: LiveData<List<Food>> = foodRepository.favoriteFoods
     val userAddedFoods: LiveData<List<Food>> = foodRepository.userAddedFoods
 
@@ -199,10 +200,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         Log.d("DietViewModel", "Calculating nutrients with totalContent: $totalContent and servingSize: ${food.servingSize}")
 
         val factor = totalContent.toFloat() / food.servingSize
-        _calculatedCalories.value = (food.calories * factor).toString()
-        _calculatedCarbohydrate.value = (food.carbohydrate * factor).toString()
-        _calculatedProtein.value = (food.protein * factor).toString()
-        _calculatedFat.value = (food.fat * factor).toString()
+        _calculatedCalories.value = String.format("%.2f", food.calories * factor)
+        _calculatedCarbohydrate.value = String.format("%.2f", food.carbohydrate * factor)
+        _calculatedProtein.value = String.format("%.2f", food.protein * factor)
+        _calculatedFat.value = String.format("%.2f", food.fat * factor)
 
         Log.d("DietViewModel", "Calculated calories: ${_calculatedCalories.value}, carbs: ${_calculatedCarbohydrate.value}, protein: ${_calculatedProtein.value}, fat: ${_calculatedFat.value}")
     }
