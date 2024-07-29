@@ -181,6 +181,9 @@ class HomeFragment : Fragment() {
 
     private fun setupNavigation() {
         binding.apply {
+            textDate.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
+            }
             btnCalendar.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
             }

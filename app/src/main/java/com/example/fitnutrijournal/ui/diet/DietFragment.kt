@@ -51,7 +51,6 @@ class DietFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val viewPager = binding.viewPager
         val adapter = DietPagerAdapter(requireActivity())
         viewPager.adapter = adapter

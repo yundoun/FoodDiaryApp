@@ -53,125 +53,135 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_edit" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
                 android:id="@+id/todayTargetSection"
                 android:layout_width="380dp"
                 android:layout_height="150dp"
                 android:layout_marginTop="100dp"
-                android:background="@drawable/border_section_light_green"
+                app:cardBackgroundColor="@color/light_green"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tvTargetCalories"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.156" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/tvBreakfast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="아침"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvLunch"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                    app:layout_constraintVertical_bias="0.3" />
+                    <!-- 내부 위젯들 -->
+                    <TextView
+                        android:id="@+id/tvTargetCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.501"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.156" />
 
-                <TextView
-                    android:id="@+id/tvLunch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="점심"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvDinner"
-                    app:layout_constraintHorizontal_bias="0.393"
-                    app:layout_constraintStart_toEndOf="@+id/tvBreakfast"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                    app:layout_constraintVertical_bias="0.3" />
+                    <TextView
+                        android:id="@+id/tvBreakfast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="아침"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvLunch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
+                        app:layout_constraintVertical_bias="0.3" />
 
-                <TextView
-                    android:id="@+id/tvDinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="저녁"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tvSnack"
-                    app:layout_constraintStart_toEndOf="@+id/tvLunch"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                    app:layout_constraintVertical_bias="0.3" />
+                    <TextView
+                        android:id="@+id/tvLunch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="점심"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvDinner"
+                        app:layout_constraintHorizontal_bias="0.393"
+                        app:layout_constraintStart_toEndOf="@+id/tvBreakfast"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
+                        app:layout_constraintVertical_bias="0.3" />
 
-                <TextView
-                    android:id="@+id/tvSnack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="간식"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tvDinner"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
-                    app:layout_constraintVertical_bias="0.311" />
+                    <TextView
+                        android:id="@+id/tvDinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="저녁"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tvSnack"
+                        app:layout_constraintStart_toEndOf="@+id/tvLunch"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
+                        app:layout_constraintVertical_bias="0.3" />
 
-                <TextView
-                    android:id="@+id/breakfast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetBreakfast : 0) + " kcal"}'
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/lunch"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.8" />
+                    <TextView
+                        android:id="@+id/tvSnack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="간식"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tvDinner"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTargetCalories"
+                        app:layout_constraintVertical_bias="0.311" />
 
-                <TextView
-                    android:id="@+id/lunch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetLunch : 0) + " kcal"}'
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/dinner"
-                    app:layout_constraintStart_toEndOf="@+id/breakfast"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.8" />
+                    <TextView
+                        android:id="@+id/breakfast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetBreakfast : 0) + " kcal"}'
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/lunch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8" />
 
-                <TextView
-                    android:id="@+id/dinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetDinner : 0) + " kcal"}'
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/snack"
-                    app:layout_constraintStart_toEndOf="@+id/lunch"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.8" />
+                    <TextView
+                        android:id="@+id/lunch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetLunch : 0) + " kcal"}'
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/dinner"
+                        app:layout_constraintStart_toEndOf="@+id/breakfast"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8" />
 
-                <TextView
-                    android:id="@+id/snack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetSnack : 0) + " kcal"}'
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/dinner"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.8" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/dinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetDinner : 0) + " kcal"}'
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/snack"
+                        app:layout_constraintStart_toEndOf="@+id/lunch"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8" />
+
+                    <TextView
+                        android:id="@+id/snack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetSnack : 0) + " kcal"}'
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/dinner"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.8" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
 
             <TextView
                 android:id="@+id/textView23"
@@ -185,7 +195,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
                 android:id="@+id/currentProgressSection"
                 android:layout_width="0dp"
                 android:layout_height="240dp"
@@ -193,150 +203,161 @@
                 android:layout_marginTop="100dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/border_section_light_blue"
+                app:cardBackgroundColor="@color/light_blue"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/todayTargetSection">
 
-                <TextView
-                    android:id="@+id/calroie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="칼로리"
-                    app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
-                    app:layout_constraintStart_toStartOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <ProgressBar
-                    android:id="@+id/calorieProgressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginEnd="30dp"
-                    android:max="@{viewModel.targetCalories}"
-                    android:progress="@{viewModel.currentTotalCalories}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <!-- 내부 위젯들 -->
+                    <TextView
+                        android:id="@+id/calroie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="칼로리"
+                        app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/currentCalorie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text='@{viewModel.currentTotalCalories + " / " + viewModel.targetCalories + " kcal"}'
-                    app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    <ProgressBar
+                        android:id="@+id/calorieProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginEnd="30dp"
+                        android:max="@{viewModel.targetCalories}"
+                        android:progress="@{viewModel.currentTotalCalories}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/carb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="탄수화물"
-                    app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/currentCalorie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text='@{viewModel.currentTotalCalories + " / " + viewModel.targetCalories + " kcal"}'
+                        app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                <ProgressBar
-                    android:id="@+id/carbProgressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="30dp"
-                    android:max="@{viewModel.targetCarbIntake}"
-                    android:progress="@{viewModel.currentCarbIntake}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/calorieProgressBar" />
+                    <TextView
+                        android:id="@+id/carb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="탄수화물"
+                        app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/currentCarb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text='@{String.valueOf(viewModel.currentCarbIntake) + "/" + String.valueOf(viewModel.targetCarbIntake) + "g"}'
-                    app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    <ProgressBar
+                        android:id="@+id/carbProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="30dp"
+                        android:max="@{viewModel.targetCarbIntake}"
+                        android:progress="@{viewModel.currentCarbIntake}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/calorieProgressBar" />
 
-                <TextView
-                    android:id="@+id/tvProtein"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="단백질"
-                    app:layout_constraintBottom_toTopOf="@+id/proteinProgressBar"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/currentCarb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text='@{String.valueOf(viewModel.currentCarbIntake) + "/" + String.valueOf(viewModel.targetCarbIntake) + "g"}'
+                        app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                <ProgressBar
-                    android:id="@+id/proteinProgressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="30dp"
-                    android:max="@{viewModel.targetProteinIntake}"
-                    android:progress="@{viewModel.currentProteinIntake}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/carbProgressBar" />
+                    <TextView
+                        android:id="@+id/tvProtein"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="단백질"
+                        app:layout_constraintBottom_toTopOf="@+id/proteinProgressBar"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/currentProtein"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text='@{viewModel.currentProteinIntake + " / " + viewModel.targetProteinIntake + " g"}'
-                    app:layout_constraintBottom_toTopOf="@+id/proteinProgressBar"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    <ProgressBar
+                        android:id="@+id/proteinProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="30dp"
+                        android:max="@{viewModel.targetProteinIntake}"
+                        android:progress="@{viewModel.currentProteinIntake}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/carbProgressBar" />
 
-                <TextView
-                    android:id="@+id/fat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="지방"
-                    app:layout_constraintBottom_toTopOf="@+id/fatProgressBar"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/currentProtein"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text='@{viewModel.currentProteinIntake + " / " + viewModel.targetProteinIntake + " g"}'
+                        app:layout_constraintBottom_toTopOf="@+id/proteinProgressBar"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                <ProgressBar
-                    android:id="@+id/fatProgressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="30dp"
-                    android:max="@{viewModel.targetFatIntake}"
-                    android:progress="@{viewModel.currentFatIntake}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/proteinProgressBar" />
+                    <TextView
+                        android:id="@+id/fat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="지방"
+                        app:layout_constraintBottom_toTopOf="@+id/fatProgressBar"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/currentFat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="10dp"
-                    android:text='@{viewModel.currentFatIntake + " / " + viewModel.targetFatIntake + " g"}'
-                    app:layout_constraintBottom_toTopOf="@+id/fatProgressBar"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ProgressBar
+                        android:id="@+id/fatProgressBar"
+                        style="@android:style/Widget.ProgressBar.Horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="30dp"
+                        android:max="@{viewModel.targetFatIntake}"
+                        android:progress="@{viewModel.currentFatIntake}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/proteinProgressBar" />
+
+                    <TextView
+                        android:id="@+id/currentFat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:text='@{viewModel.currentFatIntake + " / " + viewModel.targetFatIntake + " g"}'
+                        app:layout_constraintBottom_toTopOf="@+id/fatProgressBar"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
 
             <TextView
                 android:id="@+id/textView32"
@@ -348,7 +369,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/detailSection"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
                 android:id="@+id/detailSection"
                 android:layout_width="0dp"
                 android:layout_height="310dp"
@@ -357,38 +378,47 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="100dp"
                 android:background="@drawable/border_section_white"
+                app:cardElevation="8dp"
+                app:cardCornerRadius="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/currentProgressSection">
 
-                <com.google.android.material.appbar.AppBarLayout
-                    android:id="@+id/appbarLayout"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_height="match_parent">
 
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tabLayout"
+                    <!-- 내부 위젯들 -->
+                    <com.google.android.material.appbar.AppBarLayout
+                        android:id="@+id/appbarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/border_tab_layout" />
-                </com.google.android.material.appbar.AppBarLayout>
+                        android:background="@android:color/transparent"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPager"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/appbarLayout" />
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tabLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/border_tab_layout" />
+                    </com.google.android.material.appbar.AppBarLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/appbarLayout" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
