@@ -327,9 +327,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-    // Load meals with their associated foods using a join query
-
-
     fun setSelectedMealQuantity(quantity: Int) {
         _selectedMealQuantity.value = quantity
     }
@@ -390,14 +387,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 homeViewModel.refreshFilteredFoods()
             }
         }
-    }
-
-    suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal> {
-        return mealRepository.getMealsByFoodCodeAndDate(foodCd, date)
-    }
-
-    suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal> {
-        return mealRepository.getMealsByDateAndTypeSync(date, mealType)
     }
 
 }

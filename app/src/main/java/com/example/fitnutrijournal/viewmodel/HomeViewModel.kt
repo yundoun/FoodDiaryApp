@@ -103,7 +103,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         addSource(_targetCalories) { calories ->
             val (carbs, _, _) = calculateMacros(calories)
             value = carbs
-            Log.d("HomeViewModel", "Carb Intake updated: $carbs")
+            Log.d("progressbar", "Carb Intake updated: $carbs")
         }
     }
     private val _targetProteinIntake = MediatorLiveData<Int>().apply {
@@ -111,7 +111,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         addSource(_targetCalories) { calories ->
             val (_, protein, _) = calculateMacros(calories)
             value = protein
-            Log.d("HomeViewModel", "Protein Intake updated: $protein")
+            Log.d("progressbar", "Protein Intake updated: $protein")
         }
     }
     private val _targetFatIntake = MediatorLiveData<Int>().apply {
@@ -119,7 +119,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         addSource(_targetCalories) { calories ->
             val (_, _, fat) = calculateMacros(calories)
             value = fat
-            Log.d("HomeViewModel", "Fat Intake updated: $fat")
+            Log.d("progressbar", "Fat Intake updated: $fat")
         }
     }
 
