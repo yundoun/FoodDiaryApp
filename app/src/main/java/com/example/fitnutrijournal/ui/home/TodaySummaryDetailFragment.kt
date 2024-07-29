@@ -2,19 +2,29 @@ package com.example.fitnutrijournal.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.graphics.PorterDuff
+import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.DialogCalorieInputBinding
 import com.example.fitnutrijournal.databinding.FragmentTodaySummaryDetailBinding
 import com.example.fitnutrijournal.ui.home.Tab.ViewPagerAdapter
@@ -24,6 +34,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
 class TodaySummaryDetailFragment : Fragment() {
 
@@ -31,7 +42,6 @@ class TodaySummaryDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,9 +50,90 @@ class TodaySummaryDetailFragment : Fragment() {
             viewModel = homeViewModel
             lifecycleOwner = viewLifecycleOwner
         }
+        return binding.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         (activity as MainActivity).showBottomNavigation(false)
+        binding.viewPager.adapter = ViewPagerAdapter(this)
 
+
+        setProgressbarColor()
+
+        setClickListener()
+        setUiObserve()
+        setTabLayoutMediator()
+    }
+
+    private fun setProgressbarColor() {
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentTotalCalories,
+            homeViewModel.targetCalories,
+            binding.calorieProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentCarbIntake,
+            homeViewModel.targetCarbIntake,
+            binding.carbProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentProteinIntake,
+            homeViewModel.targetProteinIntake,
+            binding.proteinProgressBar
+        )
+
+        setupCombinedIntakeObserver(
+            homeViewModel.currentFatIntake,
+            homeViewModel.targetFatIntake,
+            binding.fatProgressBar
+        )
+    }
+
+    private fun setupCombinedIntakeObserver(
+        currentIntakeLiveData: LiveData<Int>,
+        targetIntakeLiveData: LiveData<Int>,
+        progressBar: ProgressBar
+    ) {
+        val combinedIntake = MediatorLiveData<Pair<Int, Int>>().apply {
+            var currentIntakeValue = currentIntakeLiveData.value ?: 0
+            var targetIntakeValue = targetIntakeLiveData.value ?: 0
+
+            addSource(currentIntakeLiveData) { currentIntake ->
+                currentIntakeValue = currentIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+
+            addSource(targetIntakeLiveData) { targetIntake ->
+                targetIntakeValue = targetIntake
+                value = currentIntakeValue to targetIntakeValue
+            }
+        }
+
+        combinedIntake.observe(viewLifecycleOwner, Observer { (currentIntake, targetIntake) ->
+            Log.d("progressbar", "Intake: $currentIntake Target: $targetIntake")
+            updateProgressBarColor(progressBar, currentIntake, targetIntake)
+        })
+    }
+
+    private fun updateProgressBarColor(progressBar: ProgressBar, currentIntake: Int, targetIntake: Int) {
+        val progressDrawable = progressBar.progressDrawable.mutate() as LayerDrawable
+        val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+        val colorResId = if (currentIntake > targetIntake) {
+            R.color.progressbar_red
+        } else {
+            R.color.progressbar_green
+        }
+        progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+        progressBar.progressDrawable = progressDrawable
+    }
+
+    private fun setClickListener(){
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -50,11 +141,11 @@ class TodaySummaryDetailFragment : Fragment() {
         binding.targetEdit.setOnClickListener {
             showCalorieInputDialog()
         }
+    }
 
-        // 목표 데이터를 관찰하여 UI 업데이트
+    private fun setUiObserve() {
         homeViewModel.todayGoal.observe(viewLifecycleOwner) { goal ->
             goal?.let {
-                // 필요한 경우 UI 업데이트 코드 작성
                 binding.tvTargetCalories.text = "${it.targetCalories} kcal"
                 binding.breakfast.text = "${it.targetBreakfast} kcal"
                 binding.lunch.text = "${it.targetLunch} kcal"
@@ -62,11 +153,21 @@ class TodaySummaryDetailFragment : Fragment() {
                 binding.snack.text = "${it.targetSnack} kcal"
             }
         }
-
-        return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
+    private fun setTabLayoutMediator() {
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "아침"
+                1 -> "점심"
+                2 -> "저녁"
+                3 -> "간식"
+                else -> "Breakfast"
+            }
+        }.attach()
+    }
+
+
     private fun showCalorieInputDialog() {
         val dialogView = DialogCalorieInputBinding.inflate(LayoutInflater.from(context))
 
@@ -109,7 +210,8 @@ class TodaySummaryDetailFragment : Fragment() {
                 val totalCalories = morningCalories + lunchCalories + dinnerCalories + snackCalories
 
                 val date = homeViewModel.selectedDate.value ?: LocalDate.now().format(
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                )
                 homeViewModel.saveDailyIntakeGoal(
                     date,
                     totalCalories,
@@ -143,23 +245,6 @@ class TodaySummaryDetailFragment : Fragment() {
         totalCaloriesText.text = "목표 칼로리: $totalCalories"
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.viewPager.adapter = ViewPagerAdapter(this)
-
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "아침"
-                1 -> "점심"
-                2 -> "저녁"
-                3 -> "간식"
-                else -> "Breakfast"
-            }
-        }.attach()
-
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

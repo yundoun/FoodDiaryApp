@@ -134,8 +134,8 @@
                         android:text="아침"
                         android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvLunch"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/breakfast"
+                        app:layout_constraintStart_toStartOf="@+id/breakfast"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
                         app:layout_constraintVertical_bias="0.5" />
 
@@ -147,8 +147,8 @@
                         android:text="점심"
                         android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvDinner"
-                        app:layout_constraintStart_toEndOf="@+id/tvBreakfast"
+                        app:layout_constraintEnd_toEndOf="@+id/lunch"
+                        app:layout_constraintStart_toStartOf="@+id/lunch"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
                         app:layout_constraintVertical_bias="0.5" />
 
@@ -160,8 +160,8 @@
                         android:text="저녁"
                         android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvSnack"
-                        app:layout_constraintStart_toEndOf="@+id/tvLunch"
+                        app:layout_constraintEnd_toEndOf="@+id/dinner"
+                        app:layout_constraintStart_toStartOf="@+id/dinner"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
                         app:layout_constraintVertical_bias="0.5" />
 
@@ -173,8 +173,8 @@
                         android:text="간식"
                         android:textColor="@color/text_gray"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tvDinner"
+                        app:layout_constraintEnd_toEndOf="@+id/snack"
+                        app:layout_constraintStart_toStartOf="@+id/snack"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
                         app:layout_constraintVertical_bias="0.5" />
 
@@ -187,8 +187,8 @@
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetBreakfast : 0) + " kcal"}'
                         android:textColor="@color/text_black"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tvBreakfast"
-                        app:layout_constraintStart_toStartOf="@+id/tvBreakfast"
+                        app:layout_constraintEnd_toStartOf="@+id/lunch"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvBreakfast" />
 
                     <TextView
@@ -200,8 +200,8 @@
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetLunch : 0) + " kcal"}'
                         android:textColor="@color/text_black"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tvLunch"
-                        app:layout_constraintStart_toStartOf="@+id/tvLunch"
+                        app:layout_constraintEnd_toStartOf="@+id/dinner"
+                        app:layout_constraintStart_toEndOf="@+id/breakfast"
                         app:layout_constraintTop_toBottomOf="@+id/tvLunch" />
 
                     <TextView
@@ -213,8 +213,8 @@
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetDinner : 0) + " kcal"}'
                         android:textColor="@color/text_black"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tvDinner"
-                        app:layout_constraintStart_toStartOf="@+id/tvDinner"
+                        app:layout_constraintEnd_toStartOf="@+id/snack"
+                        app:layout_constraintStart_toEndOf="@+id/lunch"
                         app:layout_constraintTop_toBottomOf="@+id/tvDinner" />
 
                     <TextView
@@ -226,8 +226,8 @@
                         android:text='@{(viewModel.todayGoal != null ? viewModel.todayGoal.targetSnack : 0) + " kcal"}'
                         android:textColor="@color/text_black"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tvSnack"
-                        app:layout_constraintStart_toStartOf="@+id/tvSnack"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/dinner"
                         app:layout_constraintTop_toBottomOf="@+id/tvSnack" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -240,6 +240,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="현재 진행 상황"
+                android:textColor="@color/text_black"
                 app:layout_constraintBottom_toTopOf="@+id/currentProgressSection"
                 app:layout_constraintEnd_toEndOf="@+id/currentProgressSection"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -272,6 +273,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="10dp"
                         android:text="칼로리"
+                        android:textColor="@color/text_black"
                         app:layout_constraintBottom_toTopOf="@+id/calorieProgressBar"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -307,6 +309,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="10dp"
                         android:text="탄수화물"
+                        android:textColor="@color/text_black"
                         app:layout_constraintBottom_toTopOf="@+id/carbProgressBar"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -342,6 +345,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="10dp"
                         android:text="단백질"
+                        android:textColor="@color/text_black"
                         app:layout_constraintBottom_toTopOf="@+id/proteinProgressBar"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -377,6 +381,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="10dp"
                         android:text="지방"
+                        android:textColor="@color/text_black"
                         app:layout_constraintBottom_toTopOf="@+id/fatProgressBar"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -415,6 +420,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="상세 정보"
+                android:textColor="@color/text_black"
                 app:layout_constraintBottom_toTopOf="@+id/detailSection"
                 app:layout_constraintEnd_toEndOf="@+id/detailSection"
                 app:layout_constraintHorizontal_bias="0.0"
