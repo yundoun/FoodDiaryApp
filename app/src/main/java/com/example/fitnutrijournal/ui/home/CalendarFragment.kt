@@ -80,6 +80,13 @@ class CalendarFragment : Fragment() {
             }
         }
 
+        binding.diary.setOnClickListener {
+            selectedDate?.let {
+                memoViewModel.updateClickedDate(it)
+                findNavController().navigate(R.id.action_calendarFragment_to_diaryFragment)
+            }
+        }
+
         binding.selectDate.setOnClickListener {
             selectedDate?.let {
                 homeViewModel.updateCurrentDate(it)

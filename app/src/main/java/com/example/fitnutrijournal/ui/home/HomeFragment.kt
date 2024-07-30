@@ -191,6 +191,9 @@ class HomeFragment : Fragment() {
             btnTodaySummaryDetail.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
             }
+            todaySummarySection.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_todaySummaryDetailFragment)
+            }
             breakfastLayout.setOnClickListener {
                 navigateToMealDetail("breakfast")
             }
@@ -313,7 +316,7 @@ class HomeFragment : Fragment() {
             if (progressLayer is RotateDrawable) {
                 val drawable = progressLayer.drawable
                 val colorResId = if (currentTotalCalories > targetCalories) {
-                    R.color.progressbar_orange
+                    R.color.progressbar_red
                 } else {
                     R.color.progressbar_blue
                 }
