@@ -117,6 +117,8 @@ class CalendarFragment : Fragment() {
             selectedDate?.let {
                 binding.calendarView.notifyDateChanged(it)
                 binding.calendarView.scrollToDate(it)
+                memoViewModel.updateClickedDate(it)
+                memoViewModel.loadMemoByDate(it.toString())
             }
         })
     }
