@@ -31,7 +31,6 @@ class DiaryFragment : Fragment() {
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
     private val memoViewModel: MemoViewModel by activityViewModels()
-    private val homeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +84,19 @@ class DiaryFragment : Fragment() {
         binding.backBtn.setOnClickListener{
 
             findNavController().popBackStack()
+        }
+
+        binding.clearMemoBtn.setOnClickListener {
+            binding.editTextDiary.text.clear()
+        }
+
+        binding.deleteMemoBtn.setOnClickListener {
+            val clickedDate = memoViewModel.clickedDate.value
+            if (clickedDate != null) {
+                memoViewModel.deleteByDate(clickedDate)
+                Toast.makeText(requireContext(), "메모가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
         }
 
 

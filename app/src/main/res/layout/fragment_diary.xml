@@ -59,6 +59,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <TextView
+            android:id="@+id/clearMemoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="모두 지우기"
+            app:layout_constraintBottom_toTopOf="@+id/editTextDiary"
+            app:layout_constraintEnd_toStartOf="@+id/deleteMemoBtn" />
+
+        <TextView
+            android:id="@+id/deleteMemoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="메모 삭제"
+            android:textColor="@color/delete_red"
+            app:layout_constraintBottom_toTopOf="@+id/editTextDiary"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

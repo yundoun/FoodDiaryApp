@@ -20,4 +20,9 @@ class DailyIntakeRecordRepository(private val dailyIntakeRecordDao: DailyIntakeR
     suspend fun getRecordByDate(date: String): DailyIntakeRecord? {
         return dailyIntakeRecordDao.getRecordByDateSync(date)
     }
+
+    // 특정 기간(startDate ~ endDate) 내의 DailyIntakeRecord 데이터를 반환
+    suspend fun getRecordsBetweenDates(startDate: String, endDate: String): List<DailyIntakeRecord> {
+        return dailyIntakeRecordDao.getRecordsBetweenDates(startDate, endDate)
+    }
 }

@@ -22,6 +22,7 @@ import com.example.fitnutrijournal.data.repository.MealRepository
 import com.example.fitnutrijournal.data.repository.MemoRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 
@@ -474,6 +475,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     // ====================================================================
 
+
+
+
+    private val _monthlyIntakeRecords = MutableLiveData<Map<LocalDate, DailyIntakeRecord>>()
+    val monthlyIntakeRecords: LiveData<Map<LocalDate, DailyIntakeRecord>> get() = _monthlyIntakeRecords
+
+
+
+
     init {
         val database = FoodDatabase.getDatabase(application)
         val dailyIntakeGoalDao = database.dailyIntakeGoalDao()
@@ -511,6 +521,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         _remainingCalories.addSource(_currentTotalCalories) { updateRemainingCalories() }
         _remainingCalories.addSource(_targetCalories) { updateRemainingCalories() }
 
+    }
+
+    // 달력에 식사 섭취 데이터를 표시하기 위한 메소드
+    fun loadIntakeRecordsForMonth(month: YearMonth) {
+        viewModelScope.launch {
+            val startDate = month.atDay(1)
+            val endDate = month.atEndOfMonth()
+            val records = dailyIntakeRecordRepository.getRecordsBetweenDates(startDate.toString(), endDate.toString())
+            _monthlyIntakeRecords.value = records.associateBy { LocalDate.parse(it.date, dateFormatter) }
+        }
     }
 
 
@@ -806,6 +826,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             filterFoodsByMealType(mealTypeValue)
         }
     }
+
+
 
 
 
