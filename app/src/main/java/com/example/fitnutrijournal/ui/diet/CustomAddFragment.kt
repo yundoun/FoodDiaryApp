@@ -1,6 +1,8 @@
 package com.example.fitnutrijournal.ui.diet
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +36,8 @@ class CustomAddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        addTextWatchers()
+
         binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -65,6 +69,40 @@ class CustomAddFragment : Fragment() {
             findNavController().popBackStack()
             Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
         }
+
+        binding.addBtn.isEnabled = false
+    }
+
+    private fun addTextWatchers() {
+        val textWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                checkFieldsForEmptyValues()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        }
+
+        binding.inputName.addTextChangedListener(textWatcher)
+        binding.inputServingSize.addTextChangedListener(textWatcher)
+        binding.inputCalories.addTextChangedListener(textWatcher)
+        binding.inputCarb.addTextChangedListener(textWatcher)
+        binding.inputProtein.addTextChangedListener(textWatcher)
+        binding.inputFat.addTextChangedListener(textWatcher)
+    }
+
+    private fun checkFieldsForEmptyValues() {
+        val name = binding.inputName.text.toString()
+        val servingSize = binding.inputServingSize.text.toString()
+        val calories = binding.inputCalories.text.toString()
+        val carb = binding.inputCarb.text.toString()
+        val protein = binding.inputProtein.text.toString()
+        val fat = binding.inputFat.text.toString()
+
+        binding.addBtn.isEnabled = name.isNotEmpty() && servingSize.isNotEmpty() &&
+                calories.isNotEmpty() && carb.isNotEmpty() &&
+                protein.isNotEmpty() && fat.isNotEmpty()
     }
 
     override fun onDestroyView() {

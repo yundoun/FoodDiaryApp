@@ -14,10 +14,12 @@ import com.example.fitnutrijournal.data.model.DailyIntakeGoal
 import com.example.fitnutrijournal.data.model.DailyIntakeRecord
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
+import com.example.fitnutrijournal.data.model.Memo
 import com.example.fitnutrijournal.data.repository.DailyIntakeGoalRepository
 import com.example.fitnutrijournal.data.repository.DailyIntakeRecordRepository
 import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.MealRepository
+import com.example.fitnutrijournal.data.repository.MemoRepository
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,6 +33,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val mealRepository: MealRepository
     private val dailyIntakeGoalRepository: DailyIntakeGoalRepository
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
+    private val memoRepository: MemoRepository
 
     // 날짜
     private val _todayDate = MutableLiveData<String>().apply {
@@ -49,7 +52,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _selectedDate = MutableLiveData<String>()
     val selectedDate: LiveData<String>
         get() = _selectedDate
-
+    
     private fun setCurrentDate(date: String) {
         _currentDate.value = date
     }
@@ -477,7 +480,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
         val foodDao = database.foodDao()
         val mealDao = database.mealDao()
+        val memoDao = FoodDatabase.getDatabase(application).memoDao()
 
+        memoRepository = MemoRepository(memoDao)
         dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         foodRepository = FoodRepository(foodDao)

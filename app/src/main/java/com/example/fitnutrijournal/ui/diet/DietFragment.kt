@@ -1,8 +1,12 @@
 package com.example.fitnutrijournal.ui.diet
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -24,6 +28,7 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
+import java.util.Locale
 
 class DietFragment : Fragment() {
 
@@ -33,6 +38,8 @@ class DietFragment : Fragment() {
     private val dietViewModel: DietViewModel by activityViewModels {
         DietViewModelFactory(requireActivity().application, homeViewModel)
     }
+
+    private val REQUEST_CODE_SPEECH_INPUT = 100
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -77,7 +84,9 @@ class DietFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-
+        binding.micBtn.setOnClickListener {
+            startVoiceInput()
+        }
 
         handleArgs(arguments?.getString("source") ?: "")
 
@@ -109,6 +118,32 @@ class DietFragment : Fragment() {
 
 
         observeFoodInfo()
+    }
+
+    private fun startVoiceInput() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "음성을 입력하세요")
+        try {
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "음성 인식을 지원하지 않습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == Activity.RESULT_OK && data != null) {
+            val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            if (!result.isNullOrEmpty()) {
+                val recognizedText = result[0]
+                binding.searchEditText.setText(recognizedText)
+                dietViewModel.setSearchQuery(recognizedText)
+            }
+        }
     }
 
     override fun onResume() {

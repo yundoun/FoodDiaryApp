@@ -62,7 +62,9 @@ class FoodDetailFragment : Fragment() {
         }
 
         binding.totalContentInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                updateButtonStates()
+            }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -77,7 +79,15 @@ class FoodDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        updateButtonStates()
+    }
 
+    private fun updateButtonStates() {
+        val totalContent = binding.totalContentInput.text.toString()
+        val isTotalContentNotEmpty = totalContent.isNotEmpty()
+
+        binding.btnSave.isEnabled = isTotalContentNotEmpty
+        binding.btnUpdate.isEnabled = isTotalContentNotEmpty
     }
 
     override fun onDestroyView() {
