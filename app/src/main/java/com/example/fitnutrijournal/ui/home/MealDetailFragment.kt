@@ -1,19 +1,32 @@
 package com.example.fitnutrijournal.ui.home
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -30,18 +43,32 @@ import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.example.fitnutrijournal.viewmodel.PhotoViewModel
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.util.Date
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MealDetailFragment : Fragment() {
 
     private var _binding: FragmentMealDetailBinding? = null
     private val binding get() = _binding!!
+    private val photoViewModel: PhotoViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val dietViewModel: DietViewModel by activityViewModels {
         DietViewModelFactory(requireActivity().application, homeViewModel)
     }
+
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_IMAGE_PICK = 2
+    private val REQUEST_IMAGE_CROP = 3
+    private val REQUEST_PERMISSIONS = 1001
+    private var currentPhotoPath: String? = null
+    private var photoUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +89,8 @@ class MealDetailFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
+        checkPermissions()
 
         dietViewModel.setCheckboxVisible(null)
 
@@ -86,6 +115,10 @@ class MealDetailFragment : Fragment() {
             val action =
                 MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
             findNavController().navigate(action)
+        }
+
+        binding.cameraBtn.setOnClickListener {
+            showImageSourceDialog()
         }
 
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
@@ -180,6 +213,125 @@ class MealDetailFragment : Fragment() {
         dietViewModel.loadMealsWithFood()
     }
 
+    private fun showImageSourceDialog() {
+        val options = arrayOf("카메라로 촬영", "앨범에서 선택")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("사진 추가")
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> dispatchTakePictureIntent()
+                    1 -> dispatchPickPictureIntent()
+                }
+            }
+        builder.create().show()
+    }
+
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
+            val photoFile: File? = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                null
+            }
+            photoFile?.also {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.example.fitnutrijournal.fileprovider", // 이 값이 AndroidManifest.xml과 일치해야 합니다.
+                    it
+                )
+                photoUri = photoURI
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
+        }
+    }
+
+
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            currentPhotoPath = absolutePath
+        }
+    }
+
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                UCrop.REQUEST_CROP -> {
+                    val resultUri = UCrop.getOutput(data!!)
+                    resultUri?.let {
+                        val date = homeViewModel.currentDate.value ?: return
+                        val mealType = homeViewModel.mealType.value ?: return
+                        currentPhotoPath?.let {
+                            photoViewModel.addPhoto(date, mealType, it)
+                            setPic(binding.imageSample, it)
+                            Toast.makeText(requireContext(), "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                UCrop.RESULT_ERROR -> {
+                    val cropError = UCrop.getError(data!!)
+                    Log.e("MealDetailFragment", "Crop error: ${cropError?.message}")
+                    Toast.makeText(requireContext(), "이미지 크롭 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    private fun cropImage(uri: Uri) {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        val file = File.createTempFile("CROP_${timeStamp}_", ".jpg", storageDir)
+        val destinationUri = Uri.fromFile(file)
+        currentPhotoPath = file.absolutePath
+
+        UCrop.of(uri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .withMaxResultSize(512, 512)
+            .start(requireContext(), this)
+    }
+
+
+    private fun setPic(imageView: ImageView, photoPath: String) {
+        val targetW: Int = imageView.width
+        val targetH: Int = imageView.height
+
+        val bmOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            BitmapFactory.decodeFile(photoPath, this)
+            val photoW: Int = outWidth
+            val photoH: Int = outHeight
+
+            val scaleFactor: Int = Math.min(photoW / targetW, photoH / targetH)
+
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor
+        }
+
+        BitmapFactory.decodeFile(photoPath, bmOptions)?.also { bitmap ->
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+    private fun dispatchPickPictureIntent() {
+        val pickPictureIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(pickPictureIntent, REQUEST_IMAGE_PICK)
+    }
+
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: MealWithFoodAdapter) {
         val itemTouchHelperCallback =
             object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -266,4 +418,50 @@ class MealDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun checkPermissions() {
+        val permissions = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_PERMISSIONS)
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:" + requireContext().packageName)
+                startActivity(intent)
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    intent.data = Uri.parse("package:" + requireContext().packageName)
+                    startActivity(intent)
+                }
+            } else {
+                Toast.makeText(requireContext(), "필요한 권한이 승인되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
 }
