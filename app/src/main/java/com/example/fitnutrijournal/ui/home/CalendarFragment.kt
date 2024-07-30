@@ -109,6 +109,11 @@ class CalendarFragment : Fragment() {
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner, Observer { memo ->
             binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
         })
+
+        // 월별 데이터를 뽑아서 데이터 있는 지 표시하기 위한 Observer
+        memoViewModel.monthlyMemos.observe(viewLifecycleOwner, Observer { memos ->
+            binding.calendarView.notifyCalendarChanged() // 달력이 전체적으로 변경됨을 알림
+        })
     }
 
     private fun setupCurrentDateObserver() {
@@ -138,6 +143,7 @@ class CalendarFragment : Fragment() {
 
         binding.calendarView.monthScrollListener = { month ->
             updateMonthTitle(month.yearMonth)
+            memoViewModel.loadMemosForMonth(month.yearMonth) // 스크롤된 월의 메모 로드
         }
 
         binding.calendarView.monthHeaderBinder =
@@ -177,7 +183,7 @@ class CalendarFragment : Fragment() {
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay
             val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
-
+            val memoIndicator = CalendarDayLayoutBinding.bind(view).memoIndicator // 빨간 점을 위한 뷰
             init {
                 view.setOnClickListener {
                     if (day.position == DayPosition.MonthDate) {
@@ -226,6 +232,14 @@ class CalendarFragment : Fragment() {
                                 )
                             }
                         }
+
+                        // 날짜에 메모가 있는 경우 빨간 점 표시
+                        if (memoViewModel.monthlyMemos.value?.containsKey(data.date) == true) {
+                            container.memoIndicator.visibility = View.VISIBLE
+                        } else {
+                            container.memoIndicator.visibility = View.INVISIBLE
+                        }
+
                     }
                     else -> {
                         val drawable = container.textView.background as GradientDrawable
@@ -235,6 +249,7 @@ class CalendarFragment : Fragment() {
                         container.textView.setTextColor(
                             ContextCompat.getColor(requireContext(), R.color.out_of_month_color)
                         )
+                        container.memoIndicator.visibility = View.INVISIBLE
                     }
                 }
 

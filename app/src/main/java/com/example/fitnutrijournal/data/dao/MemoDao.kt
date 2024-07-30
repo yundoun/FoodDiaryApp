@@ -16,6 +16,10 @@ interface MemoDao {
     @Query("SELECT * FROM memos WHERE date = :date")
     suspend fun getMemoByDate(date: String): Memo?
 
+    @Query("SELECT * FROM memos WHERE date BETWEEN :startDate AND :endDate")
+    suspend fun getMemosBetweenDates(startDate: String, endDate: String): List<Memo>
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(memo: Memo): Long
 

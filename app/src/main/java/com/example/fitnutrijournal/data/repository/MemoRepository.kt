@@ -11,6 +11,10 @@ class MemoRepository(private val memoDao: MemoDao) {
         return memoDao.getMemoByDate(date)
     }
 
+    suspend fun getMemosBetweenDates(startDate: String, endDate: String): List<Memo> {
+        return memoDao.getMemosBetweenDates(startDate, endDate)
+    }
+
     suspend fun insertOrUpdate(memo: Memo) {
         memoDao.insertOrUpdate(memo)
     }
