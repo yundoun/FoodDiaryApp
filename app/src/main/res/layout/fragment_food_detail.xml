@@ -84,7 +84,7 @@
                 android:background="@drawable/border_section_white"
                 android:ems="10"
                 android:gravity="center"
-                android:inputType="text"
+                android:inputType="number"
                 android:text="@={viewModel.totalContent}"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/unit"

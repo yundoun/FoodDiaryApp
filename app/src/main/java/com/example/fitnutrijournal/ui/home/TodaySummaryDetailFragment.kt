@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -220,6 +221,7 @@ class TodaySummaryDetailFragment : Fragment() {
                     dinnerCalories,
                     snackCalories
                 )
+                Toast.makeText(context, "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()
