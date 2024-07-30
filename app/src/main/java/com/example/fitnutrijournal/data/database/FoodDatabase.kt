@@ -9,29 +9,29 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.fitnutrijournal.data.dao.*
 import com.example.fitnutrijournal.data.model.*
 
-@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class], version = 10, exportSchema = false)
+@Database(entities = [Food::class, Meal::class, DailyIntakeGoal::class, DailyIntakeRecord::class, Memo::class], version = 11, exportSchema = false)
 abstract class FoodDatabase : RoomDatabase() {
 
     abstract fun foodDao(): FoodDao
     abstract fun mealDao(): MealDao
     abstract fun dailyIntakeGoalDao(): DailyIntakeGoalDao
     abstract fun dailyIntakeRecordDao(): DailyIntakeRecordDao
+    abstract fun memoDao(): MemoDao
 
     companion object {
         @Volatile
         private var INSTANCE: FoodDatabase? = null
 
         // Migration 객체 정의
-        private val MIGRATION_5_6 = object : Migration(5, 6) {
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // food_table에서 Food 테이블로 데이터 복사
+                // Memo 테이블 생성
                 db.execSQL("""
-                    INSERT INTO Food (foodCd, foodName, servingSize, calories, carbohydrate, protein, fat, caloriesPerGram, isFavorite, isAddedByUser)
-                    SELECT foodCd, foodName, servingSize, calories, carbohydrate, protein, fat, caloriesPerGram, isFavorite, isAddedByUser FROM food_table
+                    CREATE TABLE IF NOT EXISTS memos (
+                        date TEXT PRIMARY KEY NOT NULL,
+                        content TEXT NOT NULL
+                    )
                 """)
-
-                // food_table 삭제
-                db.execSQL("DROP TABLE IF EXISTS food_table")
             }
         }
 
@@ -42,8 +42,8 @@ abstract class FoodDatabase : RoomDatabase() {
                     FoodDatabase::class.java,
                     "food_database"
                 )
-                    .addMigrations(MIGRATION_5_6, MIGRATION_5_6) // 마이그레이션 추가
-                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_10_11) // 마이그레이션 추가
+                    //.fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

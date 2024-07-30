@@ -21,6 +21,7 @@ import com.example.fitnutrijournal.databinding.CalendarDayLayoutBinding
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.example.fitnutrijournal.viewmodel.MemoViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -40,6 +41,7 @@ class CalendarFragment : Fragment() {
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val memoViewModel: MemoViewModel by activityViewModels()
 
     private var selectedDate: LocalDate? = null
 
@@ -62,16 +64,20 @@ class CalendarFragment : Fragment() {
 
         setupCalendarView()
 
+        // 메모하기
         binding.writeDiary.setOnClickListener {
+            memoViewModel.updateClickedDate(selectedDate!!)
             findNavController().navigate(R.id.action_calendarFragment_to_diaryFragment)
         }
 
-
+        // 선택한 날짜로 이동
         binding.selectDate.setOnClickListener {
             selectedDate?.let {
                 homeViewModel.updateCurrentDate(it)
                 homeViewModel.updateSelectedDate(it)
                 Log.d("CalendarFragment", "Selected date updated to: $it")
+
+                memoViewModel.updateClickedDate(it)
                 findNavController().popBackStack()
             }
         }
@@ -80,11 +86,25 @@ class CalendarFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        memoViewModel.clickedDate.observe(viewLifecycleOwner, Observer { date ->
+            selectedDate = LocalDate.parse(date)
+            binding.calendarView.notifyDateChanged(selectedDate!!)
+            binding.calendarView.scrollToDate(selectedDate!!)
+        })
+
         homeViewModel.currentDate.observe(viewLifecycleOwner, Observer { currentDate ->
             selectedDate = LocalDate.parse(currentDate)
-            binding.calendarView.notifyDateChanged(selectedDate!!)
-            binding.calendarView.scrollToDate(selectedDate!!) // 선택된 날짜에 맞게 달력 바인딩
+
+            // currentDate를 MemoViewModel의 clickedDate로 설정
+            memoViewModel.updateClickedDate(LocalDate.parse(currentDate))
         })
+
+        // 현재 클릭된 날짜의 메모를 관찰하고 diary 텍스트뷰 업데이트
+        memoViewModel.clickedDateMemo.observe(viewLifecycleOwner, Observer { memo ->
+            binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
+        })
+
+        Log.d("CalendarFragment", "Current date: ${homeViewModel.currentDate.value}")
     }
 
     // 캘린더 뷰와 스크롤 리스너 설정
@@ -136,6 +156,10 @@ class CalendarFragment : Fragment() {
             selectedDate = date
             oldDate?.let { binding.calendarView.notifyDateChanged(it) }
             binding.calendarView.notifyDateChanged(date)
+            Log.d("CalendarFragment", "Selected date: $date")
+
+            // 클릭한 날짜 설정
+            memoViewModel.updateClickedDate(date)
         }
     }
 
@@ -161,7 +185,6 @@ class CalendarFragment : Fragment() {
                 container.day = data
                 container.textView.text = data.date.dayOfMonth.toString()
 
-                // 날짜의 위치에 따라 색상 설정
                 // 날짜의 위치에 따라 색상 설정
                 when {
                     data.position == DayPosition.MonthDate -> {
