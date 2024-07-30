@@ -11,12 +11,3 @@ data class DailyIntakeRecord(
     var currentProtein: Int = 0,
     var currentFat: Int = 0
 )
-
-
-//data class NutrientData(
-//    var calories: Int = 0,
-//    var carbs: Float = 0f,
-//    var protein: Float = 0f,
-//    var fat: Float = 0f,
-//    var quantity: Float = 0f
-//)

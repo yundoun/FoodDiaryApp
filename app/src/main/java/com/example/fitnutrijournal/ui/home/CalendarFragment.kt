@@ -114,6 +114,11 @@ class CalendarFragment : Fragment() {
         memoViewModel.monthlyMemos.observe(viewLifecycleOwner, Observer { memos ->
             binding.calendarView.notifyCalendarChanged() // 달력이 전체적으로 변경됨을 알림
         })
+
+        // DailyIntakeRecord 데이터를 관찰하여 달력에 표시하기 위한 Observer 추가
+        homeViewModel.monthlyIntakeRecords.observe(viewLifecycleOwner, Observer { records ->
+            binding.calendarView.notifyCalendarChanged() // 달력이 전체적으로 변경됨을 알림
+        })
     }
 
     private fun setupCurrentDateObserver() {
@@ -144,6 +149,7 @@ class CalendarFragment : Fragment() {
         binding.calendarView.monthScrollListener = { month ->
             updateMonthTitle(month.yearMonth)
             memoViewModel.loadMemosForMonth(month.yearMonth) // 스크롤된 월의 메모 로드
+            homeViewModel.loadIntakeRecordsForMonth(month.yearMonth) // 스크롤된 월의 섭취 기록 로드
         }
 
         binding.calendarView.monthHeaderBinder =
@@ -184,6 +190,8 @@ class CalendarFragment : Fragment() {
             lateinit var day: CalendarDay
             val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
             val memoIndicator = CalendarDayLayoutBinding.bind(view).memoIndicator // 빨간 점을 위한 뷰
+            val intakeIndicator = CalendarDayLayoutBinding.bind(view).intakeIndicator // 초록색 점을 위한 뷰
+
             init {
                 view.setOnClickListener {
                     if (day.position == DayPosition.MonthDate) {
@@ -240,6 +248,13 @@ class CalendarFragment : Fragment() {
                             container.memoIndicator.visibility = View.INVISIBLE
                         }
 
+                        // 날짜에 DailyIntakeRecord가 있는 경우 초록색 점 표시
+                        if (homeViewModel.monthlyIntakeRecords.value?.containsKey(data.date) == true) {
+                            container.intakeIndicator.visibility = View.VISIBLE
+                        } else {
+                            container.intakeIndicator.visibility = View.INVISIBLE
+                        }
+
                     }
                     else -> {
                         val drawable = container.textView.background as GradientDrawable
@@ -250,6 +265,7 @@ class CalendarFragment : Fragment() {
                             ContextCompat.getColor(requireContext(), R.color.out_of_month_color)
                         )
                         container.memoIndicator.visibility = View.INVISIBLE
+                        container.intakeIndicator.visibility = View.INVISIBLE
                     }
                 }
 
