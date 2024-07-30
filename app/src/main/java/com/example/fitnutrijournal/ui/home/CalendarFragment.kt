@@ -45,6 +45,7 @@ class CalendarFragment : Fragment() {
     private val memoViewModel: MemoViewModel by activityViewModels()
     private var selectedDate: LocalDate? = null
     private val monthYearFormatter = DateTimeFormatter.ofPattern("yyyy.MM")
+    private var isFirstTime = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +65,11 @@ class CalendarFragment : Fragment() {
         setupCalendarView()
         setupObservers()
         setupClickListeners()
+
+        if (isFirstTime) {
+            setupCurrentDateObserver()
+            isFirstTime = false
+        }
     }
 
     private fun setupClickListeners() {
@@ -102,6 +108,16 @@ class CalendarFragment : Fragment() {
 
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner, Observer { memo ->
             binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
+        })
+    }
+
+    private fun setupCurrentDateObserver() {
+        homeViewModel.currentDate.observe(viewLifecycleOwner, Observer { currentDate ->
+            selectedDate = LocalDate.parse(currentDate)
+            selectedDate?.let {
+                binding.calendarView.notifyDateChanged(it)
+                binding.calendarView.scrollToDate(it)
+            }
         })
     }
 
@@ -183,6 +199,7 @@ class CalendarFragment : Fragment() {
                         when {
                             data.date == selectedDate -> {
                                 Log.d("CalendarFragment", "바인딩 되는 날짜 : ${data.date}")
+                                Log.d("CalendarFragment", "선택된 날짜 : ${memoViewModel.clickedDate.value}")
                                 drawable.setColor(
                                     ContextCompat.getColor(requireContext(), R.color.calendar_today)
                                 )
