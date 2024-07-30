@@ -35,7 +35,7 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
         loadMemoByDate(newDate)
     }
 
-    private fun loadMemoByDate(date: String) {
+    fun loadMemoByDate(date: String) {
         viewModelScope.launch {
             _clickedDateMemo.value = memoRepository.getMemoByDate(date)
         }

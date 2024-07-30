@@ -8,12 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
@@ -35,6 +35,7 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+
 @RequiresApi(Build.VERSION_CODES.O)
 class CalendarFragment : Fragment() {
 
@@ -42,9 +43,7 @@ class CalendarFragment : Fragment() {
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val memoViewModel: MemoViewModel by activityViewModels()
-
     private var selectedDate: LocalDate? = null
-
     private val monthYearFormatter = DateTimeFormatter.ofPattern("yyyy.MM")
 
     override fun onCreateView(
@@ -63,21 +62,25 @@ class CalendarFragment : Fragment() {
         (activity as MainActivity).showBottomNavigation(false)
 
         setupCalendarView()
+        setupObservers()
+        setupClickListeners()
+    }
 
-        // 메모하기
+    private fun setupClickListeners() {
         binding.writeDiary.setOnClickListener {
-            memoViewModel.updateClickedDate(selectedDate!!)
-            findNavController().navigate(R.id.action_calendarFragment_to_diaryFragment)
+            selectedDate?.let {
+                memoViewModel.updateClickedDate(it)
+                findNavController().navigate(R.id.action_calendarFragment_to_diaryFragment)
+            }
         }
 
-        // 선택한 날짜로 이동
         binding.selectDate.setOnClickListener {
             selectedDate?.let {
                 homeViewModel.updateCurrentDate(it)
                 homeViewModel.updateSelectedDate(it)
-                Log.d("CalendarFragment", "Selected date updated to: $it")
-
                 memoViewModel.updateClickedDate(it)
+                Log.d("CalendarFragment", "Selected date updated to: $it")
+                Toast.makeText(requireContext(), "$it 날짜 변경됨", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
         }
@@ -85,29 +88,23 @@ class CalendarFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
 
+    private fun setupObservers() {
         memoViewModel.clickedDate.observe(viewLifecycleOwner, Observer { date ->
             selectedDate = LocalDate.parse(date)
-            binding.calendarView.notifyDateChanged(selectedDate!!)
-            binding.calendarView.scrollToDate(selectedDate!!)
+            selectedDate?.let {
+                binding.calendarView.notifyDateChanged(it)
+                binding.calendarView.scrollToDate(it)
+                memoViewModel.loadMemoByDate(it.toString()) // LocalDate를 문자열로 변환
+            }
         })
 
-        homeViewModel.currentDate.observe(viewLifecycleOwner, Observer { currentDate ->
-            selectedDate = LocalDate.parse(currentDate)
-
-            // currentDate를 MemoViewModel의 clickedDate로 설정
-            memoViewModel.updateClickedDate(LocalDate.parse(currentDate))
-        })
-
-        // 현재 클릭된 날짜의 메모를 관찰하고 diary 텍스트뷰 업데이트
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner, Observer { memo ->
             binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
         })
-
-        Log.d("CalendarFragment", "Current date: ${homeViewModel.currentDate.value}")
     }
 
-    // 캘린더 뷰와 스크롤 리스너 설정
     private fun setupCalendarView() {
         val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
         val currentMonth = YearMonth.now()
@@ -134,8 +131,7 @@ class CalendarFragment : Fragment() {
                         container.titlesContainer.children.map { it as TextView }
                             .forEachIndexed { index, textView ->
                                 val dayOfWeek = daysOfWeek[index]
-                                val title =
-                                    dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
                                 textView.text = title
                             }
                     }
@@ -143,13 +139,11 @@ class CalendarFragment : Fragment() {
             }
     }
 
-    // 월 제목 업데이트
     private fun updateMonthTitle(yearMonth: YearMonth) {
         val formattedMonth = yearMonth.format(monthYearFormatter)
         binding.Month.text = formattedMonth
     }
 
-    // 날짜를 선택하고 UI를 업데이트
     private fun selectDate(date: LocalDate, dayPosition: DayPosition) {
         if (dayPosition == DayPosition.MonthDate && selectedDate != date) {
             val oldDate = selectedDate
@@ -157,13 +151,10 @@ class CalendarFragment : Fragment() {
             oldDate?.let { binding.calendarView.notifyDateChanged(it) }
             binding.calendarView.notifyDateChanged(date)
             Log.d("CalendarFragment", "Selected date: $date")
-
-            // 클릭한 날짜 설정
             memoViewModel.updateClickedDate(date)
         }
     }
 
-    // 일(day) 및 월(month) 헤더 바인더 구성
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay
@@ -175,7 +166,7 @@ class CalendarFragment : Fragment() {
                         selectDate(day.date, day.position)
                     }
                 }
-            } // 날짜를 클릭했을 때 이벤트
+            }
         }
 
         binding.calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -191,6 +182,7 @@ class CalendarFragment : Fragment() {
                         val drawable = container.textView.background as GradientDrawable
                         when {
                             data.date == selectedDate -> {
+                                Log.d("CalendarFragment", "바인딩 되는 날짜 : ${data.date}")
                                 drawable.setColor(
                                     ContextCompat.getColor(requireContext(), R.color.calendar_today)
                                 )
@@ -241,4 +233,3 @@ class CalendarFragment : Fragment() {
         _binding = null
     }
 }
-
