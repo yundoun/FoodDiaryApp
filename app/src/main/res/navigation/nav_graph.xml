@@ -55,7 +55,15 @@
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.fitnutrijournal.ui.home.CalendarFragment"
-        android:label="CalendarFragment" />
+        android:label="CalendarFragment" >
+        <action
+            android:id="@+id/action_calendarFragment_to_diaryFragment"
+            app:destination="@id/diaryFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_top"
+            app:popEnterAnim="@anim/slide_in_top"
+            app:popExitAnim="@anim/slide_out_bottom"  />
+    </fragment>
     <fragment
         android:id="@+id/todaySummaryDetailFragment"
         android:name="com.example.fitnutrijournal.ui.home.TodaySummaryDetailFragment"
@@ -85,6 +93,10 @@
         android:id="@+id/customAddFragment"
         android:name="com.example.fitnutrijournal.ui.diet.CustomAddFragment"
         android:label="CustomAddFragment" />
+    <fragment
+        android:id="@+id/diaryFragment"
+        android:name="com.example.fitnutrijournal.ui.home.DiaryFragment"
+        android:label="DiaryFragment" />
 
 
 </navigation>

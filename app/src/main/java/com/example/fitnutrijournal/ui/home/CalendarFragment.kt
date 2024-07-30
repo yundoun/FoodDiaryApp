@@ -62,6 +62,11 @@ class CalendarFragment : Fragment() {
 
         setupCalendarView()
 
+        binding.writeDiary.setOnClickListener {
+            findNavController().navigate(R.id.action_calendarFragment_to_diaryFragment)
+        }
+
+
         binding.selectDate.setOnClickListener {
             selectedDate?.let {
                 homeViewModel.updateCurrentDate(it)
