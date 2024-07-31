@@ -96,7 +96,7 @@
                             app:layout_constraintEnd_toStartOf="@+id/tvTargetC"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_target_cal" />
+                            app:srcCompat="@drawable/ic_target_calories" />
 
                         <TextView
                             android:id="@+id/tvTargetC"
