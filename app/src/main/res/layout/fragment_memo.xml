@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <!-- Add ViewModel if necessary -->
+        <variable
+            name="viewModel"
+            type="com.example.fitnutrijournal.viewmodel.MemoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,8 +21,6 @@
             android:layout_height="30dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextDiary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back" />
@@ -29,7 +29,7 @@
             android:id="@+id/editTextDiary"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/border_section_white"
             android:gravity="top|start"
@@ -42,7 +42,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backBtn" />
+            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/saveBtn"
@@ -79,6 +79,17 @@
             android:textColor="@color/delete_red"
             app:layout_constraintBottom_toTopOf="@+id/editTextDiary"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:textSize="22dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

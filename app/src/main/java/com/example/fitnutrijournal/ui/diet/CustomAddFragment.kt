@@ -43,40 +43,41 @@ class CustomAddFragment : Fragment() {
         }
 
         binding.addBtn.setOnClickListener {
-            val foodName = binding.inputName.text.toString()
-            val servingSize = binding.inputServingSize.text.toString().toIntOrNull() ?: 0
-            val calories = binding.inputCalories.text.toString().toFloatOrNull() ?: 0f
-            val carbohydrate = binding.inputCarb.text.toString().toFloatOrNull() ?: 0f
-            val protein = binding.inputProtein.text.toString().toFloatOrNull() ?: 0f
-            val fat = binding.inputFat.text.toString().toFloatOrNull() ?: 0f
+            if (validateFields()) {
+                val foodName = binding.inputName.text.toString()
+                val servingSize = binding.inputServingSize.text.toString().toIntOrNull() ?: 0
+                val calories = binding.inputCalories.text.toString().toFloatOrNull() ?: 0f
+                val carbohydrate = binding.inputCarb.text.toString().toFloatOrNull() ?: 0f
+                val protein = binding.inputProtein.text.toString().toFloatOrNull() ?: 0f
+                val fat = binding.inputFat.text.toString().toFloatOrNull() ?: 0f
 
-            if (foodName.isNotEmpty() && servingSize > 0) {
-                val food = Food(
-                    foodCd = "", // foodCd는 DietViewModel에서 생성
-                    foodName = foodName,
-                    servingSize = servingSize,
-                    calories = calories,
-                    carbohydrate = carbohydrate,
-                    protein = protein,
-                    fat = fat,
-                    caloriesPerGram = calories / servingSize,
-                    isFavorite = false,
-                    isAddedByUser = true
-                )
-                dietViewModel.insertFood(food)
+                if (foodName.isNotEmpty() && servingSize > 0) {
+                    val food = Food(
+                        foodCd = "", // foodCd는 DietViewModel에서 생성
+                        foodName = foodName,
+                        servingSize = servingSize,
+                        calories = calories,
+                        carbohydrate = carbohydrate,
+                        protein = protein,
+                        fat = fat,
+                        caloriesPerGram = calories / servingSize,
+                        isFavorite = false,
+                        isAddedByUser = true
+                    )
+                    dietViewModel.insertFood(food)
+                    findNavController().popBackStack()
+                    Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "모든 값을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
-
-            findNavController().popBackStack()
-            Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
         }
-
-        binding.addBtn.isEnabled = false
     }
 
     private fun addTextWatchers() {
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                checkFieldsForEmptyValues()
+                validateFields()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -92,17 +93,52 @@ class CustomAddFragment : Fragment() {
         binding.inputFat.addTextChangedListener(textWatcher)
     }
 
-    private fun checkFieldsForEmptyValues() {
-        val name = binding.inputName.text.toString()
-        val servingSize = binding.inputServingSize.text.toString()
-        val calories = binding.inputCalories.text.toString()
-        val carb = binding.inputCarb.text.toString()
-        val protein = binding.inputProtein.text.toString()
-        val fat = binding.inputFat.text.toString()
+    private fun validateFields(): Boolean {
+        var isValid = true
 
-        binding.addBtn.isEnabled = name.isNotEmpty() && servingSize.isNotEmpty() &&
-                calories.isNotEmpty() && carb.isNotEmpty() &&
-                protein.isNotEmpty() && fat.isNotEmpty()
+        if (binding.inputName.text.toString().isEmpty()) {
+            binding.inputName.error = "이름을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputName.error = null
+        }
+
+        if (binding.inputServingSize.text.toString().isEmpty()) {
+            binding.inputServingSize.error = "기본 제공량을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputServingSize.error = null
+        }
+
+        if (binding.inputCalories.text.toString().isEmpty()) {
+            binding.inputCalories.error = "열량을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputCalories.error = null
+        }
+
+        if (binding.inputCarb.text.toString().isEmpty()) {
+            binding.inputCarb.error = "탄수화물을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputCarb.error = null
+        }
+
+        if (binding.inputProtein.text.toString().isEmpty()) {
+            binding.inputProtein.error = "단백질을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputProtein.error = null
+        }
+
+        if (binding.inputFat.text.toString().isEmpty()) {
+            binding.inputFat.error = "지방을 입력해주세요."
+            isValid = false
+        } else {
+            binding.inputFat.error = null
+        }
+
+        return isValid
     }
 
     override fun onDestroyView() {
