@@ -466,7 +466,11 @@
                             android:id="@+id/tabLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/border_tab_layout" />
+                            android:background="@drawable/border_tab_layout"
+                            app:tabIndicatorColor="@color/indicator_color"
+                            app:tabRippleColor="@color/ripple_color"
+                            app:tabSelectedTextColor="@color/selected_tab_text_color"
+                            app:tabTextColor="@color/unselected_tab_text_color" />
                     </com.google.android.material.appbar.AppBarLayout>
 
                     <androidx.viewpager2.widget.ViewPager2

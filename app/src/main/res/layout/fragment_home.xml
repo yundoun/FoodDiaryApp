@@ -352,7 +352,6 @@
                 </androidx.cardview.widget.CardView>
 
 
-
                 <TextView
                     android:id="@+id/tvTodaySummary"
                     android:layout_width="wrap_content"

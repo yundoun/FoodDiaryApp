@@ -16,6 +16,7 @@ import com.example.fitnutrijournal.databinding.FragmentCustomAddBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.data.model.Food
+import com.google.android.material.snackbar.Snackbar
 
 class CustomAddFragment : Fragment() {
 
@@ -68,7 +69,7 @@ class CustomAddFragment : Fragment() {
                     )
                     dietViewModel.insertFood(food)
                     findNavController().popBackStack()
-                    Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
