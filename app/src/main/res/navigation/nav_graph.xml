@@ -95,7 +95,7 @@
         android:label="CustomAddFragment" />
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.example.fitnutrijournal.ui.home.DiaryFragment"
+        android:name="com.example.fitnutrijournal.ui.home.MemoFragment"
         android:label="DiaryFragment" />
 
 

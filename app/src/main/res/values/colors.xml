@@ -23,4 +23,15 @@
     <color name="text_blue">#477ed6</color>
     <color name="delete_red">#ff3b55</color>
 
+
+    <color name="customErrorColor">#FF0000</color>
+    <color name="customHelperColor">#FF00FF</color>
+    <color name="customHintColor">#0000FF</color>
+
+    <color name="selected_tab_text_color">#477ed6</color>
+    <color name="unselected_tab_text_color">#FF000000</color>
+    <color name="indicator_color">#477ed6</color>
+    <color name="ripple_color">#ffffff</color>
+
+
 </resources>

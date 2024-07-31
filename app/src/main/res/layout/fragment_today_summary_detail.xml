@@ -60,6 +60,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="100dp"
                 android:layout_marginEnd="30dp"
+                android:background="@color/white"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
@@ -69,7 +70,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,7 +96,7 @@
                             app:layout_constraintEnd_toStartOf="@+id/tvTargetC"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_target_cal" />
+                            app:srcCompat="@drawable/ic_target_calories" />
 
                         <TextView
                             android:id="@+id/tvTargetC"
@@ -253,7 +255,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="100dp"
                 android:layout_marginEnd="30dp"
-                android:background="@drawable/border_section_light_blue"
+                android:background="@color/light_blue"
                 app:cardBackgroundColor="@color/light_blue"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
@@ -263,7 +265,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/light_blue">
 
                     <!-- 내부 위젯들 -->
                     <TextView
@@ -434,6 +437,8 @@
                 android:layout_marginTop="100dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="100dp"
+                android:background="@color/white"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -443,7 +448,8 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
                     <!-- 내부 위젯들 -->
                     <com.google.android.material.appbar.AppBarLayout
@@ -460,7 +466,11 @@
                             android:id="@+id/tabLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/border_tab_layout" />
+                            android:background="@drawable/border_tab_layout"
+                            app:tabIndicatorColor="@color/indicator_color"
+                            app:tabRippleColor="@color/ripple_color"
+                            app:tabSelectedTextColor="@color/selected_tab_text_color"
+                            app:tabTextColor="@color/unselected_tab_text_color" />
                     </com.google.android.material.appbar.AppBarLayout>
 
                     <androidx.viewpager2.widget.ViewPager2

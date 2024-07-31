@@ -78,10 +78,12 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/todaySummarySection"
                     android:layout_width="0dp"
-                    android:layout_height="400dp"
+                    android:layout_height="350dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="150dp"
                     android:layout_marginEnd="10dp"
+                    android:background="@color/white"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +93,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/border_section_white"
+                        android:background="@color/white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -128,8 +130,6 @@
                             android:id="@+id/progressBarLayout"
                             android:layout_width="200dp"
                             android:layout_height="200dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginBottom="20dp"
                             app:layout_constraintBottom_toTopOf="@+id/textView13"
                             app:layout_constraintEnd_toStartOf="@+id/imageView3"
                             app:layout_constraintHeight_min="200dp"
@@ -326,11 +326,11 @@
                             android:layout_marginEnd="20dp"
                             android:layout_marginBottom="20dp"
                             android:scaleType="fitCenter"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/progressBarLayout"
                             app:layout_constraintEnd_toStartOf="@+id/progressBarLayout"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_target_calories" />
+                            app:layout_constraintTop_toTopOf="@+id/progressBarLayout"
+                            app:srcCompat="@drawable/ic_target_cal" />
 
                         <ImageView
                             android:id="@+id/imageView3"
@@ -340,15 +340,14 @@
                             android:layout_marginEnd="20dp"
                             android:layout_marginBottom="20dp"
                             android:scaleType="fitCenter"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/progressBarLayout"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/progressBarLayout"
-                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/progressBarLayout"
                             app:srcCompat="@drawable/ic_remaincalories" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
-
 
 
                 <TextView
@@ -404,6 +403,8 @@
                     android:layout_marginTop="100dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="100dp"
+                    android:background="@color/white"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -415,7 +416,7 @@
                         android:id="@+id/todayDietSection"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/border_section_white">
+                        android:background="@color/white">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/breakfastLayout"

@@ -16,19 +16,15 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.model.Memo
-import com.example.fitnutrijournal.databinding.FragmentDiaryBinding
-import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.example.fitnutrijournal.databinding.FragmentMemoBinding
 import com.example.fitnutrijournal.viewmodel.MemoViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
-class DiaryFragment : Fragment() {
+class MemoFragment : Fragment() {
 
-    private var _binding: FragmentDiaryBinding? = null
+    private var _binding: FragmentMemoBinding? = null
     private val binding get() = _binding!!
     private val memoViewModel: MemoViewModel by activityViewModels()
 
@@ -36,7 +32,7 @@ class DiaryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDiaryBinding.inflate(inflater, container, false)
+        _binding = FragmentMemoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -46,6 +42,8 @@ class DiaryFragment : Fragment() {
 
         // 처음에는 저장 버튼을 비활성화
         binding.saveBtn.isEnabled = false
+
+        binding.tvDate.text = memoViewModel.clickedDate.value
 
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner) { memo ->
             binding.editTextDiary.setText(memo?.content ?: "")

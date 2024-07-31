@@ -1,244 +1,308 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.fitnutrijournal.viewmodel.DietViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:text="이름"
-            android:textColor="@color/text_black"
-            app:layout_constraintBottom_toTopOf="@+id/textView15"
-            app:layout_constraintEnd_toStartOf="@+id/inputName"
-            app:layout_constraintHorizontal_bias="0.318"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:background="@color/white"
+            android:elevation="4dp"
+            android:fitsSystemWindows="true"
+            app:liftOnScroll="false">
 
-        <EditText
-            android:id="@+id/inputName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="text"
-            android:textColor="@color/text_black"
-            app:layout_constraintBottom_toTopOf="@+id/inputServingSize"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.701"
-            app:layout_constraintStart_toStartOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/appBarLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:text="기본 제공량"
-            android:textColor="@color/text_black"
-            app:layout_constraintBottom_toTopOf="@+id/view5"
-            app:layout_constraintEnd_toStartOf="@+id/inputServingSize"
-            app:layout_constraintStart_toStartOf="parent" />
+                <ImageView
+                    android:id="@+id/backBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintBottom_toTopOf="@+id/viewLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back" />
 
-        <EditText
-            android:id="@+id/inputServingSize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@color/text_black"
-            app:layout_constraintBottom_toTopOf="@+id/view5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.701"
-            app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="음식 추가하기"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    app:layout_anchor="@+id/appBarLayout2"
+                    app:layout_anchorGravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:text="단위"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toStartOf="@+id/editTextText2"
-            app:layout_constraintHorizontal_bias="0.318"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view5" />
+                <View
+                    android:id="@+id/viewLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/editTextText2"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:gravity="center"
-            android:inputType="text"
-            android:text="g"
-            android:textColor="@color/text_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view5" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="88dp"
-            android:text="열량"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toStartOf="@+id/editTextText2"
-            app:layout_constraintHorizontal_bias="0.318"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view5" />
 
-        <EditText
-            android:id="@+id/inputCalories"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="탄수화물"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toStartOf="@+id/inputCarb"
-            app:layout_constraintHorizontal_bias="0.411"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
-        <EditText
-            android:id="@+id/inputCarb"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputCalories" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="단백질"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toStartOf="@+id/inputProtein"
-            app:layout_constraintHorizontal_bias="0.362"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
-        <EditText
-            android:id="@+id/inputProtein"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputCarb" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/nameLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="지방"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toStartOf="@+id/inputFat"
-            app:layout_constraintHorizontal_bias="0.321"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView22" />
+                    <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.3"
+                        app:srcCompat="@drawable/ic_add_food" />
 
-        <EditText
-            android:id="@+id/inputFat"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/border_section_white"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@color/text_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inputProtein" />
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:text="음식을 자유롭게 추가하세요"
+                        android:textColor="@color/text_gray"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/addBtn"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/border_section_light_green"
-            android:text="저장하기"
-            android:textColor="@color/text_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+                    <View
+                        android:id="@+id/view"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/background"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-        <View
-            android:id="@+id/view5"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:background="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_back" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="이름"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+                    app:startIconTint="@color/text_blue">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/servingSizeLaytout"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="기본 제공량(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nameLayout"
+                    app:startIconTint="@color/text_blue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputServingSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/calroiesLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="열량(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/servingSizeLaytout"
+                    app:startIconTint="@color/text_blue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputCalories"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/carbLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="탄수화물(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/calroiesLayout"
+                    app:startIconTint="@color/text_blue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputCarb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/proteinLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="단백질(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/carbLayout"
+                    app:startIconTint="@color/text_blue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputProtein"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fatLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:hint="지방(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/proteinLayout"
+                    app:startIconTint="@color/text_blue">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputFat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                    android:id="@+id/addBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="100dp"
+                    android:layout_marginBottom="20dp"
+                    android:elevation="6dp"
+                    android:text="저장하기"
+                    android:textColor="@color/text_black"
+                    android:translationZ="12dp"
+                    app:backgroundTint="@color/light_green"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fatLayout" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

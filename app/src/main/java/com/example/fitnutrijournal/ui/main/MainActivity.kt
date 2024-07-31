@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val currentFragment = navController.currentDestination?.id
         val previousBackStackEntry = navController.previousBackStackEntry
