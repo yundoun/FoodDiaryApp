@@ -7,4 +7,5 @@
     <string name="title_exercise">운동</string>
     <string name="title_profile">내정보</string>
     <string name="favorite">즐겨찾기</string>
+    <string name="delete">삭제</string>
 </resources>

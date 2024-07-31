@@ -36,6 +36,7 @@ import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.diet.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.util.CameraHelper
+import com.example.fitnutrijournal.utils.PhotoViewActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
@@ -57,6 +58,8 @@ class MealDetailFragment : Fragment() {
 
     private val REQUEST_PERMISSIONS = 1001
     private lateinit var cameraHelper: CameraHelper
+    private var photoUri: String? = null
+    private var photoId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,6 +76,10 @@ class MealDetailFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+        val mealType = homeViewModel.mealType.value ?: "breakfast"
+        cameraHelper = CameraHelper(this, binding.imageSample, photoViewModel, currentDate, mealType)
 
         // 날짜와 식사 타입에 따른 사진 바인딩
         bindPhoto()
@@ -106,6 +113,35 @@ class MealDetailFragment : Fragment() {
         binding.cameraBtn.setOnClickListener {
             showImageSourceDialog()
         }
+
+        binding.imageSample.setOnClickListener {
+            Log.d("PhotoViewActivity", "Photo URI: $photoUri")
+            photoUri?.let {
+                val intent = Intent(requireContext(), PhotoViewActivity::class.java)
+                intent.putExtra(PhotoViewActivity.EXTRA_PHOTO_URI, it)
+                Log.d("PhotoViewActivity", "Photo URI: $it")
+                startActivity(intent)
+            }
+        }
+
+        binding.imageSample.setOnLongClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("사진 삭제")
+                .setMessage("이 사진을 삭제하시겠습니까?")
+                .setPositiveButton("예") { _, _ ->
+                    Log.d("PhotoViewActivity", "Photo ID: $photoId")
+                    photoId?.let {
+                        photoViewModel.deletePhotoById(it)
+                        binding.imageSample.setImageResource(R.drawable.image_sample)
+                        photoUri = null
+                        Toast.makeText(requireContext(), "사진이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("아니오", null)
+                .show()
+            true
+        }
+
     }
 
     private fun observeViewModels() {
@@ -199,15 +235,9 @@ class MealDetailFragment : Fragment() {
             .setItems(options) { dialog, which ->
                 when (which) {
                     0 -> {
-                        val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
-                        val mealType = homeViewModel.mealType.value ?: "breakfast"
-                        cameraHelper = CameraHelper(this, binding.imageSample, photoViewModel, currentDate, mealType)
                         cameraHelper.dispatchTakePictureIntent()
                     }
                     1 -> {
-                        val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
-                        val mealType = homeViewModel.mealType.value ?: "breakfast"
-                        cameraHelper = CameraHelper(this, binding.imageSample, photoViewModel, currentDate, mealType)
                         cameraHelper.dispatchPickPictureIntent()
                     }
                 }
@@ -382,10 +412,14 @@ class MealDetailFragment : Fragment() {
         val mealType = homeViewModel.mealType.value ?: "breakfast"
         photoViewModel.getPhotoByDateAndMealType(date, mealType).observe(viewLifecycleOwner) { photo ->
             if (photo?.photoUri != null) {
+                photoUri = photo.photoUri
+                photoId = photo.id
                 Glide.with(this)
                     .load(photo.photoUri)
                     .into(binding.imageSample)
             } else {
+                photoUri = null
+                photoId = null
                 binding.imageSample.setImageResource(R.drawable.image_sample)
             }
         }
