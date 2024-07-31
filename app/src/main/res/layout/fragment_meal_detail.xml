@@ -68,8 +68,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/infoLayout"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btnBack"
-                        app:srcCompat="@drawable/image_sample" />
+                        app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/infoLayout"
