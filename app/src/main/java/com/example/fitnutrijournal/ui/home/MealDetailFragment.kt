@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -29,7 +28,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -140,6 +138,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "아침"
                 }
+
                 "lunch" -> {
                     homeViewModel.currentCaloriesLunch.observe(viewLifecycleOwner) { calories ->
                         binding.calories.text = "$calories kcal\n총 섭취량"
@@ -155,6 +154,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "점심"
                 }
+
                 "dinner" -> {
                     homeViewModel.currentCaloriesDinner.observe(viewLifecycleOwner) { calories ->
                         binding.calories.text = "$calories kcal\n총 섭취량"
@@ -170,6 +170,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "저녁"
                 }
+
                 "snack" -> {
                     homeViewModel.currentCaloriesSnack.observe(viewLifecycleOwner) { calories ->
                         binding.calories.text = "$calories kcal\n총 섭취량"
@@ -185,6 +186,7 @@ class MealDetailFragment : Fragment() {
                     }
                     "간식"
                 }
+
                 else -> "식사"
             }
             binding.mealType.text = mealText
@@ -193,9 +195,13 @@ class MealDetailFragment : Fragment() {
         homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             viewLifecycleOwner.lifecycleScope.launch {
                 val uniqueMeals = mutableListOf<MealWithFood>()
-                val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+                val date = homeViewModel.currentDate.value ?: LocalDate.now()
+                    .format(homeViewModel.dateFormatter)
                 val mealType = homeViewModel.mealType.value ?: "breakfast"
-                val meals = homeViewModel.mealRepository.getMealsByDateAndTypeSync(date, mealType) // 필터링된 mealType으로 가져오기
+                val meals = homeViewModel.mealRepository.getMealsByDateAndTypeSync(
+                    date,
+                    mealType
+                ) // 필터링된 mealType으로 가져오기
 
                 meals.forEach { meal ->
                     val food = foods.find { it.foodCd == meal.dietFoodCode }
@@ -208,6 +214,8 @@ class MealDetailFragment : Fragment() {
                 adapter.updateMealsWithFood(uniqueMeals)
             }
         }
+
+
 
 
         dietViewModel.loadMealsWithFood()
@@ -249,11 +257,11 @@ class MealDetailFragment : Fragment() {
     }
 
 
-
     @Throws(IOException::class)
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        val storageDir: File =
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */
             ".jpg", /* suffix */
@@ -268,42 +276,80 @@ class MealDetailFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        Log.d("camera", "onActivityResult: requestCode: $requestCode, resultCode: $resultCode, data: $data")
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                UCrop.REQUEST_CROP -> {
-                    val resultUri = UCrop.getOutput(data!!)
-                    resultUri?.let {
-                        val date = homeViewModel.currentDate.value ?: return
-                        val mealType = homeViewModel.mealType.value ?: return
-                        currentPhotoPath?.let {
-                            photoViewModel.addPhoto(date, mealType, it)
-                            setPic(binding.imageSample, it)
-                            Toast.makeText(requireContext(), "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
-                        }
+                REQUEST_IMAGE_CAPTURE -> {
+                    Log.d("camera", "REQUEST_IMAGE_CAPTURE, photoUri: $photoUri")
+                    photoUri?.let { cropImage(it) }
+                }
+
+                REQUEST_IMAGE_PICK -> {
+                    Log.d("camera", "REQUEST_IMAGE_PICK, data: $data")
+                    data?.data?.let { uri ->
+                        currentPhotoPath = uri.toString()
+                        cropImage(uri)
                     }
                 }
-                UCrop.RESULT_ERROR -> {
-                    val cropError = UCrop.getError(data!!)
-                    Log.e("MealDetailFragment", "Crop error: ${cropError?.message}")
-                    Toast.makeText(requireContext(), "이미지 크롭 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+
+                REQUEST_IMAGE_CROP -> {
+                    Log.d("camera", "REQUEST_IMAGE_CROP, currentPhotoPath: $currentPhotoPath")
+                    val date = homeViewModel.currentDate.value ?: return
+                    val mealType = homeViewModel.mealType.value ?: return
+                    currentPhotoPath?.let {
+                        photoViewModel.addPhoto(date, mealType, it)
+                        setPic(binding.imageSample, it)
+                        Toast.makeText(requireContext(), "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
     }
 
 
-    private fun cropImage(uri: Uri) {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
-        val file = File.createTempFile("CROP_${timeStamp}_", ".jpg", storageDir)
-        val destinationUri = Uri.fromFile(file)
-        currentPhotoPath = file.absolutePath
 
-        UCrop.of(uri, destinationUri)
-            .withAspectRatio(1f, 1f)
-            .withMaxResultSize(512, 512)
-            .start(requireContext(), this)
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun cropImage(uri: Uri) {
+        try {
+            val cropIntent = Intent("com.android.camera.action.CROP")
+            cropIntent.setDataAndType(uri, "image/*")
+            cropIntent.putExtra("crop", "true")
+            cropIntent.putExtra("aspectX", 1)
+            cropIntent.putExtra("aspectY", 1)
+            cropIntent.putExtra("outputX", 512)
+            cropIntent.putExtra("outputY", 512)
+            cropIntent.putExtra("scale", true)
+            cropIntent.putExtra("noFaceDetection", true)
+            cropIntent.putExtra("return-data", false)
+
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+            val file = File.createTempFile("CROP_${timeStamp}_", ".jpg", storageDir)
+            currentPhotoPath = file.absolutePath
+            val photoURI: Uri = FileProvider.getUriForFile(
+                requireContext(),
+                "com.example.fitnutrijournal.fileprovider",
+                file
+            )
+
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
+            // 명시적으로 권한 부여
+            val resInfoList = requireContext().packageManager.queryIntentActivities(cropIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (resolveInfo in resInfoList) {
+                val packageName = resolveInfo.activityInfo.packageName
+                requireContext().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            Log.d("cropImage", "Starting crop activity with URI: $photoURI")
+            startActivityForResult(cropIntent, REQUEST_IMAGE_CROP)
+        } catch (e: Exception) {
+            Log.e("cropImage", "Error during image cropping: ${e.message}")
+            Toast.makeText(requireContext(), "이미지 크롭 작업을 지원하지 않습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
 
     private fun setPic(imageView: ImageView, photoPath: String) {
@@ -328,7 +374,8 @@ class MealDetailFragment : Fragment() {
     }
 
     private fun dispatchPickPictureIntent() {
-        val pickPictureIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val pickPictureIntent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(pickPictureIntent, REQUEST_IMAGE_PICK)
     }
 
@@ -336,8 +383,10 @@ class MealDetailFragment : Fragment() {
         val itemTouchHelperCallback =
             object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-                private val background = ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
-                private val deleteIcon: Drawable? = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
+                private val background =
+                    ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
+                private val deleteIcon: Drawable? =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
                 private val iconMargin = resources.getDimension(R.dimen.icon_margin).toInt()
 
                 override fun onMove(
@@ -371,7 +420,8 @@ class MealDetailFragment : Fragment() {
                     isCurrentlyActive: Boolean
                 ) {
                     val itemView = viewHolder.itemView
-                    val iconTop = itemView.top + (itemView.height - deleteIcon!!.intrinsicHeight) / 2
+                    val iconTop =
+                        itemView.top + (itemView.height - deleteIcon!!.intrinsicHeight) / 2
                     val iconMargin = iconMargin
                     val iconLeft = itemView.right - iconMargin - deleteIcon.intrinsicWidth
                     val iconRight = itemView.right - iconMargin
@@ -394,14 +444,27 @@ class MealDetailFragment : Fragment() {
                     c.save()
 
                     if (dX < 0) {
-                        c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                        c.clipRect(
+                            itemView.right + dX.toInt(),
+                            itemView.top,
+                            itemView.right,
+                            itemView.bottom
+                        )
                     } else {
                         c.clipRect(0, 0, 0, 0)
                     }
 
                     deleteIcon.draw(c)
                     c.restore()
-                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
                 }
             }
 
@@ -429,10 +492,17 @@ class MealDetailFragment : Fragment() {
         }
 
         val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                it
+            ) != PackageManager.PERMISSION_GRANTED
         }
         if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_PERMISSIONS)
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                permissionsToRequest.toTypedArray(),
+                REQUEST_PERMISSIONS
+            )
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
@@ -440,6 +510,7 @@ class MealDetailFragment : Fragment() {
                 startActivity(intent)
             }
         }
+        Log.d("camera", "Permissions checked and requested if necessary")
     }
 
     @Deprecated("Deprecated in Java")
@@ -460,8 +531,8 @@ class MealDetailFragment : Fragment() {
                 Toast.makeText(requireContext(), "필요한 권한이 승인되지 않았습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+        Log.d("camera", "Permissions result: $grantResults")
     }
-
 
 
 }

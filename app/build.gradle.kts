@@ -41,14 +41,14 @@ android {
         dataBinding = true
         viewBinding = true
     }
-
-
 }
+
+
 
 dependencies {
 
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
-    implementation("com.github.yalantis:ucrop:2.2.6")
+
 
     // Room components
     implementation ("androidx.room:room-runtime:2.6.1")
