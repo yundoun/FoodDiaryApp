@@ -23,4 +23,10 @@
     <color name="text_blue">#477ed6</color>
     <color name="delete_red">#ff3b55</color>
 
+
+    <color name="customErrorColor">#FF0000</color>
+    <color name="customHelperColor">#FF00FF</color>
+    <color name="customHintColor">#0000FF</color>
+
+
 </resources>

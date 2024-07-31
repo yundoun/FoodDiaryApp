@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.diet
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentCustomAddBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
@@ -68,8 +70,6 @@ class CustomAddFragment : Fragment() {
                     findNavController().popBackStack()
                     Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(context, "모든 값을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -77,7 +77,7 @@ class CustomAddFragment : Fragment() {
     private fun addTextWatchers() {
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                validateFields()
+                removeErrorMessages()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -93,49 +93,76 @@ class CustomAddFragment : Fragment() {
         binding.inputFat.addTextChangedListener(textWatcher)
     }
 
+    private fun removeErrorMessages() {
+        if (binding.inputName.text.toString().isNotEmpty()) {
+            binding.nameLayout.error = null
+        }
+
+        if (binding.inputServingSize.text.toString().isNotEmpty()) {
+            binding.servingSizeLaytout.error = null
+        }
+
+        if (binding.inputCalories.text.toString().isNotEmpty()) {
+            binding.calroiesLayout.error = null
+        }
+
+        if (binding.inputCarb.text.toString().isNotEmpty()) {
+            binding.carbLayout.error = null
+        }
+
+        if (binding.inputProtein.text.toString().isNotEmpty()) {
+            binding.proteinLayout.error = null
+        }
+
+        if (binding.inputFat.text.toString().isNotEmpty()) {
+            binding.fatLayout.error = null
+        }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun validateFields(): Boolean {
         var isValid = true
 
         if (binding.inputName.text.toString().isEmpty()) {
-            binding.inputName.error = "이름을 입력해주세요."
+            binding.nameLayout.error = "음식 이름을 입력해주세요."
             isValid = false
         } else {
-            binding.inputName.error = null
+            binding.nameLayout.error = null
         }
 
         if (binding.inputServingSize.text.toString().isEmpty()) {
-            binding.inputServingSize.error = "기본 제공량을 입력해주세요."
+            binding.servingSizeLaytout.error = "1회 제공량을 입력해주세요."
             isValid = false
         } else {
-            binding.inputServingSize.error = null
+            binding.servingSizeLaytout.error = null
         }
 
         if (binding.inputCalories.text.toString().isEmpty()) {
-            binding.inputCalories.error = "열량을 입력해주세요."
+            binding.calroiesLayout.error = "칼로리를 입력해주세요."
             isValid = false
         } else {
-            binding.inputCalories.error = null
+            binding.calroiesLayout.error = null
         }
 
         if (binding.inputCarb.text.toString().isEmpty()) {
-            binding.inputCarb.error = "탄수화물을 입력해주세요."
+            binding.carbLayout.error = "탄수화물을 입력해주세요."
             isValid = false
         } else {
-            binding.inputCarb.error = null
+            binding.carbLayout.error = null
         }
 
         if (binding.inputProtein.text.toString().isEmpty()) {
-            binding.inputProtein.error = "단백질을 입력해주세요."
+            binding.proteinLayout.error = "단백질을 입력해주세요."
             isValid = false
         } else {
-            binding.inputProtein.error = null
+            binding.proteinLayout.error = null
         }
 
         if (binding.inputFat.text.toString().isEmpty()) {
-            binding.inputFat.error = "지방을 입력해주세요."
+            binding.fatLayout.error = "지방을 입력해주세요."
             isValid = false
         } else {
-            binding.inputFat.error = null
+            binding.fatLayout.error = null
         }
 
         return isValid

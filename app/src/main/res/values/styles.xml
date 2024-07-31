@@ -1,16 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/black</item>
-    </style>
+<!--    &lt;!&ndash; Base application theme &ndash;&gt;-->
+<!--    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/white</item>-->
+<!--        <item name="colorPrimaryDark">@color/white</item>-->
+<!--        <item name="colorAccent">@color/black</item>-->
+<!--    </style>-->
 
     <style name="BottomNavigationViewStyle" parent="Widget.Design.BottomNavigationView">
         <item name="itemIconTint">@color/nav_item_color_state</item>
         <item name="itemTextColor">@color/nav_item_color_state</item>
         <item name="itemBackground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <!-- 기본 테마 -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="colorPrimary">@color/text_blue</item>
+        <item name="colorPrimaryDark">@color/text_blue</item>
+        <item name="colorAccent">@color/blue</item>
+        <item name="textInputStyle">@style/Widget.MyApp.TextInputLayout</item>
+    </style>
+
+    <!-- 사용자 정의 TextInputLayout 스타일 -->
+    <style name="Widget.MyApp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="errorTextAppearance">@style/MyApp.TextInputLayout.Error</item>
+        <item name="helperTextTextAppearance">@style/MyApp.TextInputLayout.Helper</item>
+        <item name="hintTextAppearance">@style/MyApp.TextInputLayout.Hint</item>
+    </style>
+
+    <!-- 사용자 정의 오류 텍스트 모양 -->
+    <style name="MyApp.TextInputLayout.Error" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/customErrorColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- 사용자 정의 도우미 텍스트 모양 -->
+    <style name="MyApp.TextInputLayout.Helper" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/customHelperColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- 사용자 정의 힌트 텍스트 모양 -->
+    <style name="MyApp.TextInputLayout.Hint" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/customHintColor</item>
+        <item name="android:textSize">12sp</item>
     </style>
 </resources>

@@ -139,9 +139,14 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="이름"
+                    style="@style/Widget.MyApp.TextInputLayout"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputName"
@@ -153,6 +158,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/servingSizeLaytout"
+                    style="@style/Widget.MyApp.TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -160,9 +166,13 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="기본 제공량(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/nameLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/nameLayout"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputServingSize"
@@ -174,6 +184,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/calroiesLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -181,9 +192,13 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="열량(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/servingSizeLaytout">
+                    app:layout_constraintTop_toBottomOf="@+id/servingSizeLaytout"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputCalories"
@@ -195,6 +210,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/carbLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -202,9 +218,13 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="탄수화물(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/calroiesLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/calroiesLayout"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputCarb"
@@ -215,7 +235,8 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout6"
+                    android:id="@+id/proteinLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -223,9 +244,13 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="단백질(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/carbLayout">
+                    app:layout_constraintTop_toBottomOf="@+id/carbLayout"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputProtein"
@@ -236,7 +261,8 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout"
+                    android:id="@+id/fatLayout"
+                    style="@style/Widget.MyApp.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -244,9 +270,13 @@
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
                     android:hint="지방(g)"
+                    app:boxStrokeColor="@color/text_blue"
+                    app:endIconTint="@color/text_blue"
+                    app:hintTextColor="@color/text_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
+                    app:layout_constraintTop_toBottomOf="@+id/proteinLayout"
+                    app:startIconTint="@color/text_blue">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputFat"
@@ -270,7 +300,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+                    app:layout_constraintTop_toBottomOf="@+id/fatLayout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
