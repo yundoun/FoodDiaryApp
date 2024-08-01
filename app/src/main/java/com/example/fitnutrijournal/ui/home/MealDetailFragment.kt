@@ -229,7 +229,7 @@ class MealDetailFragment : Fragment() {
     }
 
     private fun showImageSourceDialog() {
-        val options = arrayOf("카메라로 촬영", "앨범에서 선택")
+        val options = arrayOf("카메라로 촬영")
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("사진 추가")
             .setItems(options) { dialog, which ->
@@ -237,9 +237,9 @@ class MealDetailFragment : Fragment() {
                     0 -> {
                         cameraHelper.dispatchTakePictureIntent()
                     }
-                    1 -> {
-                        cameraHelper.dispatchPickPictureIntent()
-                    }
+//                    1 -> {
+//                        cameraHelper.dispatchPickPictureIntent()
+//                    }
                 }
             }
         builder.create().show()
@@ -275,11 +275,6 @@ class MealDetailFragment : Fragment() {
                     val removedItem = adapter.removeItemById(adapter.getItem(position).meal.id)
                     if (removedItem != null) {
                         dietViewModel.deleteMealById(removedItem.meal.id)
-                        Toast.makeText(
-                            requireContext(),
-                            "${removedItem.food.foodName}이 삭제 되었습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
 

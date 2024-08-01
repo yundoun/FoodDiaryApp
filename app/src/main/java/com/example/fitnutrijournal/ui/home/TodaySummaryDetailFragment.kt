@@ -31,6 +31,7 @@ import com.example.fitnutrijournal.databinding.FragmentTodaySummaryDetailBinding
 import com.example.fitnutrijournal.ui.home.Tab.ViewPagerAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -221,7 +222,8 @@ class TodaySummaryDetailFragment : Fragment() {
                     dinnerCalories,
                     snackCalories
                 )
-                Toast.makeText(context, "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "목표가 저장되었습니다.", Snackbar.LENGTH_SHORT).show()
             }
             .setNegativeButton("취소") { dialog, _ ->
                 dialog.dismiss()

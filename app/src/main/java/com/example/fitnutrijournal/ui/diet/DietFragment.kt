@@ -108,8 +108,8 @@ class DietFragment : Fragment() {
                 Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
             }
 
-            Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
             findNavController().popBackStack()
+            Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnAddCustomFood.setOnClickListener {

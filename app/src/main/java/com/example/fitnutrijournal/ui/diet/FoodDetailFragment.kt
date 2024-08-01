@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.google.android.material.snackbar.Snackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FoodDetailFragment : Fragment() {
@@ -58,7 +59,6 @@ class FoodDetailFragment : Fragment() {
             } else {
                 binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
             }
-            binding.unit.setText("g")
         }
 
         binding.totalContentInput.addTextChangedListener(object : TextWatcher {
