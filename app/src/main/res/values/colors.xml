@@ -36,5 +36,7 @@
     <color name="indicator_color">#477ed6</color>
     <color name="ripple_color">#ffffff</color>
 
+    <color name="section_gray">#989a9e</color>
+
 
 </resources>

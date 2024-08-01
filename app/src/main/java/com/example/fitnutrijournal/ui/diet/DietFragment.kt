@@ -117,7 +117,7 @@ class DietFragment : Fragment() {
         }
 
 
-        //observeFoodInfo()
+        observeFoodInfo()
     }
 
     private fun startVoiceInput() {
