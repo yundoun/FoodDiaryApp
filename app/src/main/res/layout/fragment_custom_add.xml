@@ -293,6 +293,7 @@
                     android:layout_marginTop="100dp"
                     android:layout_marginBottom="20dp"
                     android:elevation="6dp"
+                    android:gravity="center"
                     android:text="저장하기"
                     android:textColor="@color/text_black"
                     android:translationZ="12dp"

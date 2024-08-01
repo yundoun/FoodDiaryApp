@@ -40,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.selectedFood.foodName}"
+                android:textColor="@color/text_black"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -57,6 +58,7 @@
                 android:layout_marginTop="50dp"
                 android:gravity="center"
                 android:text="섭취량"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toStartOf="@+id/textView6"
                 app:layout_constraintHorizontal_bias="0.559"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,6 +72,7 @@
                 android:layout_marginEnd="50dp"
                 android:gravity="center"
                 android:text="단위"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView2"
                 app:layout_constraintTop_toBottomOf="@+id/foodName" />
@@ -86,6 +89,7 @@
                 android:gravity="center"
                 android:inputType="number"
                 android:text="@={viewModel.totalContent}"
+                android:textColor="@color/text_black"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/unit"
                 app:layout_constraintStart_toStartOf="parent"
@@ -103,6 +107,7 @@
                 android:enabled="false"
                 android:gravity="center"
                 android:inputType="none"
+                android:textColor="@color/text_gray"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/totalContentInput"
@@ -126,6 +131,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:text="영양정보"
+                android:textColor="@color/text_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.077"
@@ -165,6 +171,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="40dp"
                 android:text="제공량"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toStartOf="@+id/totalContent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -176,6 +183,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="40dp"
                 android:text="열량"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toStartOf="@+id/calories"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -187,6 +195,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
                 android:text="탄수화물"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toStartOf="@+id/carbohydrate"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -209,6 +218,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
                 android:text="지방"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toStartOf="@+id/fat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView20" />
@@ -221,6 +231,7 @@
                 android:layout_marginEnd="30dp"
                 android:gravity="end"
                 android:text="@{viewModel.calculatedCalories}"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView11"
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -233,6 +244,7 @@
                 android:layout_marginEnd="30dp"
                 android:gravity="end"
                 android:text="@{viewModel.calculatedCarbohydrate}"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView19"
                 app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -269,6 +281,7 @@
                 android:layout_marginEnd="30dp"
                 android:gravity="end"
                 android:text="@{viewModel.totalContent}"
+                android:textColor="@color/text_black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView10"
                 app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -284,6 +297,7 @@
             android:layout_marginBottom="30dp"
             android:background="@drawable/border_section_light_green"
             android:text="추가하기"
+            android:textColor="@color/text_black"
             android:visibility="@{viewModel.isSaveButtonVisible ? android.view.View.VISIBLE : android.view.View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

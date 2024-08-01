@@ -27,6 +27,7 @@ import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.Locale
 
@@ -96,7 +97,7 @@ class DietFragment : Fragment() {
             val mealType = dietViewModel.mealType.value ?: ""
 
             if (checkedItems.isEmpty()) {
-                Toast.makeText(context, "선택된 아이템이 없습니다.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(view, "선택된 아이템이 없습니다.", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -107,8 +108,7 @@ class DietFragment : Fragment() {
                 Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
             }
 
-            Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
-
+            Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }
 
