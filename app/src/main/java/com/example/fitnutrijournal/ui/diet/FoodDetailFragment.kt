@@ -23,6 +23,7 @@ class FoodDetailFragment : Fragment() {
 
     private val dietViewModel: DietViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
+    private var mealId: Long = -1L // mealId 변수를 추가
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +41,10 @@ class FoodDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mealId = arguments?.getLong("mealId") ?: -1L
+
         binding.btnUpdate.setOnClickListener {
-            dietViewModel.updateFoodIntake()
+            dietViewModel.updateFoodIntake(mealId)
             Toast.makeText(context, "식사가 업데이트되었습니다.", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }

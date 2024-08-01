@@ -367,18 +367,19 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateFoodIntake() {
+    fun updateFoodIntake(mealId: Long) {
         val food = _selectedFood.value ?: return
         val newQuantity = _totalContent.value?.toIntOrNull() ?: return
         viewModelScope.launch {
             val date = homeViewModel.currentDate.value ?: return@launch
             val mealType = _mealType.value ?: return@launch
 
-            val meal = mealRepository.getMealByFoodCodeAndDate(food.foodCd, date)
-            meal?.let {
-                val oldQuantity = it.quantity
+            val mealWithFood = mealRepository.getMealWithFoodById(mealId)
+            mealWithFood?.let {
+                val oldQuantity = it.meal.quantity
 
-                val updatedMeal = it.copy(quantity = newQuantity)
+                val updatedMeal = it.meal.copy(quantity = newQuantity)
+                Log.d("DietViewModel", "Updating meal: $updatedMeal")
                 mealRepository.update(updatedMeal)
 
                 // 기존 섭취량을 제거하고, 새로운 섭취량을 추가하여 영양성분 업데이트
@@ -386,8 +387,11 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 homeViewModel.updateNutrientData(mealType, food, newQuantity)
 
                 homeViewModel.refreshFilteredFoods()
+            } ?: run {
+                Log.d("DietViewModel", "Meal not found with id: $mealId")
             }
         }
     }
+
 
 }

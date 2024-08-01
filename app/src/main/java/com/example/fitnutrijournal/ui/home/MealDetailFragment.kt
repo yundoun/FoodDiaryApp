@@ -217,10 +217,14 @@ class MealDetailFragment : Fragment() {
         val adapter = MealWithFoodAdapter(
             emptyList(),
             { mealWithFood ->
+                val mealId = mealWithFood.meal.id
                 dietViewModel.selectFood(mealWithFood.food.foodCd)
                 dietViewModel.setSaveButtonVisibility(false)
                 dietViewModel.setUpdateButtonVisibility(true)
-                findNavController().navigate(R.id.action_mealDetailFragment_to_foodDetailFragment)
+
+                val action = MealDetailFragmentDirections
+                    .actionMealDetailFragmentToFoodDetailFragment(mealId)
+                findNavController().navigate(action)
             },
             dietViewModel
         )
