@@ -87,8 +87,13 @@
         </action>
         <action
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
-            app:destination="@id/dietDetailFragment" />
+            app:destination="@id/dietDetailFragment">
+            <argument
+                android:name="mealId"
+                app:argType="long" />
+        </action>
     </fragment>
+
     <fragment
         android:id="@+id/customAddFragment"
         android:name="com.example.fitnutrijournal.ui.diet.CustomAddFragment"

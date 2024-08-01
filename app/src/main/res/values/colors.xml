@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="splash_background">#FFFFFF</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#ECECEC</color>
@@ -21,8 +23,9 @@
     <color name="text_black">#000000</color>
     <color name="text_gray">#7f7f7f</color>
     <color name="text_blue">#477ed6</color>
+    <color name="text_dark_blue">#3b68b1</color>
     <color name="delete_red">#ff3b55</color>
-
+    <color name="accent_red">#ff4081</color>
 
     <color name="customErrorColor">#FF0000</color>
     <color name="customHelperColor">#FF00FF</color>

@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    &lt;!&ndash; Base application theme &ndash;&gt;-->
-<!--    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
-<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-<!--        <item name="colorPrimary">@color/white</item>-->
-<!--        <item name="colorPrimaryDark">@color/white</item>-->
-<!--        <item name="colorAccent">@color/black</item>-->
-<!--    </style>-->
-
     <style name="BottomNavigationViewStyle" parent="Widget.Design.BottomNavigationView">
         <item name="itemIconTint">@color/nav_item_color_state</item>
         <item name="itemTextColor">@color/nav_item_color_state</item>
         <item name="itemBackground">?android:attr/selectableItemBackground</item>
     </style>
 
-    <!-- 기본 테마 -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+     기본 테마
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/text_blue</item>
-        <item name="colorPrimaryDark">@color/text_blue</item>
-        <item name="colorAccent">@color/blue</item>
+        <item name="colorPrimaryDark">@color/text_dark_blue</item>
+        <item name="colorAccent">@color/accent_red</item>
         <item name="textInputStyle">@style/Widget.MyApp.TextInputLayout</item>
     </style>
+
 
     <!-- 사용자 정의 TextInputLayout 스타일 -->
     <style name="Widget.MyApp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">

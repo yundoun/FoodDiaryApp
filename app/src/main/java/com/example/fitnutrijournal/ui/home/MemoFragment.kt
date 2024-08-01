@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.model.Memo
 import com.example.fitnutrijournal.databinding.FragmentMemoBinding
 import com.example.fitnutrijournal.viewmodel.MemoViewModel
+import com.google.android.material.snackbar.Snackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MemoFragment : Fragment() {
@@ -58,7 +59,6 @@ class MemoFragment : Fragment() {
                 val memo = Memo(clickedDate, content)
                 memoViewModel.insertOrUpdate(memo)
                 Toast.makeText(requireContext(), "메모가 저장되었습니다.", Toast.LENGTH_SHORT).show()
-
                 findNavController().popBackStack()
             }
         }
