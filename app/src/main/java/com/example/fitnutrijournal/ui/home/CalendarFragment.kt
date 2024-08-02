@@ -66,6 +66,7 @@ class CalendarFragment : Fragment() {
         setupObservers()
         setupClickListeners()
 
+        // 처음에는 현재 날짜로 설정
         if (isFirstTime) {
             setupCurrentDateObserver()
             isFirstTime = false
@@ -117,7 +118,7 @@ class CalendarFragment : Fragment() {
             binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
         })
 
-        // 월별 데이터를 뽑아서 데이터 있는 지 표시하기 위한 Observer
+        // 월별 메모 데이터를 뽑아서 데이터 있는 지 표시하기 위한 Observer
         memoViewModel.monthlyMemos.observe(viewLifecycleOwner, Observer { memos ->
             binding.calendarView.notifyCalendarChanged() // 달력이 전체적으로 변경됨을 알림
         })
@@ -221,8 +222,6 @@ class CalendarFragment : Fragment() {
                         val drawable = container.textView.background as GradientDrawable
                         when {
                             data.date == selectedDate -> {
-                                Log.d("CalendarFragment", "바인딩 되는 날짜 : ${data.date}")
-                                Log.d("CalendarFragment", "선택된 날짜 : ${memoViewModel.clickedDate.value}")
                                 drawable.setColor(
                                     ContextCompat.getColor(requireContext(), R.color.calendar_today)
                                 )
