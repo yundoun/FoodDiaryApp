@@ -19,6 +19,12 @@ interface DailyIntakeRecordDao {
     @Query("SELECT * FROM daily_intake_record WHERE date = :date LIMIT 1")
     suspend fun getRecordByDateSync(date: String): DailyIntakeRecord?
 
-    @Query("SELECT * FROM daily_intake_record WHERE date BETWEEN :startDate AND :endDate")
+    @Query("""
+    SELECT * 
+    FROM daily_intake_record 
+    WHERE date BETWEEN :startDate AND :endDate 
+    AND (currentCalories != 0 OR currentCarbs != 0 OR currentProtein != 0 OR currentFat != 0)
+""")
     suspend fun getRecordsBetweenDates(startDate: String, endDate: String): List<DailyIntakeRecord>
+
 }

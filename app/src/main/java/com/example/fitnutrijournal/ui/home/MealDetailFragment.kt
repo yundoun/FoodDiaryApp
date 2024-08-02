@@ -95,7 +95,6 @@ class MealDetailFragment : Fragment() {
 
         observeViewModels()
 
-
     }
 
     private fun setClickListeners() {

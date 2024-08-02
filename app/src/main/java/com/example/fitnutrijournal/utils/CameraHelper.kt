@@ -1,12 +1,15 @@
 package com.example.fitnutrijournal.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -32,6 +35,7 @@ class CameraHelper(
     private var currentPhotoPath: String? = null
     private var photoUri: Uri? = null
 
+    @SuppressLint("QueryPermissionsNeeded")
     fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(fragment.requireActivity().packageManager) != null) {
@@ -84,7 +88,7 @@ class CameraHelper(
                 REQUEST_IMAGE_CROP -> {
                     currentPhotoPath?.let {
                         photoViewModel.addPhoto(currentDate, mealType, it)
-                        setPic(imageView, it)
+                        setPicWithObserver(imageView, it)
                         Toast.makeText(
                             fragment.requireContext(),
                             "사진이 저장되었습니다.",
@@ -143,26 +147,48 @@ class CameraHelper(
         }
     }
 
+    private fun setPicWithObserver(imageView: ImageView, photoPath: String) {
+        val observer = imageView.viewTreeObserver
+        observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (observer.isAlive) {
+                    observer.removeOnGlobalLayoutListener(this)
+                    setPic(imageView, photoPath)
+                }
+            }
+        })
+    }
+
     private fun setPic(imageView: ImageView, photoPath: String) {
+        // Get the dimensions of the View
         val targetW: Int = imageView.width
         val targetH: Int = imageView.height
 
+        // Get the dimensions of the bitmap
         val bmOptions = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
             BitmapFactory.decodeFile(photoPath, this)
             val photoW: Int = outWidth
             val photoH: Int = outHeight
 
-            val scaleFactor: Int = Math.min(photoW / targetW, photoH / targetH)
+            // Determine how much to scale down the image
+            val scaleFactor: Int = if (targetW > 0 && targetH > 0) {
+                Math.min(photoW / targetW, photoH / targetH)
+            } else {
+                1
+            }
 
             inJustDecodeBounds = false
             inSampleSize = scaleFactor
+            inPurgeable = true
+            inPreferredConfig = Bitmap.Config.ARGB_8888 // Set preferred config to improve quality
         }
 
         BitmapFactory.decodeFile(photoPath, bmOptions)?.also { bitmap ->
             imageView.setImageBitmap(bitmap)
         }
     }
+
 
     fun dispatchPickPictureIntent() {
         val pickPictureIntent =

@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="아침에 저장"
+                android:text="@string/bottom_sheet_addBreakfast"
                 android:textColor="@color/text_black"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="점심에 저장"
+                android:text="@string/bottom_sheet_addLunch"
                 android:textColor="@color/text_black"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="저녁에 저장"
+                android:text="@string/bottom_sheet_addDinner"
                 android:textColor="@color/text_black"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="간식/기타에 저장"
+                android:text="@string/bottom_sheet_addSnack"
                 android:textColor="@color/text_black"
                 android:textSize="16sp" />
         </LinearLayout>
