@@ -286,6 +286,8 @@ class CalendarFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Home의 메모는 CalendarFragment의 clickedDateMemo 이므로 종료 시에 오늘 날짜로 초기화
+        memoViewModel.loadMemoByDate(homeViewModel.currentDate.value ?: "")
         _binding = null
     }
 }

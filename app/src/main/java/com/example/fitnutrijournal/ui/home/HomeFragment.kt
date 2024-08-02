@@ -34,6 +34,7 @@ import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
+import com.example.fitnutrijournal.viewmodel.MemoViewModel
 import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -42,6 +43,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by activityViewModels()
+    private val memoViewModel: MemoViewModel by activityViewModels()
     private val dietViewModel: DietViewModel by viewModels {
         DietViewModelFactory(requireActivity().application, homeViewModel)
     }
@@ -67,13 +69,26 @@ class HomeFragment : Fragment() {
         setupCircularProgressBarColorObserver()
     }
 
-    private fun setupObservers(){
+    private fun setupObservers() {
         homeViewModel.remainingCalories.observe(viewLifecycleOwner) {
             setRemainingCaloriesText(binding.remainingCalories, it)
             setCalorieIntakeText(binding.tvCalorieIntake, homeViewModel.dailyIntakeRecord.value?.currentCalories ?: 0)
             setTargetCaloriesText(binding.tvTargetCalories, homeViewModel.todayGoal.value?.targetCalories ?: 0)
         }
+
+        memoViewModel.clickedDate.observe(viewLifecycleOwner) { date ->
+            memoViewModel.loadMemoByDate(date)
+        }
+
+        memoViewModel.clickedDateMemo.observe(viewLifecycleOwner) { memo ->
+            if (memo != null) {
+                binding.edtMemo.text = memo.content.ifEmpty {
+                    "작성된 메모가 없습니다"
+                }
+            }
+        }
     }
+
 
     @SuppressLint("SetTextI18n", "ResourceAsColor")
     @BindingAdapter("calorieIntakeText")
@@ -270,10 +285,10 @@ class HomeFragment : Fragment() {
     private fun updateProgressBarColor(progressBar: ProgressBar, currentIntake: Int, targetIntake: Int) {
         val progressDrawable = progressBar.progressDrawable.mutate() as LayerDrawable
         val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
-        val colorResId = if (currentIntake > targetIntake) {
-            R.color.progressbar_red
-        } else {
-            R.color.progressbar_green
+        val colorResId = when {
+            currentIntake > targetIntake -> R.color.progressbar_red
+            currentIntake > targetIntake * 0.8 -> R.color.progressbar_orange
+            else -> R.color.progressbar_green
         }
         progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
         progressBar.progressDrawable = progressDrawable
@@ -305,23 +320,16 @@ class HomeFragment : Fragment() {
         val progressDrawable = progressBar.progressDrawable.mutate()
 
         if (progressDrawable is LayerDrawable) {
-            // 로그를 사용하여 각 레이어의 타입을 확인합니다.
-            for (i in 0 until progressDrawable.numberOfLayers) {
-                val layerDrawable = progressDrawable.getDrawable(i)
-                Log.d("LayerInfo", "Layer $i: ${layerDrawable::class.java.simpleName}")
-            }
-
             val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress)
 
             if (progressLayer is RotateDrawable) {
                 val drawable = progressLayer.drawable
-                val colorResId = if (currentTotalCalories > targetCalories) {
-                    R.color.progressbar_red
-                } else {
-                    R.color.progressbar_blue
+                val colorResId = when {
+                    currentTotalCalories > targetCalories -> R.color.progressbar_red
+                    currentTotalCalories > targetCalories * 0.8 -> R.color.progressbar_orange
+                    else -> R.color.progressbar_blue
                 }
                 drawable?.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
-                Log.d("ColorChange", "Changing color to: ${if (currentTotalCalories > targetCalories) "red" else "blue"}")
                 progressBar.progressDrawable = progressDrawable
             } else {
                 Log.e("HomeFragment", "Progress layer is not a RotateDrawable")

@@ -23,8 +23,10 @@
     <string name="dinner">저녁</string>
     <string name="snack">간식 / 기타</string>
 
-    <string name="bottom_sheet_addBreakfast">아침에 저장하기</string>
-    <string name="bottom_sheet_addLunch">점심에 저장하기</string>
-    <string name="bottom_sheet_addDinner">저녁에 저장하기</string>
-    <string name="bottom_sheet_addSnack">간식/기타에 저장하기</string>
+    <string name="today_memo">오늘의 메모</string>
+
+    <string name="bottom_sheet_addBreakfast">아침에 저장</string>
+    <string name="bottom_sheet_addLunch">점심에 저장</string>
+    <string name="bottom_sheet_addDinner">저녁에 저장</string>
+    <string name="bottom_sheet_addSnack">간식/기타에 저장</string>
 </resources>
