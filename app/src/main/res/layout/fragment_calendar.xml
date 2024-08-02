@@ -135,21 +135,21 @@
                 <TextView
                     android:id="@+id/diary"
                     android:layout_width="0dp"
-                    android:layout_height="240dp"
+                    android:layout_height="300dp"
                     android:layout_marginStart="30dp"
                     android:layout_marginEnd="30dp"
                     android:layout_marginBottom="100dp"
                     android:background="@drawable/border_section_white"
+                    android:ellipsize="end"
                     android:gravity="center|start"
-                    android:padding="20dp"
+                    android:maxLines="12"
+                    android:paddingStart="20dp"
                     android:text="작성된 메모가 없습니다"
                     android:textColor="@color/text_black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.495"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/calendarView"
-                    app:layout_constraintVertical_bias="0.45" />
+                    app:layout_constraintTop_toBottomOf="@+id/calendarView" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,8 +19,8 @@ class FoodApiRepository(private val foodRepository: FoodRepository) {
     private val apiKey = "2faba1329d85403c85cc"
     private val serviceId = "I2790"
     private val dataType = "json"
-    private val startIdx = 10000
-    private val endIdx = 11000
+    private val startIdx = 8000
+    private val endIdx = 9000
 
     fun fetchFoodInfo(query: String? = null): LiveData<FoodResponse> {
         val call = RetrofitClient.foodApiService.getFoodInfo(

@@ -127,7 +127,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="30dp"
-                        android:background="@color/black"
+                        android:background="@color/section_gray"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -139,7 +139,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="20dp"
                         android:layout_marginEnd="30dp"
-                        android:background="@color/black"
+                        android:background="@color/section_gray"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
@@ -188,6 +188,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="20dp"
                         android:text="단백질"
+                        android:textColor="@color/text_black"
                         app:layout_constraintEnd_toStartOf="@+id/protein"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView19" />
@@ -240,6 +241,7 @@
                         android:layout_marginEnd="30dp"
                         android:gravity="end"
                         android:text="@{viewModel.calculatedProtein}"
+                        android:textColor="@color/text_black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView20"
                         app:layout_constraintTop_toBottomOf="@+id/textView19" />
@@ -253,6 +255,7 @@
                         android:layout_marginBottom="20dp"
                         android:gravity="end"
                         android:text="@{viewModel.calculatedFat}"
+                        android:textColor="@color/text_black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView21"
@@ -309,7 +312,6 @@
                     android:layout_marginBottom="30dp"
                     android:background="@drawable/border_section_light_green"
                     android:text="추가하기"
-                    android:textColor="@color/text_black"
                     android:visibility="@{viewModel.isSaveButtonVisible ? android.view.View.VISIBLE : android.view.View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -326,6 +328,20 @@
                     android:background="@drawable/border_section_light_green"
                     android:text="저장하기"
                     android:visibility="@{viewModel.isUpdateButtonVisible ? android.view.View.VISIBLE : android.view.View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAddFromLibrary"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/border_section_light_green"
+                    android:text="저장하기"
+                    android:visibility="@{viewModel.isAddFromLibraryButtonVisible() ? android.view.View.VISIBLE : android.view.View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

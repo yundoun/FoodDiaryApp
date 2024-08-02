@@ -69,7 +69,7 @@ class CustomAddFragment : Fragment() {
                     )
                     dietViewModel.insertFood(food)
                     findNavController().popBackStack()
-                    Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

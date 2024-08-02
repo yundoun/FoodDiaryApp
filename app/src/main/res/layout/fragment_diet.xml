@@ -155,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
+                android:paddingStart="20sp"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/light_green"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -167,12 +168,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
+                android:paddingStart="20dp"
                 android:text="음식 추가하기"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/light_green"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="RtlSymmetry" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

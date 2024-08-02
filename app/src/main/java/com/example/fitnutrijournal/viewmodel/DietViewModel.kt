@@ -26,7 +26,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val dailyIntakeRecordRepository: DailyIntakeRecordRepository
 
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
-    val dailyIntakeRecord: LiveData<DailyIntakeRecord?> get() = _dailyIntakeRecord
 
     init {
         val database = FoodDatabase.getDatabase(application)
@@ -81,17 +80,21 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     val favoriteFoods: LiveData<List<Food>> = foodRepository.favoriteFoods
     val userAddedFoods: LiveData<List<Food>> = foodRepository.userAddedFoods
 
-    private val _isCheckboxVisible = MutableLiveData<Boolean?>()
-    val isCheckboxVisible: LiveData<Boolean?> get() = _isCheckboxVisible
+    // 버튼 가시성 설정
 
-    fun setCheckboxVisible(isVisible: Boolean?) {
-        _isCheckboxVisible.value = isVisible
-    }
+    private val _isCheckboxVisible = MutableLiveData<Boolean>(false)
+    val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
 
     private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
     val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
+
     private val _isUpdateButtonVisible = MutableLiveData<Boolean>(false)
     val isUpdateButtonVisible: LiveData<Boolean> get() = _isUpdateButtonVisible
+
+    private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(false)
+    val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
+
+
 
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
@@ -100,11 +103,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _mealType = MutableLiveData<String>("")
     val mealType: LiveData<String> get() = _mealType
 
-    private val _quantity = MutableLiveData<Float>()
-    val quantity: LiveData<Float> get() = _quantity
-
     private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
-    val mealsWithFood: LiveData<List<MealWithFood>> get() = _mealsWithFood
 
     private val _selectedMealQuantity = MutableLiveData<Int?>()
     val selectedMealQuantity: LiveData<Int?> get() = _selectedMealQuantity
@@ -140,12 +139,20 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _selectedCountFoodItem.value = 0
     }
 
+    fun setCheckboxVisible(isVisible: Boolean?) {
+        _isCheckboxVisible.value = isVisible
+    }
+
     fun setSaveButtonVisibility(isVisible: Boolean) {
         _isSaveButtonVisible.value = isVisible
     }
 
     fun setUpdateButtonVisibility(isVisible: Boolean) {
         _isUpdateButtonVisible.value = isVisible
+    }
+
+    fun setAddFromLibraryButtonVisibility(isVisible: Boolean) {
+        _isAddFromLibraryButtonVisible.value = isVisible
     }
 
     init {
@@ -300,6 +307,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
 
             homeViewModel.updateNutrientData(mealType, food, totalContent)
+            homeViewModel.refreshFoodNames()  // 음식 추가 후 foodNames 업데이트
         }
     }
 
@@ -325,6 +333,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             foodRepository.delete(food)
             // 섭취 기록 업데이트
             homeViewModel.refreshFilteredFoods()
+            homeViewModel.refreshFoodNames() // 음식 삭제 후 foodNames 업데이트
         }
     }
 
@@ -359,6 +368,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
                 // 섭취 기록 업데이트
                 homeViewModel.refreshFilteredFoods()
+                homeViewModel.refreshFoodNames() //foodNames 업데이트
             } else {
                 Log.d("DietViewModel", "Meal not found with id: $mealId")
             }
@@ -371,7 +381,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         val food = _selectedFood.value ?: return
         val newQuantity = _totalContent.value?.toIntOrNull() ?: return
         viewModelScope.launch {
-            val date = homeViewModel.currentDate.value ?: return@launch
             val mealType = _mealType.value ?: return@launch
 
             val mealWithFood = mealRepository.getMealWithFoodById(mealId)
@@ -387,6 +396,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 homeViewModel.updateNutrientData(mealType, food, newQuantity)
 
                 homeViewModel.refreshFilteredFoods()
+                homeViewModel.refreshFoodNames() //foodNames 업데이트
             } ?: run {
                 Log.d("DietViewModel", "Meal not found with id: $mealId")
             }

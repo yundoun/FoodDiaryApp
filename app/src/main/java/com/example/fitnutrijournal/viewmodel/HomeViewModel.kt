@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.model.DailyIntakeGoal
@@ -57,6 +58,28 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private fun setCurrentDate(date: String) {
         _currentDate.value = date
     }
+
+    // ============================== 식사 목록 텍스트==============================
+    private val _breakfastFoodNames = MutableLiveData<List<String>>()
+    val breakfastFoodNames: LiveData<String> = _breakfastFoodNames.map { foods ->
+        foods.joinToString(", ")
+    }
+
+    private val _lunchFoodNames = MutableLiveData<List<String>>()
+    val lunchFoodNames: LiveData<String> = _lunchFoodNames.map { foods ->
+        foods.joinToString(", ")
+    }
+
+    private val _dinnerFoodNames = MutableLiveData<List<String>>()
+    val dinnerFoodNames: LiveData<String> = _dinnerFoodNames.map { foods ->
+        foods.joinToString(", ")
+    }
+
+    private val _snackFoodNames = MutableLiveData<List<String>>()
+    val snackFoodNames: LiveData<String> = _snackFoodNames.map { foods ->
+        foods.joinToString(", ")
+    }
+
 
 
     // ============================== Database에서 가져온 데이터 ==============================
@@ -443,6 +466,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _filteredFoods = MutableLiveData<List<Food>>()
     val filteredFoods: LiveData<List<Food>> get() = _filteredFoods
 
+    // 필터링된 음식을 텍스트로 변환
+    val filteredFoodsText = MediatorLiveData<String>().apply {
+        addSource(_filteredFoods) { foods ->
+            value = foods.joinToString(", ") { it.foodName }
+        }
+    }
+
+
     // 식단 자세히 보기
      fun filterFoodsByMealType(mealType: String) {
         viewModelScope.launch {
@@ -451,21 +482,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
             Log.d("HomeViewModel", "Meals: $meals")
             val foods = mutableListOf<Food>()
-            val mealsToDelete = mutableListOf<Meal>()
 
             for (meal in meals) {
                 val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
-                if (food != null) {
-                    foods.add(food)
-                } else {
-                    mealsToDelete.add(meal)
-                    Log.w("HomeViewModel", "Food not found for dietFoodCode: ${meal.dietFoodCode}, marking meal for deletion.")
-                }
-            }
-
-            // Remove meals with null Food data
-            mealsToDelete.forEach { meal ->
-                mealRepository.deleteMealById(meal.id)
+                foods.add(food)
             }
 
             _filteredFoods.postValue(foods)
@@ -549,6 +569,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
             addMealsAndUpdateIntakeRecord(meals, mealType)
             refreshFilteredFoods()
+            refreshFoodNames() //foodNames 업데이트
         }
     }
 
@@ -616,18 +637,23 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
+    // 특정 날짜(todayDate)의 일일 영양 섭취 기록을 초기화
     private suspend fun initializeDailyIntake(todayDate: String) {
         val record = dailyIntakeRecordRepository.getRecordByDate(todayDate)
         _dailyIntakeRecord.value = record
         _currentTotalCalories.value = record?.currentCalories ?: 0
 
-        // 각 식사 유형별로 섭취한 영양소 데이터를 초기화합니다.
         initializeMealNutrients(todayDate, "breakfast")
         initializeMealNutrients(todayDate, "lunch")
         initializeMealNutrients(todayDate, "dinner")
         initializeMealNutrients(todayDate, "snack")
+
+        // 음식 이름 업데이트
+        refreshFoodNames()
     }
 
+    // 특정 날짜(date)와 식사 유형(mealType)에 대한 영양소 정보를 초기화
     private suspend fun initializeMealNutrients(date: String, mealType: String) {
         val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
         var totalCalories = 0
@@ -639,16 +665,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         for (meal in meals) {
             val food = foodRepository.getFoodByFoodCode(meal.dietFoodCode)
-            if (food != null) {
-                val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
-                foods.add(foodDetails)
-                totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
-                totalCarbs += food.carbohydrate * meal.quantity / food.servingSize
-                totalProtein += food.protein * meal.quantity / food.servingSize
-                totalFat += food.fat * meal.quantity / food.servingSize
-            } else {
-                Log.w("HomeViewModel", "Food not found for dietFoodCode: ${meal.dietFoodCode}")
-            }
+            val foodDetails = "${food.foodName} (Calories: ${(food.calories * meal.quantity / food.servingSize).toInt()}, Carbs: ${food.carbohydrate * meal.quantity / food.servingSize}, Protein: ${food.protein * meal.quantity / food.servingSize}, Fat: ${food.fat * meal.quantity / food.servingSize})"
+            foods.add(foodDetails)
+            totalCalories += (food.calories * meal.quantity / food.servingSize).toInt()
+            totalCarbs += food.carbohydrate * meal.quantity / food.servingSize
+            totalProtein += food.protein * meal.quantity / food.servingSize
+            totalFat += food.fat * meal.quantity / food.servingSize
         }
 
         Log.d("HomeViewModel", "Date: $date, Meal Type: $mealType, Foods: ${foods.joinToString(", ")}")
@@ -656,13 +678,26 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val nutrientData = NutrientData(totalCalories, totalCarbs, totalProtein, totalFat)
 
         when (mealType) {
-            "breakfast" -> _breakfastNutrients.postValue(nutrientData)
-            "lunch" -> _lunchNutrients.postValue(nutrientData)
-            "dinner" -> _dinnerNutrients.postValue(nutrientData)
-            "snack" -> _snackNutrients.postValue(nutrientData)
+            "breakfast" -> {
+                _breakfastNutrients.postValue(nutrientData)
+                _breakfastFoodNames.postValue(foods.map { it.split(" (")[0] })
+            }
+            "lunch" -> {
+                _lunchNutrients.postValue(nutrientData)
+                _lunchFoodNames.postValue(foods.map { it.split(" (")[0] })
+            }
+            "dinner" -> {
+                _dinnerNutrients.postValue(nutrientData)
+                _dinnerFoodNames.postValue(foods.map { it.split(" (")[0] })
+            }
+            "snack" -> {
+                _snackNutrients.postValue(nutrientData)
+                _snackFoodNames.postValue(foods.map { it.split(" (")[0] })
+            }
         }
     }
 
+    // 섭취한 영양소 데이터 업데이트
     fun updateNutrientData(mealType: String, food: Food, quantity: Int) {
         val nutrientData = when (mealType) {
             "breakfast" -> _breakfastNutrients.value ?: NutrientData()
@@ -826,6 +861,35 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             filterFoodsByMealType(mealTypeValue)
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun refreshFoodNames() {
+        viewModelScope.launch {
+            val date = currentDate.value ?: return@launch
+
+            // 각 식사 유형에 대해 업데이트
+            updateFoodNamesForMealType(date, "breakfast")
+            updateFoodNamesForMealType(date, "lunch")
+            updateFoodNamesForMealType(date, "dinner")
+            updateFoodNamesForMealType(date, "snack")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun updateFoodNamesForMealType(date: String, mealType: String) {
+        val meals = mealRepository.getMealsByDateAndTypeSync(date, mealType)
+        val foods = meals.map { meal ->
+            foodRepository.getFoodByFoodCode(meal.dietFoodCode).foodName
+        }
+
+        when (mealType) {
+            "breakfast" -> _breakfastFoodNames.postValue(foods)
+            "lunch" -> _lunchFoodNames.postValue(foods)
+            "dinner" -> _dinnerFoodNames.postValue(foods)
+            "snack" -> _snackFoodNames.postValue(foods)
+        }
+    }
+
 
 
 

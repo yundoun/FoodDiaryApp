@@ -47,6 +47,9 @@ android {
 
 dependencies {
 
+
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
 
     implementation("com.github.bumptech.glide:glide:4.12.0")
@@ -84,8 +87,7 @@ dependencies {
     // Jetpack Compose Integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // CalendarView

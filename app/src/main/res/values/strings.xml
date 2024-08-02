@@ -8,4 +8,23 @@
     <string name="title_profile">내정보</string>
     <string name="favorite">즐겨찾기</string>
     <string name="delete">삭제</string>
+
+    <string name="calories">칼로리</string>
+    <string name="carbohydrate">탄수화물</string>
+    <string name="protein">단백질</string>
+    <string name="fat">지방</string>
+
+    <string name="today_summary">오늘 하루 요약</string>
+    <string name="today_diet">오늘의 식단</string>
+    <string name="detail_info">상세정보</string>
+
+    <string name="breakfast">아침</string>
+    <string name="lunch">점심</string>
+    <string name="dinner">저녁</string>
+    <string name="snack">간식 / 기타</string>
+
+    <string name="bottom_sheet_addBreakfast">아침에 저장하기</string>
+    <string name="bottom_sheet_addLunch">점심에 저장하기</string>
+    <string name="bottom_sheet_addDinner">저녁에 저장하기</string>
+    <string name="bottom_sheet_addSnack">간식/기타에 저장하기</string>
 </resources>

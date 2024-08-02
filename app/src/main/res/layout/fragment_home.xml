@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.currentDate}"
                     android:textColor="@color/text_black"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +106,7 @@
                             android:gravity="center"
                             android:maxLines="2"
                             android:textColor="@color/text_black"
-                            android:textSize="20dp"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -120,7 +120,7 @@
                             android:gravity="center"
                             android:maxLines="2"
                             android:textColor="@color/text_black"
-                            android:textSize="20dp"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="@+id/imageView3"
                             app:layout_constraintStart_toStartOf="@+id/imageView3"
@@ -162,7 +162,7 @@
                                 android:gravity="center"
                                 android:maxLines="2"
                                 android:textColor="@color/text_black"
-                                android:textSize="24dp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -178,7 +178,7 @@
                             android:layout_width="0dp"
                             android:layout_height="12dp"
                             android:layout_centerInParent="true"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="30dp"
                             android:layout_marginTop="10dp"
                             android:layout_marginEnd="50dp"
                             android:max="@{viewModel.targetCarbIntake}"
@@ -193,12 +193,12 @@
                             android:id="@+id/textView12"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="30dp"
                             android:layout_marginEnd="50dp"
                             android:gravity="center"
-                            android:text="탄수화물"
+                            android:text="@string/carbohydrate"
                             android:textColor="@color/text_gray"
-                            android:textSize="12dp"
+                            android:textSize="12sp"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/textView13"
@@ -211,13 +211,13 @@
                             android:id="@+id/tvCarb"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="30dp"
                             android:layout_marginTop="10dp"
                             android:layout_marginEnd="50dp"
                             android:gravity="center"
                             android:text='@{viewModel.dailyIntakeRecord.currentCarbs + "/" + viewModel.targetCarbIntake + "g"}'
                             android:textColor="@color/text_black"
-                            android:textSize="14dp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toStartOf="@+id/tvProtein"
                             app:layout_constraintHorizontal_bias="0.15"
@@ -243,9 +243,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="단백질"
+                            android:text="@string/protein"
                             android:textColor="@color/text_gray"
-                            android:textSize="12dp"
+                            android:textSize="12sp"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/textView14"
@@ -261,7 +261,7 @@
                             android:gravity="center"
                             android:text='@{viewModel.dailyIntakeRecord.currentProtein + "/" + viewModel.targetProteinIntake + "g"}'
                             android:textColor="@color/text_black"
-                            android:textSize="14dp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toStartOf="@id/tvFat"
                             app:layout_constraintStart_toEndOf="@id/tvCarb"
@@ -275,7 +275,7 @@
                             android:layout_centerInParent="true"
                             android:layout_marginStart="50dp"
                             android:layout_marginTop="10dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="30dp"
                             android:max="@{viewModel.targetFatIntake}"
                             android:progress="@{viewModel.currentFatIntake}"
                             android:progressDrawable="@drawable/progress_bar_custom"
@@ -289,11 +289,11 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="50dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="30dp"
                             android:gravity="center"
-                            android:text="지방"
+                            android:text="@string/fat"
                             android:textColor="@color/text_gray"
-                            android:textSize="12dp"
+                            android:textSize="12sp"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -307,11 +307,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="50dp"
                             android:layout_marginTop="10dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="30dp"
                             android:gravity="center"
                             android:text='@{viewModel.dailyIntakeRecord.currentFat + "/" + viewModel.targetFatIntake + "g"}'
                             android:textColor="@color/text_black"
-                            android:textSize="14dp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.85"
@@ -322,7 +322,7 @@
                             android:id="@+id/imageView"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="30dp"
                             android:layout_marginEnd="20dp"
                             android:layout_marginBottom="20dp"
                             android:scaleType="fitCenter"
@@ -337,7 +337,7 @@
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="30dp"
                             android:layout_marginBottom="20dp"
                             android:scaleType="fitCenter"
                             app:layout_constraintBottom_toBottomOf="@+id/progressBarLayout"
@@ -356,9 +356,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
-                    android:text="오늘 하루 요약"
-                    android:textColor="@color/text_green"
-                    android:textSize="16dp"
+                    android:text="@string/today_summary"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -372,9 +372,9 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
-                    android:text="상세정보"
+                    android:text="@string/detail_info"
                     android:textColor="@color/text_blue"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@+id/todaySummarySection"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -386,9 +386,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginBottom="10dp"
-                    android:text="오늘의 식단"
-                    android:textColor="@color/text_green"
-                    android:textSize="16dp"
+                    android:text="@string/today_diet"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/todayDietSectionCardView"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -398,7 +398,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/todayDietSectionCardView"
                     android:layout_width="0dp"
-                    android:layout_height="300dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="100dp"
                     android:layout_marginEnd="10dp"
@@ -415,21 +415,32 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/todayDietSection"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@color/white">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/breakfastLayout"
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="60dp"
-                            android:layout_marginBottom="5dp"
-                            app:layout_constraintBottom_toTopOf="@+id/view1"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="10dp"
+                            app:layout_constraintEnd_toStartOf="@+id/addBreakfast"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:text="@string/breakfast"
+                                android:textColor="@color/text_black"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toTopOf="@+id/tvBreakfastCalories"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/tvBreakfastCalories"
@@ -438,78 +449,49 @@
                                 android:layout_marginStart="10dp"
                                 android:text='@{"섭취 칼로리: " + viewModel.breakfastNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
-                                android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivBreakfast"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toTopOf="@+id/breakfastList"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-                            <ImageView
-                                android:id="@+id/ivBreakfast"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="10dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_breakfast" />
-
                             <TextView
-                                android:id="@+id/textView4"
+                                android:id="@+id/breakfastList"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="아침"
-                                android:textColor="@color/text_black"
-                                android:textSize="18dp"
-                                android:textStyle="bold"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivBreakfast"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvBreakfastCalories"
+                                app:textOrGone="@{viewModel.breakfastFoodNames}" />
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/lunchLayout"
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="60dp"
-                            android:layout_marginBottom="5dp"
-                            app:layout_constraintBottom_toTopOf="@+id/view2"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="10dp"
+                            app:layout_constraintEnd_toStartOf="@+id/addLunch"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/view1">
-
-                            <ImageView
-                                android:id="@+id/ivLunch"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="10dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_lunch" />
 
                             <TextView
                                 android:id="@+id/textView5"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="점심"
+                                android:text="@string/lunch"
                                 android:textColor="@color/text_black"
-                                android:textSize="18dp"
+                                android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivLunch"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintBottom_toTopOf="@+id/tvLunchCalories"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/tvLunchCalories"
@@ -518,51 +500,51 @@
                                 android:layout_marginStart="10dp"
                                 android:text='@{"섭취 칼로리: " + viewModel.lunchNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
-                                android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivLunch"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toTopOf="@id/lunchList"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+
+                            <TextView
+                                android:id="@+id/lunchList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvLunchCalories"
+                                app:textOrGone="@{viewModel.lunchFoodNames}" />
+
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/dinnerLayout"
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="60dp"
-                            android:layout_marginBottom="5dp"
-                            app:layout_constraintBottom_toTopOf="@+id/view3"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="10dp"
+                            app:layout_constraintEnd_toStartOf="@+id/addDinner"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/view2">
-
-                            <ImageView
-                                android:id="@+id/ivDinner"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="10dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_dinner" />
 
                             <TextView
                                 android:id="@+id/textView7"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="저녁"
+                                android:text="@string/dinner"
                                 android:textColor="@color/text_black"
-                                android:textSize="18dp"
+                                android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivDinner"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintBottom_toTopOf="@+id/tvDinnerCalories"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/tvDinnerCalories"
@@ -571,50 +553,51 @@
                                 android:layout_marginStart="10dp"
                                 android:text='@{"섭취 칼로리: " + viewModel.dinnerNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
-                                android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivDinner"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toTopOf="@+id/dinnerList"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+                            <TextView
+                                android:id="@+id/dinnerList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvDinnerCalories"
+                                app:textOrGone="@{viewModel.dinnerFoodNames}" />
+
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/snackLayout"
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="60dp"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="20dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/addSnack"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/view3">
-
-                            <ImageView
-                                android:id="@+id/ivSnack"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="10dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_snack" />
 
                             <TextView
                                 android:id="@+id/textView8"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="간식 및 기타"
+                                android:text="@string/snack"
                                 android:textColor="@color/text_black"
-                                android:textSize="18dp"
+                                android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivSnack"
+                                app:layout_constraintBottom_toTopOf="@+id/tvSnackCalories"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintVertical_bias="0.20" />
 
@@ -625,10 +608,24 @@
                                 android:layout_marginStart="10dp"
                                 android:text='@{"섭취 칼로리: " + viewModel.snackNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
-                                android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/ivSnack"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toTopOf="@+id/snackList"
+                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+                            <TextView
+                                android:id="@+id/snackList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvSnackCalories"
+                                app:textOrGone="@{viewModel.snackFoodNames}" />
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <View
@@ -636,86 +633,84 @@
                             android:layout_width="0dp"
                             android:layout_height="2dp"
                             android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
                             android:layout_marginEnd="30dp"
-                            android:background="@color/black"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:background="@color/background"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.25" />
+                            app:layout_constraintTop_toBottomOf="@+id/breakfastLayout" />
 
                         <View
                             android:id="@+id/view2"
                             android:layout_width="0dp"
                             android:layout_height="2dp"
                             android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
                             android:layout_marginEnd="30dp"
-                            android:background="@color/black"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:background="@color/background"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toBottomOf="@+id/lunchLayout" />
 
                         <View
                             android:id="@+id/view3"
                             android:layout_width="0dp"
                             android:layout_height="2dp"
                             android:layout_marginStart="30dp"
+                            android:layout_marginTop="20dp"
                             android:layout_marginEnd="30dp"
-                            android:background="@color/black"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:background="@color/background"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.75" />
+                            app:layout_constraintTop_toBottomOf="@+id/dinnerLayout" />
 
                         <ImageView
                             android:id="@+id/addBreakfast"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
                             android:layout_marginEnd="30dp"
                             app:layout_constraintBottom_toTopOf="@+id/view1"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/breakfastLayout"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_plus" />
+                            app:srcCompat="@drawable/ic_add_circle" />
 
                         <ImageView
                             android:id="@+id/addLunch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
                             android:layout_marginEnd="30dp"
                             app:layout_constraintBottom_toTopOf="@+id/view2"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/lunchLayout"
                             app:layout_constraintTop_toBottomOf="@+id/view1"
-                            app:srcCompat="@drawable/ic_plus" />
+                            app:srcCompat="@drawable/ic_add_circle" />
 
                         <ImageView
                             android:id="@+id/addDinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
                             android:layout_marginEnd="30dp"
                             app:layout_constraintBottom_toTopOf="@+id/view3"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/dinnerLayout"
                             app:layout_constraintTop_toBottomOf="@+id/view2"
-                            app:srcCompat="@drawable/ic_plus" />
+                            app:srcCompat="@drawable/ic_add_circle" />
 
                         <ImageView
                             android:id="@+id/addSnack"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
                             android:layout_marginEnd="30dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/snackLayout"
                             app:layout_constraintTop_toBottomOf="@+id/view3"
-                            app:srcCompat="@drawable/ic_plus" />
+                            app:srcCompat="@drawable/ic_add_circle" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>

@@ -15,11 +15,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.utils.ModalBottomSheet
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.google.android.material.snackbar.Snackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
-class FoodDetailFragment : Fragment() {
+class FoodDetailFragment : Fragment(), ModalBottomSheet.OnMealTypeSelectedListener {
 
     private val dietViewModel: DietViewModel by activityViewModels()
     private lateinit var binding: FragmentFoodDetailBinding
@@ -82,6 +83,11 @@ class FoodDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.btnAddFromLibrary.setOnClickListener {
+            val modalBottomSheet = ModalBottomSheet(this)
+            modalBottomSheet.show(childFragmentManager, ModalBottomSheet.TAG)
+        }
+
         updateButtonStates()
     }
 
@@ -96,6 +102,12 @@ class FoodDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         dietViewModel.clearSelectedMealQuantity()
+    }
+
+    override fun onMealTypeSelected(mealType: String) {
+        dietViewModel.setMealType(mealType)
+        dietViewModel.saveCurrentFoodIntake()
+        Snackbar.make(requireView(), "식사가 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
     }
 
 }
