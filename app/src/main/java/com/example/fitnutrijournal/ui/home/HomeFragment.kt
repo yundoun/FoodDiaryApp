@@ -75,7 +75,7 @@ class HomeFragment : Fragment() {
             setCalorieIntakeText(binding.tvCalorieIntake, homeViewModel.dailyIntakeRecord.value?.currentCalories ?: 0)
             setTargetCaloriesText(binding.tvTargetCalories, homeViewModel.todayGoal.value?.targetCalories ?: 0)
         }
-        
+
         homeViewModel.currentDate.observe(viewLifecycleOwner) { date ->
             memoViewModel.loadMemoByDate(date)
         }

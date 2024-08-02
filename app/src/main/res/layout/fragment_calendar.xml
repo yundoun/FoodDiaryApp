@@ -145,6 +145,8 @@
                     android:maxLines="12"
                     android:paddingStart="20dp"
                     android:textColor="@color/text_black"
+                    android:hint="@string/memo_hint"
+                    android:textColorHint="@color/text_gray"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

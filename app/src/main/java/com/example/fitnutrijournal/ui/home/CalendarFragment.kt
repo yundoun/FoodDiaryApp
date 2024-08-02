@@ -115,7 +115,7 @@ class CalendarFragment : Fragment() {
         })
 
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner, Observer { memo ->
-            binding.diary.text = memo?.content ?: "작성된 메모가 없습니다"
+            binding.diary.text = memo?.content
         })
 
         // 월별 메모 데이터를 뽑아서 데이터 있는 지 표시하기 위한 Observer

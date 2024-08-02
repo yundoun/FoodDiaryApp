@@ -24,6 +24,7 @@
     <string name="snack">간식 / 기타</string>
 
     <string name="today_memo">오늘의 메모</string>
+    <string name="memo_hint">작성된 메모가 없습니다.</string>
 
     <string name="bottom_sheet_addBreakfast">아침에 저장</string>
     <string name="bottom_sheet_addLunch">점심에 저장</string>
