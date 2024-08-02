@@ -398,7 +398,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/todayDietSectionCardView"
                     android:layout_width="0dp"
-                    android:layout_height="300dp"
+                    android:layout_height="400dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="100dp"
                     android:layout_marginEnd="10dp"
@@ -432,18 +432,6 @@
                             app:layout_constraintTop_toTopOf="parent">
 
                             <TextView
-                                android:id="@+id/tvBreakfastCalories"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:text='@{"섭취 칼로리: " + viewModel.breakfastNutrients.calories + "kcal"}'
-                                android:textColor="@color/text_gray"
-                                android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-                            <TextView
                                 android:id="@+id/textView4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -452,10 +440,35 @@
                                 android:textColor="@color/text_black"
                                 android:textSize="18dp"
                                 android:textStyle="bold"
+                                app:layout_constraintBottom_toTopOf="@+id/tvBreakfastCalories"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvBreakfastCalories"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:text='@{"섭취 칼로리: " + viewModel.breakfastNutrients.calories + "kcal"}'
+                                android:textColor="@color/text_gray"
+                                android:textSize="14dp"
+                                app:layout_constraintBottom_toTopOf="@+id/breakfastList"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+                            <TextView
+                                android:id="@+id/breakfastList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@{viewModel.breakfastFoodNames}"
+                                android:textSize="14dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintTop_toBottomOf="@+id/tvBreakfastCalories" />
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -480,10 +493,9 @@
                                 android:textColor="@color/text_black"
                                 android:textSize="18dp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/tvLunchCalories"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/tvLunchCalories"
@@ -493,9 +505,26 @@
                                 android:text='@{"섭취 칼로리: " + viewModel.lunchNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
                                 android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@id/lunchList"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+
+                            <TextView
+                                android:id="@+id/lunchList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@{viewModel.lunchFoodNames}"
+                                android:textSize="14dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvLunchCalories" />
+
+
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -520,10 +549,9 @@
                                 android:textColor="@color/text_black"
                                 android:textSize="18dp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/tvDinnerCalories"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.19999999" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/tvDinnerCalories"
@@ -533,9 +561,24 @@
                                 android:text='@{"섭취 칼로리: " + viewModel.dinnerNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
                                 android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/dinnerList"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+                            <TextView
+                                android:id="@+id/dinnerList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@{viewModel.dinnerFoodNames}"
+                                android:textSize="14dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvDinnerCalories" />
+
+
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -561,7 +604,7 @@
                                 android:textColor="@color/text_black"
                                 android:textSize="18dp"
                                 android:textStyle="bold"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/tvSnackCalories"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintVertical_bias="0.20" />
@@ -574,9 +617,23 @@
                                 android:text='@{"섭취 칼로리: " + viewModel.snackNutrients.calories + "kcal"}'
                                 android:textColor="@color/text_gray"
                                 android:textSize="14dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/snackList"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+                            <TextView
+                                android:id="@+id/snackList"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@{viewModel.snackFoodNames}"
+                                android:textSize="14dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvSnackCalories" />
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <View
