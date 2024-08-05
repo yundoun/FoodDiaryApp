@@ -17,6 +17,9 @@ interface MealDao {
     @Query("SELECT * FROM Meal WHERE date = :date")
     fun getMealsByDate(date: String): LiveData<List<Meal>>
 
+    @Query("SELECT * FROM Meal WHERE date = :date")
+    suspend fun getMealsByDateSync(date: String): List<Meal>
+
     @Query("SELECT * FROM Meal WHERE date = :date AND mealType = :mealType")
     suspend fun getMealsByDateAndTypeSync(date: String, mealType: String): List<Meal>
 
@@ -60,4 +63,11 @@ interface MealDao {
 """)
     suspend fun getAllMealsWithFood(): List<MealWithFood>
 
+    @Query("""
+        SELECT Meal.*, Food.*
+        FROM Meal
+        INNER JOIN Food ON Meal.dietFoodCode = Food.foodCd
+        WHERE Meal.date = :date
+    """)
+    suspend fun getMealsWithFoodsByDate(date: String): List<MealWithFood>
 }

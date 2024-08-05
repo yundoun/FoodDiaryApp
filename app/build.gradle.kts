@@ -43,14 +43,11 @@ android {
     }
 }
 
-
-
 dependencies {
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
-
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
-
     implementation("com.github.bumptech.glide:glide:4.12.0")
 
     // Room components

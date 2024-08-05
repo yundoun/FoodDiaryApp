@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
@@ -72,20 +71,25 @@ class HomeFragment : Fragment() {
     private fun setupObservers() {
         homeViewModel.remainingCalories.observe(viewLifecycleOwner) {
             setRemainingCaloriesText(binding.remainingCalories, it)
-            setCalorieIntakeText(binding.tvCalorieIntake, homeViewModel.dailyIntakeRecord.value?.currentCalories ?: 0)
-            setTargetCaloriesText(binding.tvTargetCalories, homeViewModel.todayGoal.value?.targetCalories ?: 0)
+            setCalorieIntakeText(
+                binding.tvCalorieIntake,
+                homeViewModel.dailyIntakeRecord.value?.currentCalories ?: 0
+            )
+            setTargetCaloriesText(
+                binding.tvTargetCalories,
+                homeViewModel.todayGoal.value?.targetCalories ?: 0
+            )
         }
 
         homeViewModel.currentDate.observe(viewLifecycleOwner) { date ->
             memoViewModel.loadMemoByDate(date)
         }
 
+
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner) { memo ->
-            if (memo != null) {
-                binding.edtMemo.text = memo.content.ifEmpty {
-                    "작성된 메모가 없습니다"
-                }
-            }
+            binding.edtMemo.text = memo?.content?.ifEmpty {
+                "작성된 메모가 없습니다"
+            } ?: ""
         }
     }
 
@@ -194,9 +198,11 @@ class HomeFragment : Fragment() {
     }
 
 
-
     private fun setupNavigation() {
         binding.apply {
+            memoCardView.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_diaryFragment)
+            }
             textDate.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
             }
@@ -282,15 +288,23 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun updateProgressBarColor(progressBar: ProgressBar, currentIntake: Int, targetIntake: Int) {
+    private fun updateProgressBarColor(
+        progressBar: ProgressBar,
+        currentIntake: Int,
+        targetIntake: Int
+    ) {
         val progressDrawable = progressBar.progressDrawable.mutate() as LayerDrawable
-        val progressLayer = progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
+        val progressLayer =
+            progressDrawable.findDrawableByLayerId(android.R.id.progress) as ClipDrawable
         val colorResId = when {
             currentIntake > targetIntake -> R.color.progressbar_red
             currentIntake > targetIntake * 0.8 -> R.color.progressbar_orange
             else -> R.color.progressbar_green
         }
-        progressLayer.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+        progressLayer.setColorFilter(
+            ContextCompat.getColor(requireContext(), colorResId),
+            PorterDuff.Mode.SRC_IN
+        )
         progressBar.progressDrawable = progressDrawable
     }
 
@@ -310,13 +324,26 @@ class HomeFragment : Fragment() {
             }
         }
 
-        combinedIntake.observe(viewLifecycleOwner, Observer { (currentTotalCalories, targetCalories) ->
-            Log.d("circularProgressBar", "Current Total Calories: $currentTotalCalories, Target Calories: $targetCalories")
-            updateCircularProgressBarColor(binding.circularProgressBar, currentTotalCalories, targetCalories)
-        })
+        combinedIntake.observe(
+            viewLifecycleOwner,
+            Observer { (currentTotalCalories, targetCalories) ->
+                Log.d(
+                    "circularProgressBar",
+                    "Current Total Calories: $currentTotalCalories, Target Calories: $targetCalories"
+                )
+                updateCircularProgressBarColor(
+                    binding.circularProgressBar,
+                    currentTotalCalories,
+                    targetCalories
+                )
+            })
     }
 
-    private fun updateCircularProgressBarColor(progressBar: ProgressBar, currentTotalCalories: Int, targetCalories: Int) {
+    private fun updateCircularProgressBarColor(
+        progressBar: ProgressBar,
+        currentTotalCalories: Int,
+        targetCalories: Int
+    ) {
         val progressDrawable = progressBar.progressDrawable.mutate()
 
         if (progressDrawable is LayerDrawable) {
@@ -329,7 +356,10 @@ class HomeFragment : Fragment() {
                     currentTotalCalories > targetCalories * 0.8 -> R.color.progressbar_orange
                     else -> R.color.progressbar_blue
                 }
-                drawable?.setColorFilter(ContextCompat.getColor(requireContext(), colorResId), PorterDuff.Mode.SRC_IN)
+                drawable?.setColorFilter(
+                    ContextCompat.getColor(requireContext(), colorResId),
+                    PorterDuff.Mode.SRC_IN
+                )
                 progressBar.progressDrawable = progressDrawable
             } else {
                 Log.e("HomeFragment", "Progress layer is not a RotateDrawable")
@@ -338,7 +368,6 @@ class HomeFragment : Fragment() {
             Log.e("HomeFragment", "Progress drawable is not a LayerDrawable")
         }
     }
-
 
 
     private fun navigateToMealDetail(mealType: String) {

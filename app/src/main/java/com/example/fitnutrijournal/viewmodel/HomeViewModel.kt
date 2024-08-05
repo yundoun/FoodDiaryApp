@@ -54,9 +54,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _selectedDate = MutableLiveData<String>()
     val selectedDate: LiveData<String>
         get() = _selectedDate
-    
+
     private fun setCurrentDate(date: String) {
-        _currentDate.value = date
+        if (_currentDate.value != date) {
+            _currentDate.value = date
+            Log.d("HomeViewModel", "Current date set to: $date")
+        }
     }
 
     // ============================== 식사 목록 텍스트==============================
@@ -828,12 +831,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateCurrentDate(date: LocalDate) {
         val newDate = date.format(dateFormatter)
-        if (_currentDate.value != newDate) {
-            _currentDate.value = newDate
-            viewModelScope.launch {
-                initializeDailyIntake(newDate)
-                loadDailyIntakeGoal(newDate)
-            }
+        Log.d("HomeViewModel", "Updating current date to: $newDate")
+        setCurrentDate(newDate)
+        viewModelScope.launch {
+            initializeDailyIntake(newDate)
+            loadDailyIntakeGoal(newDate)
         }
     }
 
