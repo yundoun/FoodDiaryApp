@@ -1,5 +1,6 @@
 package com.example.fitnutrijournal.ui.report
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -64,6 +65,7 @@ class ReportFragment : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updatePieChart(data: Map<String, Int>) {
         Log.d("ReportFragment", "Updating PieChart with: $data")
 
@@ -96,6 +98,7 @@ class ReportFragment : Fragment() {
         binding.pieChart.data = pieData
         binding.pieChart.setUsePercentValues(true)
         binding.pieChart.centerText = "섭취한 총 칼로리\n${totalCalories}"
+        binding.totalCalorie.text = "${totalCalories}kcal"
         binding.pieChart.setCenterTextSize(16f)
         binding.pieChart.setCenterTextColor(R.color.text_gray)
         binding.pieChart.invalidate() // Refresh the chart

@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.model.Memo
 import com.example.fitnutrijournal.databinding.FragmentMemoBinding
+import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.MemoViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -34,6 +35,7 @@ class MemoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMemoBinding.inflate(inflater, container, false)
+        (activity as MainActivity).showBottomNavigation(false)
         return binding.root
     }
 

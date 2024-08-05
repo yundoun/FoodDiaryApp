@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.example.fitnutrijournal.viewmodel.ReportViewModel" />
+        <variable
+            name="homeViewModel"
+            type="com.example.fitnutrijournal.viewmodel.HomeViewModel" />
     </data>
 
 
@@ -32,7 +35,7 @@
                     android:id="@+id/textDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="test"
+                    android:text="@{homeViewModel.currentDate}"
                     android:textColor="@color/text_black"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -67,12 +70,12 @@
                 tools:context=".ui.report.ReportFragment">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView"
+                    android:id="@+id/chartCardView"
                     android:layout_width="0dp"
                     android:layout_height="300dp"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="100dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -98,16 +101,15 @@
 
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/listCardView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="100dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardView">
+                    app:layout_constraintTop_toBottomOf="@+id/chartCardView">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -151,7 +153,54 @@
                 </androidx.cardview.widget.CardView>
 
 
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/totalCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="100dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/listCardView">
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="120dp"
+                            android:text="총"
+                            android:textColor="@color/text_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/totalCalorie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="end"
+                            android:textColor="@color/text_black"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
