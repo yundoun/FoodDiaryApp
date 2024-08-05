@@ -11,11 +11,13 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.adapter.PhiChartFoodListAdapter
+import com.example.fitnutrijournal.databinding.FragmentReportBinding
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModelFactory
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -25,27 +27,41 @@ class ReportFragment : Fragment() {
 
     private lateinit var reportViewModel: ReportViewModel
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var pieChart: PieChart
+    private var _binding: FragmentReportBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var foodListAdapter: PhiChartFoodListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_report, container, false)
-        pieChart = root.findViewById(R.id.pieChart)
+        _binding = FragmentReportBinding.inflate(inflater, container, false)
+        val root = binding.root
 
-        // ViewModel 초기화
         homeViewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
-        reportViewModel = ViewModelProvider(
-            this,
-            ReportViewModelFactory(requireActivity().application, homeViewModel)
-        )[ReportViewModel::class.java]
+        reportViewModel = ViewModelProvider(this, ReportViewModelFactory(requireActivity().application, homeViewModel)).get(ReportViewModel::class.java)
+
+        foodListAdapter = PhiChartFoodListAdapter()
+        binding.foodListRecyclerView.adapter = foodListAdapter
+        binding.foodListRecyclerView.layoutManager = LinearLayoutManager(context)
 
         reportViewModel.caloriesByMealType.observe(viewLifecycleOwner, Observer { data ->
             updatePieChart(data)
         })
 
+        reportViewModel.mealsWithFoods.observe(viewLifecycleOwner, Observer { data ->
+            Log.d("ReportFragment", "Observing meals with foods: $data")
+            foodListAdapter.submitList(data)
+        })
+
+        refreshData()
+
         return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun updatePieChart(data: Map<String, Int>) {
@@ -65,8 +81,7 @@ class ReportFragment : Fragment() {
             PieEntry(it.value.toFloat(), mealType)
         }
 
-
-        val dataSet = PieDataSet(entries, "Calories by Meal Type")
+        val dataSet = PieDataSet(entries, null)
         dataSet.colors = listOf(
             resources.getColor(R.color.colorBreakfast, null),
             resources.getColor(R.color.colorLunch, null),
@@ -78,12 +93,20 @@ class ReportFragment : Fragment() {
         pieData.setValueTextSize(12f)
         pieData.setValueTextColor(Color.WHITE)
 
-        pieChart.data = pieData
-        pieChart.setUsePercentValues(true)
-        pieChart.centerText = "섭취한 총 칼로리\n${totalCalories}"
-        pieChart.setCenterTextSize(12f)
-        pieChart.setCenterTextColor(Color.BLACK)
-        pieChart.invalidate() // Refresh the chart
+        binding.pieChart.data = pieData
+        binding.pieChart.setUsePercentValues(true)
+        binding.pieChart.centerText = "섭취한 총 칼로리\n${totalCalories}"
+        binding.pieChart.setCenterTextSize(16f)
+        binding.pieChart.setCenterTextColor(R.color.text_gray)
+        binding.pieChart.invalidate() // Refresh the chart
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun refreshData() {
+        val currentDate = homeViewModel.currentDate.value
+        if (currentDate != null) {
+            reportViewModel.loadCaloriesByMealType(currentDate)
+            reportViewModel.loadMealsWithFoods(currentDate)
+        }
     }
 }
-

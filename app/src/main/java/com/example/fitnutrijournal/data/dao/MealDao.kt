@@ -63,4 +63,11 @@ interface MealDao {
 """)
     suspend fun getAllMealsWithFood(): List<MealWithFood>
 
+    @Query("""
+        SELECT Meal.*, Food.*
+        FROM Meal
+        INNER JOIN Food ON Meal.dietFoodCode = Food.foodCd
+        WHERE Meal.date = :date
+    """)
+    suspend fun getMealsWithFoodsByDate(date: String): List<MealWithFood>
 }
