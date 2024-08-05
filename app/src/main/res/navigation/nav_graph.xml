@@ -43,10 +43,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_exercise"
-        android:name="com.example.fitnutrijournal.ui.exercise.ExerciseFragment"
-        android:label="@string/title_exercise"
-        tools:layout="@layout/fragment_exercise" />
+        android:id="@+id/navigation_report"
+        android:name="com.example.fitnutrijournal.ui.report.ReportFragment"
+        android:label="@string/title_report"
+        tools:layout="@layout/fragment_report" />
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.fitnutrijournal.ui.profile.ProfileFragment"

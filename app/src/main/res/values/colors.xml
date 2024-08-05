@@ -38,5 +38,10 @@
 
     <color name="section_gray">#989a9e</color>
 
+    <color name="colorBreakfast">#477ed6</color>
+    <color name="colorLunch">#FF7F0E</color>
+    <color name="colorDinner">#2ACC61</color>
+    <color name="colorSnack">#65558F</color>
+
 
 </resources>
