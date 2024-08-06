@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.adapter.DietTabAdapter
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 

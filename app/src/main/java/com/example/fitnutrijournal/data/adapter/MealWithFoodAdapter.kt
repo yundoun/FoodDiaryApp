@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.diet
+package com.example.fitnutrijournal.data.adapter
 
 import android.annotation.SuppressLint
 import android.util.Log

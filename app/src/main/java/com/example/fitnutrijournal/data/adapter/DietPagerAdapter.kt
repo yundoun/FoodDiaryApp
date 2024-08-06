@@ -1,10 +1,13 @@
-package com.example.fitnutrijournal.ui.diet
+package com.example.fitnutrijournal.data.adapter
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.fitnutrijournal.ui.diet.CustomAddTabFragment
+import com.example.fitnutrijournal.ui.diet.DietFragment
+import com.example.fitnutrijournal.ui.diet.DietTabFragment
+import com.example.fitnutrijournal.ui.diet.FavoriteTabFragment
 
-class DietPagerAdapter(fragmentActivity: FragmentActivity) :
+class DietPagerAdapter(fragmentActivity: DietFragment) :
     FragmentStateAdapter(fragmentActivity) {
 
     companion object {
