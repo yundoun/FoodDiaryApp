@@ -19,15 +19,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
+import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.adapter.DietPagerAdapter
 import com.example.fitnutrijournal.data.database.FoodDatabase
-import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
+import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.Locale
 
@@ -41,7 +45,9 @@ class DietFragment : Fragment() {
     }
 
     private val REQUEST_CODE_SPEECH_INPUT = 100
-
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
+    private var shouldClearCheckedItems = true
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,14 +65,24 @@ class DietFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewPager = binding.viewPager
-        val adapter = DietPagerAdapter(requireActivity())
+        viewPager = binding.viewPager
+        tabLayout = binding.tabLayout
+
+        val adapter = DietPagerAdapter(this)
         viewPager.adapter = adapter
 
-        val tabLayout = binding.tabLayout
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
+
+
+
+        findNavController().addOnDestinationChangedListener { _, destination, _ ->
+            shouldClearCheckedItems = when (destination.id) {
+                R.id.foodDetailFragment -> false
+                else -> true
+            }
+        }
 
         // 실시간 검색을 위한 EditText의 TextWatcher 설정
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
@@ -105,23 +121,48 @@ class DietFragment : Fragment() {
 
             checkedItems.forEach { food ->
                 val quantity = food.servingSize.toFloat()
-                Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
+                Log.d(
+                    "DietFragment",
+                    "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity"
+                )
             }
 
-           Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
+            dietViewModel.clearCheckedItems()
+            dietViewModel.clearSelectedCountFoodItem()
+            Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
         }
 
         binding.btnAddCustomFood.setOnClickListener {
             findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
         }
 
-
         //observeFoodInfo()
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPause() {
+        super.onPause()
+        if (this::viewPager.isInitialized && shouldClearCheckedItems) {
+            clearCheckedItemsInAllTabs()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun clearCheckedItemsInAllTabs() {
+        val adapter = viewPager.adapter as DietPagerAdapter
+        for (i in 0 until adapter.itemCount) {
+            val fragment = childFragmentManager.findFragmentByTag("f$i") as? DietTabFragment
+            fragment?.clearCheckedItems()
+        }
     }
 
     private fun startVoiceInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "음성을 입력하세요")
         try {
@@ -143,13 +184,6 @@ class DietFragment : Fragment() {
                 dietViewModel.setSearchQuery(recognizedText)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Fragment가 다시 생성될 때 체크된 항목 초기화
-        dietViewModel.clearCheckedItems()
-        dietViewModel.clearSelectedCountFoodItem()
     }
 
     private fun handleArgs(source: String) {
@@ -182,10 +216,7 @@ class DietFragment : Fragment() {
 
         foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
             foodResponse?.i2790?.rows?.forEach { item ->
-                Log.d(
-                    "DietFragment",
-                    "식품코드: ${item.foodCd}, 식품군: ${item.groupName}, 식품이름: ${item.foodName}, 총내용량: ${item.servingSize}, 단위: ${item.servingUnit}, 열량: ${item.calories}, 탄수화물: ${item.carbohydrate}, 단백질: ${item.protein}, 지방: ${item.fat}, 당류: ${item.nutrCont5}, 나트륨: ${item.nutrCont6}, 콜레스테롤: ${item.nutrCont7}, 포화지방산: ${item.nutrCont8}, 트랜스지방: ${item.nutrCont9}"
-                )
+                Log.d("DietFragment", "Api 호출 관찰됨 ")
             }
         })
     }
@@ -208,6 +239,7 @@ class DietFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.text.clear()
+        dietViewModel.setAddFromLibraryButtonVisibility(false)
         _binding = null
     }
 }

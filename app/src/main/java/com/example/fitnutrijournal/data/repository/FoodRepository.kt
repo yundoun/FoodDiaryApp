@@ -13,19 +13,19 @@ class FoodRepository(private val foodDao: FoodDao) {
     // 주어진 Food 객체를 삽입
     suspend fun insert(food: Food) {
         foodDao.insert(food)
-        Log.d("DietRepository", "Food inserted: $food")
+        Log.d("DietRepository", "Food inserted")
     }
 
     // 주어진 Food 객체를 업데이트
     suspend fun update(food: Food) {
         foodDao.update(food)
-        Log.d("DietRepository", "Food updated: $food")
+        Log.d("DietRepository", "Food updated")
     }
 
     // 주어진 Food 리스트를 삽입
     private suspend fun insertAll(foods: List<Food>) {
         foodDao.insertAll(foods)
-        Log.d("DietRepository", "Foods inserted: $foods")
+        Log.d("DietRepository", "Foods inserted")
     }
 
     // 특정 foodCode에 해당하는 Food 객체를 반환

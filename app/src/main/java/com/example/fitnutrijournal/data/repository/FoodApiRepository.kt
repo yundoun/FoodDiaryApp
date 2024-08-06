@@ -34,7 +34,7 @@ class FoodApiRepository(private val foodRepository: FoodRepository) {
         call.enqueue(object : Callback<FoodResponse> {
             override fun onResponse(call: Call<FoodResponse>, response: Response<FoodResponse>) {
                 if (response.isSuccessful) {
-                    Log.d("FoodInfo", "응답 성공: ${response.body()}")
+                    Log.d("FoodInfo", "응답 성공")
                     response.body()?.let {
                         _foodInfo.postValue(it)
                         CoroutineScope(Dispatchers.IO).launch {

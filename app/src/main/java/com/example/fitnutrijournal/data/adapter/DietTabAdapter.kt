@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.diet
+package com.example.fitnutrijournal.data.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -27,6 +27,11 @@ class DietTabAdapter(
         notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateCheckedItems() {
+        notifyDataSetChanged()
+    }
+
     inner class DietViewHolder(private val binding: ItemDietBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
@@ -43,7 +48,6 @@ class DietTabAdapter(
             binding.root.setOnClickListener {
                 onItemClick(item)
             }
-
 
             binding.root.setOnLongClickListener {
                 onItemLongClick?.invoke(item) // Invoke only if non-null
@@ -102,13 +106,5 @@ class DietTabAdapter(
 
 
     override fun getItemCount(): Int = diets.size
-
-    // 아이템 제거 메서드 removeItem 메서드는 해당 아이템을 데이터 소스에서 제거하고, 이를 notifyItemRemoved로 RecyclerView에 알립니다.
-    fun removeItem(position: Int): Food {
-        val removedItem = diets[position]
-        diets = diets.toMutableList().apply { removeAt(position) }
-        notifyItemRemoved(position)
-        return removedItem
-    }
 
 }

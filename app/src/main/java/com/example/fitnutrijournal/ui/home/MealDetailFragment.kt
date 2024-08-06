@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -34,7 +33,7 @@ import com.bumptech.glide.Glide
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
-import com.example.fitnutrijournal.ui.diet.MealWithFoodAdapter
+import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.utils.CameraHelper
 import com.example.fitnutrijournal.utils.PhotoViewActivity
@@ -82,6 +81,8 @@ class MealDetailFragment : Fragment() {
         val mealType = homeViewModel.mealType.value ?: "breakfast"
         cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
 
+        clearCheckedItems()
+
         // 날짜와 식사 타입에 따른 사진 바인딩
         bindPhoto()
 
@@ -95,7 +96,11 @@ class MealDetailFragment : Fragment() {
         setupRecyclerView()
 
         observeViewModels()
+    }
 
+    private fun clearCheckedItems() {
+        dietViewModel.clearCheckedItems()
+        dietViewModel.clearSelectedCountFoodItem()
     }
 
     private fun setClickListeners() {
@@ -250,15 +255,11 @@ class MealDetailFragment : Fragment() {
     private fun showImageSourceDialog() {
         val options = arrayOf("카메라로 촬영")
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("사진 추가")
-            .setItems(options) { dialog, which ->
+            .setItems(options) { _, which ->
                 when (which) {
                     0 -> {
                         cameraHelper.dispatchTakePictureIntent()
                     }
-//                    1 -> {
-//                        cameraHelper.dispatchPickPictureIntent()
-//                    }
                 }
             }
         builder.create().show()
@@ -448,10 +449,4 @@ class MealDetailFragment : Fragment() {
             }
         }
     }
-
-    private fun Int.dpToPx(): Int {
-        return (this * Resources.getSystem().displayMetrics.density).toInt()
-    }
-
-
 }

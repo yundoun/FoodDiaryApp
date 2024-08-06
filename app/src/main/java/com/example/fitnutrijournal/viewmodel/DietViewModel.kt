@@ -180,6 +180,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     fun clearCheckedItems() {
         _checkedItems.value = emptySet()
         _checkedItems.value = _checkedItems.value // 트리거
+       Log.d("DietViewModel", "Cleared checked items")
     }
 
     // 체크된 아이템 로그 출력 메서드

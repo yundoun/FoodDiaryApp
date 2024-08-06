@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_diet" >
         <action
             android:id="@+id/action_navigation_diet_to_FoodDetailFragment"
-            app:destination="@id/dietDetailFragment" />
+            app:destination="@id/foodDetailFragment" />
         <argument
             android:name="source"
             app:argType="string"
@@ -76,7 +76,7 @@
         android:name="com.example.fitnutrijournal.ui.home.TodaySummaryDetailFragment"
         android:label="TodaySummaryDetailFragment" />
     <fragment
-        android:id="@+id/dietDetailFragment"
+        android:id="@+id/foodDetailFragment"
         android:name="com.example.fitnutrijournal.ui.diet.FoodDetailFragment"
         android:label="fragment_diet_detail"
         tools:layout="@layout/fragment_food_detail" />
@@ -94,7 +94,7 @@
         </action>
         <action
             android:id="@+id/action_mealDetailFragment_to_foodDetailFragment"
-            app:destination="@id/dietDetailFragment">
+            app:destination="@id/foodDetailFragment">
             <argument
                 android:name="mealId"
                 app:argType="long" />
