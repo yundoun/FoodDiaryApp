@@ -95,7 +95,6 @@ class MealDetailFragment : Fragment() {
         setupRecyclerView()
 
         observeViewModels()
-
     }
 
     private fun setClickListeners() {
@@ -250,15 +249,11 @@ class MealDetailFragment : Fragment() {
     private fun showImageSourceDialog() {
         val options = arrayOf("카메라로 촬영")
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("사진 추가")
-            .setItems(options) { dialog, which ->
+            .setItems(options) { _, which ->
                 when (which) {
                     0 -> {
                         cameraHelper.dispatchTakePictureIntent()
                     }
-//                    1 -> {
-//                        cameraHelper.dispatchPickPictureIntent()
-//                    }
                 }
             }
         builder.create().show()
@@ -448,10 +443,4 @@ class MealDetailFragment : Fragment() {
             }
         }
     }
-
-    private fun Int.dpToPx(): Int {
-        return (this * Resources.getSystem().displayMetrics.density).toInt()
-    }
-
-
 }

@@ -54,6 +54,22 @@ class FoodDetailFragment : Fragment(), ModalBottomSheet.OnMealTypeSelectedListen
             findNavController().popBackStack()
         }
 
+        dietViewModel.isSaveButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+            binding.btnSave.visibility = if (isVisible) View.VISIBLE else View.GONE
+            binding.btnUpdate.visibility = if (isVisible) View.GONE else View.VISIBLE
+            Log.d("FoodDetailFragment", "isSaveButtonVisible: $isVisible")
+        }
+
+        dietViewModel.isUpdateButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+            binding.btnUpdate.visibility = if (isVisible) View.VISIBLE else View.GONE
+            Log.d("FoodDetailFragment", "isUpdateButtonVisible: $isVisible")
+        }
+
+        dietViewModel.isAddFromLibraryButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+            binding.btnAddFromLibrary.visibility = if (isVisible) View.VISIBLE else View.GONE
+            Log.d("FoodDetailFragment", "isAddFromLibraryButtonVisible: $isVisible")
+        }
+
         dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
             val selectedMealQuantity = dietViewModel.selectedMealQuantity.value
             if (selectedMealQuantity != null) {

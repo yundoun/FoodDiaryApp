@@ -20,8 +20,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.data.database.FoodDatabase
-import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
+import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
@@ -105,10 +105,15 @@ class DietFragment : Fragment() {
 
             checkedItems.forEach { food ->
                 val quantity = food.servingSize.toFloat()
-                Log.d("DietFragment", "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity")
+                Log.d(
+                    "DietFragment",
+                    "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity"
+                )
             }
 
-           Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
+            dietViewModel.clearCheckedItems()
+            dietViewModel.clearSelectedCountFoodItem()
+            Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
         }
 
         binding.btnAddCustomFood.setOnClickListener {
@@ -121,7 +126,10 @@ class DietFragment : Fragment() {
 
     private fun startVoiceInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "음성을 입력하세요")
         try {
@@ -208,6 +216,7 @@ class DietFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.text.clear()
+        dietViewModel.setAddFromLibraryButtonVisibility(false)
         _binding = null
     }
 }
