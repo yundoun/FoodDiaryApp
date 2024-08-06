@@ -27,6 +27,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
 
+
+
     init {
         val database = FoodDatabase.getDatabase(application)
         val dailyIntakeRecordDao = database.dailyIntakeRecordDao()
