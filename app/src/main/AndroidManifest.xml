@@ -41,15 +41,18 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
 
-        <activity
-            android:name="com.example.fitnutrijournal.ui.main.MainActivity"
-            android:theme="@style/AppTheme"
-            android:exported="true" >
+        <activity android:name="com.example.fitnutrijournal.ui.main.SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.fitnutrijournal.ui.main.MainActivity"
+            android:theme="@style/AppTheme"/>
+
+
 
         <activity
             android:name="com.example.fitnutrijournal.utils.PhotoViewActivity" />

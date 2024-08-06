@@ -96,7 +96,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@android:drawable/ic_menu_search" />
+                    app:srcCompat="@drawable/ic_search" />
 
                 <EditText
                     android:id="@+id/searchEditText"

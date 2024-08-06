@@ -125,42 +125,42 @@ class CustomAddFragment : Fragment() {
         var isValid = true
 
         if (binding.inputName.text.toString().isEmpty()) {
-            binding.nameLayout.error = "음식 이름을 입력해주세요."
+            binding.nameLayout.error = getString(R.string.foodName_error)
             isValid = false
         } else {
             binding.nameLayout.error = null
         }
 
         if (binding.inputServingSize.text.toString().isEmpty()) {
-            binding.servingSizeLaytout.error = "1회 제공량을 입력해주세요."
+            binding.servingSizeLaytout.error = getString(R.string.servingSize_error)
             isValid = false
         } else {
             binding.servingSizeLaytout.error = null
         }
 
         if (binding.inputCalories.text.toString().isEmpty()) {
-            binding.calroiesLayout.error = "칼로리를 입력해주세요."
+            binding.calroiesLayout.error = getString(R.string.calories_error)
             isValid = false
         } else {
             binding.calroiesLayout.error = null
         }
 
         if (binding.inputCarb.text.toString().isEmpty()) {
-            binding.carbLayout.error = "탄수화물을 입력해주세요."
+            binding.carbLayout.error = getString(R.string.carbohydrate_error)
             isValid = false
         } else {
             binding.carbLayout.error = null
         }
 
         if (binding.inputProtein.text.toString().isEmpty()) {
-            binding.proteinLayout.error = "단백질을 입력해주세요."
+            binding.proteinLayout.error = getString(R.string.protein_error)
             isValid = false
         } else {
             binding.proteinLayout.error = null
         }
 
         if (binding.inputFat.text.toString().isEmpty()) {
-            binding.fatLayout.error = "지방을 입력해주세요."
+            binding.fatLayout.error = getString(R.string.fat_error)
             isValid = false
         } else {
             binding.fatLayout.error = null

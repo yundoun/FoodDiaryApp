@@ -203,10 +203,7 @@ class HomeFragment : Fragment() {
             memoCardView.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_home_to_diaryFragment)
             }
-            textDate.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
-            }
-            btnCalendar.setOnClickListener {
+            calendarLayout.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_home_to_calendarFragment)
             }
             btnTodaySummaryDetail.setOnClickListener {
