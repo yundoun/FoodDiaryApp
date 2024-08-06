@@ -72,7 +72,7 @@ class DietFragment : Fragment() {
         viewPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = "Tab ${position + 1}"
+            tab.text = adapter.getTabTitle(position)
         }.attach()
 
 
