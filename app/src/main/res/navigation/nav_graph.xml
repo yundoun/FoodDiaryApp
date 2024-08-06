@@ -49,7 +49,11 @@
         android:id="@+id/navigation_report"
         android:name="com.example.fitnutrijournal.ui.report.ReportFragment"
         android:label="@string/title_report"
-        tools:layout="@layout/fragment_report" />
+        tools:layout="@layout/fragment_report" >
+        <action
+            android:id="@+id/action_navigation_report_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.fitnutrijournal.ui.profile.ProfileFragment"
