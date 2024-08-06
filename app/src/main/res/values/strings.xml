@@ -25,9 +25,17 @@
 
     <string name="today_memo">오늘의 메모</string>
     <string name="memo_hint">작성된 메모가 없습니다.</string>
+    <string name="cameraInfo">사진을 찍어 식단을 업로드하세요</string>
 
     <string name="bottom_sheet_addBreakfast">아침에 저장</string>
     <string name="bottom_sheet_addLunch">점심에 저장</string>
     <string name="bottom_sheet_addDinner">저녁에 저장</string>
     <string name="bottom_sheet_addSnack">간식/기타에 저장</string>
+
+    <string name="foodName_error">음식 이름을 입력해주세요.</string>
+    <string name="servingSize_error">1회 제공량을 입력해주세요.</string>
+    <string name="calories_error">칼로리를 입력해주세요.</string>
+    <string name="carbohydrate_error">탄수화물을 입력해주세요.</string>
+    <string name="protein_error">단백질을 입력해주세요.</string>
+    <string name="fat_error">지방을 입력해주세요.</string>
 </resources>

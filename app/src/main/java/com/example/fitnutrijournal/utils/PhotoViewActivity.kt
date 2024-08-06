@@ -21,7 +21,7 @@ class PhotoViewActivity : AppCompatActivity() {
                 .load(photoUri)
                 .into(binding.imageView)
         } else {
-            binding.imageView.setImageResource(R.drawable.image_sample)
+            binding.imageView.setImageResource(R.drawable.ic_camera_background)
         }
 
         binding.btnClose.setOnClickListener {

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -35,7 +36,7 @@ import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
 import com.example.fitnutrijournal.ui.diet.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
-import com.example.fitnutrijournal.util.CameraHelper
+import com.example.fitnutrijournal.utils.CameraHelper
 import com.example.fitnutrijournal.utils.PhotoViewActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
@@ -79,7 +80,7 @@ class MealDetailFragment : Fragment() {
 
         val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
         val mealType = homeViewModel.mealType.value ?: "breakfast"
-        cameraHelper = CameraHelper(this, binding.imageSample, photoViewModel, currentDate, mealType)
+        cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
 
         // 날짜와 식사 타입에 따른 사진 바인딩
         bindPhoto()
@@ -123,24 +124,39 @@ class MealDetailFragment : Fragment() {
             }
         }
 
-        binding.imageSample.setOnLongClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("사진 삭제")
-                .setMessage("이 사진을 삭제하시겠습니까?")
-                .setPositiveButton("예") { _, _ ->
-                    Log.d("PhotoViewActivity", "Photo ID: $photoId")
-                    photoId?.let {
-                        photoViewModel.deletePhotoById(it)
-                        binding.imageSample.setImageResource(R.drawable.image_sample)
-                        photoUri = null
-                        Toast.makeText(requireContext(), "사진이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .setNegativeButton("아니오", null)
-                .show()
-            true
+        binding.menuBtn.setOnClickListener {
+            showOptionsMenu()
         }
+    }
 
+    private fun showOptionsMenu() {
+        val options = arrayOf("사진 삭제")
+        AlertDialog.Builder(requireContext())
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showDeletePhotoDialog() // 사진 삭제
+                }
+            }
+            .show()
+    }
+
+    private fun showDeletePhotoDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("사진 삭제")
+            .setMessage("이 사진을 삭제하시겠습니까?")
+            .setPositiveButton("예") { _, _ ->
+                Log.d("PhotoViewActivity", "Photo ID: $photoId")
+                photoId?.let {
+                    photoViewModel.deletePhotoById(it)
+                    binding.imageSample.setImageResource(R.drawable.ic_camera_background)
+                    binding.imageSampleLayout.visibility = View.VISIBLE
+                    binding.imageSample.visibility = View.GONE
+                    photoUri = null
+                    Toast.makeText(requireContext(), "사진이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("아니오", null)
+            .show()
     }
 
     private fun observeViewModels() {
@@ -415,14 +431,27 @@ class MealDetailFragment : Fragment() {
                 Glide.with(this)
                     .load(photo.photoUri)
                     .into(binding.imageSample)
+                // 사진이 존재할 경우
+                binding.imageSampleLayout.visibility = View.GONE
+                binding.imageSample.visibility = View.VISIBLE
+                binding.cameraBtn.visibility = View.GONE
+                binding.menuBtn.visibility = View.VISIBLE
             } else {
                 photoUri = null
                 photoId = null
-                binding.imageSample.setImageResource(R.drawable.image_sample)
+                binding.imageSample.setImageResource(R.drawable.ic_camera_background)
+                // 사진이 존재하지 않을 경우
+                binding.imageSampleLayout.visibility = View.VISIBLE
+                binding.imageSample.visibility = View.GONE
+                binding.cameraBtn.visibility = View.VISIBLE
+                binding.menuBtn.visibility = View.GONE
             }
         }
     }
 
+    private fun Int.dpToPx(): Int {
+        return (this * Resources.getSystem().displayMetrics.density).toInt()
+    }
 
 
 }

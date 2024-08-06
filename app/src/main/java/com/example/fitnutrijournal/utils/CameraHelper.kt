@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.util
+package com.example.fitnutrijournal.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -9,8 +9,10 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -24,6 +26,7 @@ import java.util.Locale
 class CameraHelper(
     private val fragment: Fragment,
     private val imageView: ImageView,
+    private val imageSampleLayout: View,
     private val photoViewModel: PhotoViewModel,
     private val currentDate: String,
     private val mealType: String
@@ -89,6 +92,8 @@ class CameraHelper(
                     currentPhotoPath?.let {
                         photoViewModel.addPhoto(currentDate, mealType, it)
                         setPicWithObserver(imageView, it)
+                        imageSampleLayout.visibility = View.GONE
+                        imageView.visibility = View.VISIBLE
                         Toast.makeText(
                             fragment.requireContext(),
                             "사진이 저장되었습니다.",
@@ -100,6 +105,7 @@ class CameraHelper(
         }
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun cropImage(uri: Uri) {
         try {
             val cropIntent = Intent("com.android.camera.action.CROP")

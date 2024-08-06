@@ -21,9 +21,13 @@ import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModelFactory
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReportFragment : Fragment() {
@@ -34,6 +38,8 @@ class ReportFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var foodListAdapter: PhiChartFoodListAdapter
 
+    // Pie chart
+    private var usePercentValues = true
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -120,16 +126,45 @@ class ReportFragment : Fragment() {
         val pieData = PieData(dataSet)
         pieData.setValueTextSize(12f)
         pieData.setValueTextColor(Color.WHITE)
+        pieData.setValueFormatter(object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return if (usePercentValues) {
+                    "${value.toInt()}%"
+                } else {
+                    "${value.toInt()}g"
+                }
+            }
+        })
+
 
         binding.pieChart.data = pieData
         binding.pieChart.apply {
-            setUsePercentValues(true)
+            setUsePercentValues(usePercentValues)
             centerText = "섭취한 총 칼로리\n${totalCalories}"
             setCenterTextSize(16f)
             setCenterTextColor(R.color.text_gray)
             invalidate() // Refresh the chart
         }
         binding.totalCalorie.text = "${totalCalories}kcal"
+
+        binding.pieChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                usePercentValues = false
+                binding.pieChart.setUsePercentValues(false)
+                binding.pieChart.data.notifyDataChanged()
+                binding.pieChart.notifyDataSetChanged()
+                binding.pieChart.invalidate() // Refresh the chart to show the values instead of percent
+            }
+
+            override fun onNothingSelected() {
+                // Optional: Reset to percent values when nothing is selected
+                usePercentValues = true
+                binding.pieChart.setUsePercentValues(true)
+                binding.pieChart.data.notifyDataChanged()
+                binding.pieChart.notifyDataSetChanged()
+                binding.pieChart.invalidate() // Refresh the chart to show the percent values again
+            }
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
