@@ -27,7 +27,10 @@ class DietTabAdapter(
         notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
     }
 
-
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateCheckedItems() {
+        notifyDataSetChanged()
+    }
     inner class DietViewHolder(private val binding: ItemDietBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")

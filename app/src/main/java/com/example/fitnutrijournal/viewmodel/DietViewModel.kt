@@ -78,9 +78,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     val calculatedFat: MutableLiveData<String> get() = _calculatedFat
 
 
-    private val allFoods: LiveData<List<Food>> = foodRepository.allFoods
-    val favoriteFoods: LiveData<List<Food>> = foodRepository.favoriteFoods
-    val userAddedFoods: LiveData<List<Food>> = foodRepository.userAddedFoods
+
 
     // 버튼 가시성 설정
 
@@ -97,7 +95,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
 
 
-
+    // 체크된 아이템
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
 
@@ -105,6 +103,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _mealType = MutableLiveData<String>("")
     val mealType: LiveData<String> get() = _mealType
 
+    // 식사 데이터 데이터베이스에서 가져와 저장
     private val _mealsWithFood = MutableLiveData<List<MealWithFood>>()
 
     private val _selectedMealQuantity = MutableLiveData<Int?>()
@@ -121,24 +120,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-
-
-    // 정렬 기준 LiveData
-    private val _sortOrder = MutableLiveData<SortOrder>(SortOrder.ASCENDING)
-    val sortOrder: LiveData<SortOrder> get() = _sortOrder
-
-    enum class SortOrder {
-        DEFAULT,
-        ASCENDING,
-        DESCENDING
-    }
-
-    // 정렬 기준 설정 메서드
-    fun setSortOrder(order: SortOrder) {
-        _sortOrder.value = order
-    }
-
-
     fun insertFood(food: Food) {
         viewModelScope.launch {
             val newFoodCd = generateFoodCode()
@@ -147,11 +128,11 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-
     fun setMealType(type: String) {
         _mealType.value = type
     }
 
+    // 체크된 아이템 개수 카운트
     private val _selectedCountFoodItem = MutableLiveData<Int>(0)
     val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
@@ -159,7 +140,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _selectedCountFoodItem.value = 0
     }
 
-    fun setCheckboxVisible(isVisible: Boolean?) {
+    fun setCheckboxVisible(isVisible: Boolean) {
         _isCheckboxVisible.value = isVisible
     }
 
@@ -175,23 +156,57 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _isAddFromLibraryButtonVisible.value = isVisible
     }
 
-    init {
-        // Load initial favorites from the database
-        favoriteFoods.observeForever { favoriteList ->
-            _favorites.value = favoriteList.map { it.foodCd }.toSet()
-        }
+    // =================================  모든 Food 데이터 가져와 저장
+    private val allFoods: LiveData<List<Food>> = foodRepository.allFoods
+
+    // 정렬 기준 LiveData
+    private val _sortOrder = MutableLiveData<SortOrder>(SortOrder.ASCENDING)
+    private val sortOrder: LiveData<SortOrder> get() = _sortOrder
+
+    enum class SortOrder {
+        ASCENDING,
+        DESCENDING
     }
 
-    // RecyclerView에 바인딩 하기 위한 Food 목록 필터링
+    // 정렬 기준 설정 메서드
+    fun setSortOrder(order: SortOrder) {
+        _sortOrder.value = order
+    }
+
+    // RecyclerView 바인딩 하기 위한 Food 목록 필터링
     val filteredFoods = MediatorLiveData<List<Food>>().apply {
         addSource(allFoods) { foods ->
-            value = filterAndSortFoods(foods, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.DEFAULT)
+            value = filterAndSortFoods(foods, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.ASCENDING)
         }
         addSource(searchQuery) { query ->
-            value = filterAndSortFoods(allFoods.value.orEmpty(), query, sortOrder.value ?: SortOrder.DEFAULT)
+            value = filterAndSortFoods(allFoods.value.orEmpty(), query, sortOrder.value ?: SortOrder.ASCENDING)
         }
         addSource(sortOrder) { order ->
             value = filterAndSortFoods(allFoods.value.orEmpty(), searchQuery.value.orEmpty(), order)
+        }
+    }
+
+    val favoriteFoods = MediatorLiveData<List<Food>>().apply {
+        addSource(allFoods) { foods ->
+            value = filterAndSortFoods(foods.filter { it.isFavorite }, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.ASCENDING)
+        }
+        addSource(searchQuery) { query ->
+            value = filterAndSortFoods(allFoods.value.orEmpty().filter { it.isFavorite }, query, sortOrder.value ?: SortOrder.ASCENDING)
+        }
+        addSource(sortOrder) { order ->
+            value = filterAndSortFoods(allFoods.value.orEmpty().filter { it.isFavorite }, searchQuery.value.orEmpty(), order)
+        }
+    }
+
+    val userAddedFoods = MediatorLiveData<List<Food>>().apply {
+        addSource(allFoods) { foods ->
+            value = filterAndSortFoods(foods.filter { it.isAddedByUser }, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.ASCENDING)
+        }
+        addSource(searchQuery) { query ->
+            value = filterAndSortFoods(allFoods.value.orEmpty().filter { it.isAddedByUser }, query, sortOrder.value ?: SortOrder.ASCENDING)
+        }
+        addSource(sortOrder) { order ->
+            value = filterAndSortFoods(allFoods.value.orEmpty().filter { it.isAddedByUser }, searchQuery.value.orEmpty(), order)
         }
     }
 
@@ -204,10 +219,15 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         return when (sortOrder) {
             SortOrder.ASCENDING -> filtered.sortedBy { it.foodName }
             SortOrder.DESCENDING -> filtered.sortedByDescending { it.foodName }
-            else -> filtered
         }
     }
 
+    init {
+        // favoriteFoods LiveData를 관찰하여 favorite 목록 업데이트
+        favoriteFoods.observeForever { favoriteList ->
+            _favorites.value = favoriteList.map { it.foodCd }.toSet()
+        }
+    }
 
 
     // 체크 상태 업데이트 메서드
@@ -263,8 +283,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         Log.d("DietViewModel", "Calculated calories: ${_calculatedCalories.value}, carbs: ${_calculatedCarbohydrate.value}, protein: ${_calculatedProtein.value}, fat: ${_calculatedFat.value}")
     }
-
-
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query

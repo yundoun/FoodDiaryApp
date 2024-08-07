@@ -140,7 +140,7 @@ class ReportFragment : Fragment() {
         binding.pieChart.data = pieData
         binding.pieChart.apply {
             setUsePercentValues(usePercentValues)
-            centerText = "섭취한 총 칼로리\n${totalCalories}"
+            centerText = "섭취한 칼로리\n${totalCalories}"
             setCenterTextSize(16f)
             setCenterTextColor(R.color.text_gray)
             invalidate() // Refresh the chart

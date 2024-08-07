@@ -93,7 +93,7 @@ class MealDetailFragment : Fragment() {
         // 카메라 권한 체크
         checkPermissions()
 
-        dietViewModel.setCheckboxVisible(null)
+        dietViewModel.setCheckboxVisible(false)
 
         setupRecyclerView()
 

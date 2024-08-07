@@ -78,6 +78,13 @@ class DietTabFragment : Fragment() {
             adapter.notifyDataSetChanged() // 가시성 변경 시 어댑터 갱신
         }
 
+        dietViewModel.checkedItems.observe(viewLifecycleOwner, Observer { checkedItems ->
+            Log.d("DietTabFragment", "checkedItems 변경됨: ${checkedItems.size}")
+            checkedItems.forEach { food ->
+                Log.d("DietTabFragment", "체크된 아이템: ${food.foodCd}")
+            }
+            adapter.updateCheckedItems()
+        })
     }
 
     fun clearCheckedItems() {
