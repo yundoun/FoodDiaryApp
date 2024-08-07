@@ -26,6 +26,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -81,6 +82,8 @@ class MealDetailFragment : Fragment() {
         val mealType = homeViewModel.mealType.value ?: "breakfast"
         cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
 
+        dietViewModel.setAddFromLibraryButtonVisibility(false)
+
         clearCheckedItems()
 
         // 날짜와 식사 타입에 따른 사진 바인딩
@@ -91,7 +94,7 @@ class MealDetailFragment : Fragment() {
         // 카메라 권한 체크
         checkPermissions()
 
-        dietViewModel.setCheckboxVisible(null)
+        dietViewModel.setCheckboxVisible(false)
 
         setupRecyclerView()
 
@@ -233,7 +236,13 @@ class MealDetailFragment : Fragment() {
 
     private fun setupRecyclerView() {
         val recyclerView = binding.foodList
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = layoutManager
+
+        // DividerItemDecoration 추가
+        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
+        recyclerView.addItemDecoration(dividerItemDecoration)
+
         val adapter = MealWithFoodAdapter(
             emptyList(),
             { mealWithFood ->
@@ -274,7 +283,7 @@ class MealDetailFragment : Fragment() {
 
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: MealWithFoodAdapter) {
         val itemTouchHelperCallback =
-            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
 
                 private val background =
                     ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
@@ -287,7 +296,10 @@ class MealDetailFragment : Fragment() {
                     viewHolder: RecyclerView.ViewHolder,
                     target: RecyclerView.ViewHolder
                 ): Boolean {
-                    return false
+                    val fromPosition = viewHolder.adapterPosition
+                    val toPosition = target.adapterPosition
+                    adapter.moveItem(fromPosition, toPosition)
+                    return true
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

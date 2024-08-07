@@ -8,17 +8,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.adapter.DietTabAdapter
 import com.example.fitnutrijournal.data.model.Food
+import com.example.fitnutrijournal.databinding.FragmentDietTabBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("NotifyDataSetChanged")
 class DietTabFragment : Fragment() {
@@ -34,19 +37,21 @@ class DietTabFragment : Fragment() {
     }
 
     private val dietViewModel: DietViewModel by activityViewModels()
+    private var _binding: FragmentDietTabBinding? = null
+    private val binding get() = _binding!!
     lateinit var adapter: DietTabAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_diet_tab, container, false)
+        _binding = FragmentDietTabBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter = DietTabAdapter(
             emptyList(),
@@ -63,7 +68,7 @@ class DietTabFragment : Fragment() {
             },
             dietViewModel // DietViewModel 전달
         )
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
         dietViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             adapter.updateDiets(foods)
@@ -86,19 +91,24 @@ class DietTabFragment : Fragment() {
         dietViewModel.clearCheckedItems()
     }
 
-        private fun showDeleteConfirmationDialog(food: Food) {
-            AlertDialog.Builder(requireContext()).apply {
-                setTitle("삭제 확인")
-                setMessage("이 항목을 삭제하시겠습니까?")
-                setPositiveButton("확인") { dialog, _ ->
-                    dietViewModel.deleteFood(food)
-                    dialog.dismiss()
-                }
-                setNegativeButton("취소") { dialog, _ ->
-                    dialog.dismiss()
-                }
-            }.show()
-        }
+    private fun showDeleteConfirmationDialog(food: Food) {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle("삭제 확인")
+            setMessage("이 항목을 삭제하시겠습니까?")
+            setPositiveButton("확인") { dialog, _ ->
+                dietViewModel.deleteFood(food)
+                dialog.dismiss()
+            }
+            setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }.show()
+    }
 
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
-
