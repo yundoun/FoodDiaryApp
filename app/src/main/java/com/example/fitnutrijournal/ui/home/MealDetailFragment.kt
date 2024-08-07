@@ -81,6 +81,8 @@ class MealDetailFragment : Fragment() {
         val mealType = homeViewModel.mealType.value ?: "breakfast"
         cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
 
+        dietViewModel.setAddFromLibraryButtonVisibility(false)
+
         clearCheckedItems()
 
         // 날짜와 식사 타입에 따른 사진 바인딩

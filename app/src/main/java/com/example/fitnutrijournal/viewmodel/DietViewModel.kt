@@ -121,6 +121,24 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+
+
+    // 정렬 기준 LiveData
+    private val _sortOrder = MutableLiveData<SortOrder>(SortOrder.ASCENDING)
+    val sortOrder: LiveData<SortOrder> get() = _sortOrder
+
+    enum class SortOrder {
+        DEFAULT,
+        ASCENDING,
+        DESCENDING
+    }
+
+    // 정렬 기준 설정 메서드
+    fun setSortOrder(order: SortOrder) {
+        _sortOrder.value = order
+    }
+
+
     fun insertFood(food: Food) {
         viewModelScope.launch {
             val newFoodCd = generateFoodCode()
@@ -163,6 +181,34 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
         }
     }
+
+    // RecyclerView에 바인딩 하기 위한 Food 목록 필터링
+    val filteredFoods = MediatorLiveData<List<Food>>().apply {
+        addSource(allFoods) { foods ->
+            value = filterAndSortFoods(foods, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.DEFAULT)
+        }
+        addSource(searchQuery) { query ->
+            value = filterAndSortFoods(allFoods.value.orEmpty(), query, sortOrder.value ?: SortOrder.DEFAULT)
+        }
+        addSource(sortOrder) { order ->
+            value = filterAndSortFoods(allFoods.value.orEmpty(), searchQuery.value.orEmpty(), order)
+        }
+    }
+
+    private fun filterAndSortFoods(foods: List<Food>, query: String, sortOrder: SortOrder): List<Food> {
+        val filtered = if (query.isEmpty()) {
+            foods
+        } else {
+            foods.filter { it.foodName.contains(query, ignoreCase = true) }
+        }
+        return when (sortOrder) {
+            SortOrder.ASCENDING -> filtered.sortedBy { it.foodName }
+            SortOrder.DESCENDING -> filtered.sortedByDescending { it.foodName }
+            else -> filtered
+        }
+    }
+
+
 
     // 체크 상태 업데이트 메서드
     fun toggleCheckedItem(item: Food) {
@@ -218,32 +264,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         Log.d("DietViewModel", "Calculated calories: ${_calculatedCalories.value}, carbs: ${_calculatedCarbohydrate.value}, protein: ${_calculatedProtein.value}, fat: ${_calculatedFat.value}")
     }
 
-    val filteredFoods = MediatorLiveData<List<Food>>().apply {
-        addSource(allFoods) { foods ->
-            if (foods.isNotEmpty()) {
-                value = filterFoods(foods, searchQuery.value.orEmpty())
-            } else {
-                value = emptyList()
-            }
-        }
-        addSource(searchQuery) { query ->
-            val currentFoods = allFoods.value.orEmpty()
-            if (currentFoods.isNotEmpty()) {
-                value = filterFoods(currentFoods, query)
-            } else {
-                value = emptyList()
-            }
-        }
-    }
 
-    private fun filterFoods(foods: List<Food>, query: String): List<Food> {
-        val filtered = if (query.isEmpty()) {
-            foods
-        } else {
-            foods.filter { it.foodName.contains(query, ignoreCase = true) }
-        }
-        return filtered
-    }
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query

@@ -11,8 +11,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -84,6 +89,9 @@ class DietFragment : Fragment() {
             }
         }
 
+        // 정렬 버튼 클릭 시 팝업 메뉴 표시
+        binding.btnSort.setOnClickListener { showSortMenu(it) }
+
         // 실시간 검색을 위한 EditText의 TextWatcher 설정
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -92,7 +100,6 @@ class DietFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString()
-                Log.d("DietFragment", "Search query: $query")
                 dietViewModel.setSearchQuery(query)
             }
         })
@@ -137,7 +144,6 @@ class DietFragment : Fragment() {
         }
 
         //observeFoodInfo()
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -236,10 +242,31 @@ class DietFragment : Fragment() {
         dietViewModel.setSaveButtonVisibility(true) // 저장 버튼 표시
     }
 
+
+    private fun showSortMenu(view: View) {
+        val popup = PopupMenu(requireContext(), view)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.sort_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.sort_ascending -> {
+                    dietViewModel.setSortOrder(DietViewModel.SortOrder.ASCENDING)
+                    true
+                }
+                R.id.sort_descending -> {
+                    dietViewModel.setSortOrder(DietViewModel.SortOrder.DESCENDING)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.text.clear()
-        dietViewModel.setAddFromLibraryButtonVisibility(false)
         _binding = null
     }
 }

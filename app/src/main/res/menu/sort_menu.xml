@@ -1,0 +1,9 @@
+<!-- res/menu/sort_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sort_ascending"
+        android:title="@string/sort_ascending" />
+    <item
+        android:id="@+id/sort_descending"
+        android:title="@string/sort_descending" />
+</menu>
