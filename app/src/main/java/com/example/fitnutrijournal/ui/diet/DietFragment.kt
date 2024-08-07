@@ -143,7 +143,7 @@ class DietFragment : Fragment() {
             findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
         }
 
-        //observeFoodInfo()
+        observeFoodInfo()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -222,7 +222,7 @@ class DietFragment : Fragment() {
 
         foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
             foodResponse?.i2790?.rows?.forEach { item ->
-                Log.d("DietFragment", "Api 호출 관찰됨 ")
+                //Log.d("DietFragment", "Api 호출 관찰됨 ")
             }
         })
     }
