@@ -1,8 +1,13 @@
 package com.example.fitnutrijournal.ui.main
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,6 +23,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
+    private val permissions = arrayOf(
+        Manifest.permission.INTERNET,
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.CAMERA
+    )
+
+    private val requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            logPermissionsStatus(permissions)
+            if (permissions.values.all { it }) {
+                onPermissionsGranted()
+            } else {
+                showPermissionsDeniedDialog()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -29,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         navView.setupWithNavController(navController)
+
+        checkPermissions()
     }
 
     @Deprecated("Deprecated in Java")
@@ -37,7 +60,6 @@ class MainActivity : AppCompatActivity() {
         val previousBackStackEntry = navController.previousBackStackEntry
 
         if (currentFragment == R.id.navigation_home && previousBackStackEntry == null) {
-            // HomeFragment에서 뒤로가기 버튼을 눌렀을 때 백스택이 비어 있는 경우
             val builder = AlertDialog.Builder(this)
             val messageView = View.inflate(this, R.layout.dialog_message, null)
             val messageTextView = messageView.findViewById<TextView>(R.id.dialog_message_text)
@@ -45,13 +67,12 @@ class MainActivity : AppCompatActivity() {
             messageTextView.setTextColor(ContextCompat.getColor(this, android.R.color.black))
 
             builder.setView(messageView)
-                .setPositiveButton("예") { dialog, which ->
+                .setPositiveButton("예") { _, _ ->
                     super.onBackPressed()
                 }
                 .setNegativeButton("아니오", null)
                 .show()
         } else {
-            // 다른 Fragment에서 뒤로가기 버튼을 눌렀을 때 또는 백스택에 다른 항목이 남아 있는 경우
             if (!navController.popBackStack()) {
                 super.onBackPressed()
             }
@@ -60,5 +81,39 @@ class MainActivity : AppCompatActivity() {
 
     fun showBottomNavigation(show: Boolean) {
         binding.navView.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun checkPermissions() {
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionsLauncher.launch(permissionsToRequest)
+        } else {
+            onPermissionsGranted()
+        }
+    }
+
+    private fun showPermissionsDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("권한 거부됨")
+            .setMessage("필요한 권한이 승인되지 않았습니다. 앱을 종료합니다.")
+            .setPositiveButton("확인") { _, _ ->
+                finish()
+            }
+            .show()
+    }
+
+    private fun logPermissionsStatus(permissions: Map<String, Boolean>) {
+        permissions.forEach { (permission, isGranted) ->
+            Log.d("PermissionsStatus", "Permission: $permission, Granted: $isGranted")
+        }
+    }
+
+    private fun onPermissionsGranted() {
+        // 필요한 권한이 모두 허용된 경우 실행할 작업
+        Log.d("PermissionsStatus", "All required permissions granted")
+        // 추가로 필요한 초기화 작업이 있다면 여기서 수행
     }
 }

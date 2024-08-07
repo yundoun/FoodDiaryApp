@@ -91,9 +91,6 @@ class MealDetailFragment : Fragment() {
 
         setClickListeners()
 
-        // 카메라 권한 체크
-        checkPermissions()
-
         dietViewModel.setCheckboxVisible(false)
 
         setupRecyclerView()
@@ -382,57 +379,7 @@ class MealDetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun checkPermissions() {
-        val permissions = mutableListOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
 
-        val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                it
-            ) != PackageManager.PERMISSION_GRANTED
-        }
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permissionsToRequest.toTypedArray(),
-                REQUEST_PERMISSIONS
-            )
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.parse("package:" + requireContext().packageName)
-                startActivity(intent)
-            }
-        }
-        Log.d("camera", "Permissions checked and requested if necessary")
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSIONS) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = Uri.parse("package:" + requireContext().packageName)
-                    startActivity(intent)
-                }
-            } else {
-                Toast.makeText(requireContext(), "필요한 권한이 승인되지 않았습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-        Log.d("camera", "Permissions result: $grantResults")
-    }
 
     private fun bindPhoto() {
         val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
