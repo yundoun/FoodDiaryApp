@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.ItemDietBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import java.util.Collections
 
 class MealWithFoodAdapter(
     private var mealsWithFood: List<MealWithFood>,
@@ -73,5 +74,13 @@ class MealWithFoodAdapter(
 
     fun getItem(position: Int): MealWithFood {
         return mealsWithFood[position]
+    }
+
+    // 추가: 아이템 순서를 변경하는 메서드
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        val mutableList = mealsWithFood.toMutableList()
+        Collections.swap(mutableList, fromPosition, toPosition)
+        mealsWithFood = mutableList
+        notifyItemMoved(fromPosition, toPosition)
     }
 }
