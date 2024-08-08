@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -37,20 +36,21 @@ class CustomAddTabFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter = DietTabAdapter(
-            emptyList(),
             dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { food ->
                 dietViewModel.selectFood(food.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
             },
-            { food -> showDeleteConfirmationDialog(food) },  // 롱클릭 리스너 추가
+            { food ->
+                showDeleteConfirmationDialog(food)
+            },  // 롱클릭 리스너 추가
             dietViewModel
         )
         recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.userAddedFoods.observe(viewLifecycleOwner) { diets ->
             Log.d("UserAddedTabFragment", "Updating adapter with user added diets: $diets")
@@ -74,7 +74,8 @@ class CustomAddTabFragment : Fragment() {
                 dietViewModel.deleteFood(food)
                 dialog.dismiss()
 
-                val snackbar = Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
+                val snackbar =
+                    Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
                 snackbar.setAction(R.string.undo) {
                     // 삭제 취소 처리
                     dietViewModel.insertFood(deletedFood)

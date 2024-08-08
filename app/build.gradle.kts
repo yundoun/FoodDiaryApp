@@ -44,6 +44,9 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.simplecityapps:recyclerview-fastscroll:2.0.0")
+
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")

@@ -6,31 +6,45 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.databinding.ItemDietBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 
 class DietTabAdapter(
-    private var diets: List<Food>,
     private val toggleFavorite: (Food) -> Unit,
     private val favorites: LiveData<Set<String>>,
     private val onItemClick: (Food) -> Unit,
-    private val onItemLongClick: ((Food) -> Unit)? = null, // 롱클릭 인터페이스 추가
+    private val onItemLongClick: ((Food) -> Unit)? = null,
     private val viewModel: DietViewModel
-) : RecyclerView.Adapter<DietTabAdapter.DietViewHolder>() {
+) : ListAdapter<Food, DietTabAdapter.DietViewHolder>(DietDiffCallback()),
+    FastScrollRecyclerView.SectionedAdapter {
+
+    class DietDiffCallback : DiffUtil.ItemCallback<Food>() {
+        override fun areItemsTheSame(oldItem: Food, newItem: Food): Boolean {
+            return oldItem.foodCd == newItem.foodCd
+        }
+
+        override fun areContentsTheSame(oldItem: Food, newItem: Food): Boolean {
+            return oldItem == newItem
+        }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateDiets(newDiets: List<Food>) {
-        diets = newDiets
-        notifyDataSetChanged() // This will notify the RecyclerView to refresh its items
+        submitList(newDiets)
+        notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateCheckedItems() {
         notifyDataSetChanged()
     }
+
     inner class DietViewHolder(private val binding: ItemDietBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
@@ -49,7 +63,7 @@ class DietTabAdapter(
             }
 
             binding.root.setOnLongClickListener {
-                onItemLongClick?.invoke(item) // Invoke only if non-null
+                onItemLongClick?.invoke(item)
                 true
             }
 
@@ -68,20 +82,11 @@ class DietTabAdapter(
                 }
             }
 
-            // 체크박스 상태 설정
-            binding.checkbox.setOnCheckedChangeListener(null) // Prevents infinite loop
+            binding.checkbox.setOnCheckedChangeListener(null)
             binding.checkbox.isChecked = viewModel.checkedItems.value?.contains(item) == true
             binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.toggleCheckedItem(item)
             }
-
-            binding.root.setOnLongClickListener {
-                if (viewModel.isLongClickEnabled.value == true) {
-                    onItemLongClick?.let { it1 -> it1(item) }
-                }
-                true
-            }
-
         }
     }
 
@@ -91,15 +96,8 @@ class DietTabAdapter(
     }
 
     override fun onBindViewHolder(holder: DietViewHolder, position: Int) {
-        val item = diets[position]
+        val item = getItem(position)
         holder.bind(item)
-
-        // 즐겨찾기 상태 관찰
-        favorites.observeForever {
-            holder.bind(item)
-        }
-
-
     }
 
     private fun updateFavoriteButton(button: ImageButton, foodCode: String) {
@@ -110,7 +108,7 @@ class DietTabAdapter(
         )
     }
 
-
-    override fun getItemCount(): Int = diets.size
-
+    override fun getSectionName(position: Int): String {
+        return getItem(position).initial.toString()
+    }
 }

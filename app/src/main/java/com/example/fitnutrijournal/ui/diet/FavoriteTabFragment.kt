@@ -31,11 +31,9 @@ class FavoriteTabFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_diet_tab, container, false)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
 
 
         val adapter = DietTabAdapter(
-            emptyList(),
             dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
@@ -46,6 +44,7 @@ class FavoriteTabFragment : Fragment() {
             dietViewModel
         )
         recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.favoriteFoods.observe(viewLifecycleOwner) { favorites ->
             adapter.updateDiets(favorites)

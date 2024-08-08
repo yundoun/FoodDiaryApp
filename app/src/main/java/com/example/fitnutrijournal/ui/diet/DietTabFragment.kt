@@ -8,8 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -52,24 +50,23 @@ class DietTabFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
         adapter = DietTabAdapter(
-            emptyList(),
             dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
-                // Handle item click
                 dietViewModel.selectFood(diet.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
             },
             { diet ->
-                // Handle item long click
                 showDeleteConfirmationDialog(diet)
             },
-            dietViewModel // DietViewModel 전달
+            dietViewModel
         )
+
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+
 
         dietViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             adapter.updateDiets(foods)
@@ -107,7 +104,8 @@ class DietTabFragment : Fragment() {
                 dietViewModel.deleteFood(food)
                 dialog.dismiss()
 
-                val snackbar = Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
+                val snackbar =
+                    Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
                 snackbar.setAction(R.string.undo) {
                     // 삭제 취소 처리
                     dietViewModel.insertFood(deletedFood)
@@ -119,7 +117,6 @@ class DietTabFragment : Fragment() {
             }
         }.show()
     }
-
 
 
     override fun onDestroyView() {
