@@ -46,6 +46,19 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+                <ImageButton
+                    android:id="@+id/favoriteBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/favorite"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@{viewModel.isFavorite}" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -83,19 +96,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageButton
-                        android:id="@+id/favoriteBtn"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="20dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/favorite"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="@+id/foodName"
-                        app:layout_constraintEnd_toStartOf="@+id/foodName"
-                        app:layout_constraintTop_toTopOf="@+id/foodName"
-                        app:srcCompat="@{viewModel.isFavorite}" />
 
 
                     <View

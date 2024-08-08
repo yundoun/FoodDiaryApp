@@ -36,6 +36,7 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.PhotoViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -342,10 +343,21 @@ class MealDetailFragment : Fragment() {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
-                    val removedItem = adapter.removeItemById(adapter.getItem(position).meal.id)
-                    if (removedItem != null) {
-                        dietViewModel.deleteMealById(removedItem.meal.id)
-                    }
+                    val removedItem = adapter.getItem(position)
+
+                    adapter.removeItemById(removedItem.meal.id)
+
+                    Snackbar.make(binding.root, R.string.message_delete, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo) {
+                            adapter.addItem(position, removedItem)
+                            recyclerView.scrollToPosition(position)
+                        }.addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                if (event != DISMISS_EVENT_ACTION) {
+                                    dietViewModel.deleteMealById(removedItem.meal.id)
+                                }
+                            }
+                        }).show()
                 }
 
                 override fun onChildDraw(

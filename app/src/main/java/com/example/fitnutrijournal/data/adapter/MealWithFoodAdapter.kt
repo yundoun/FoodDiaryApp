@@ -1,9 +1,11 @@
 package com.example.fitnutrijournal.data.adapter
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.ItemDietBinding
@@ -84,4 +86,15 @@ class MealWithFoodAdapter(
         mealsWithFood = mutableList
         notifyItemMoved(fromPosition, toPosition)
     }
+
+    // 추가: 아이템을 특정 위치에 추가하는 메서드
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addItem(position: Int, mealWithFood: MealWithFood) {
+        val mutableList = mealsWithFood.toMutableList()
+        mutableList.add(position, mealWithFood)
+        mealsWithFood = mutableList
+        notifyItemInserted(position)
+        viewModel.addMealWithFood(mealWithFood)
+    }
+
 }

@@ -462,6 +462,26 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+    // 실행 취소 시 음식 복구
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addMealWithFood(mealWithFood: MealWithFood) {
+        viewModelScope.launch {
+            val quantity = mealWithFood.meal.quantity
+            val mealType = mealWithFood.meal.mealType
+            Log.d("DietViewModel", "Adding meal: ${mealWithFood.meal}")
+            // 섭취량 증가
+            homeViewModel.updateNutrientData(mealType, mealWithFood.food, quantity)
+            // 식사 데이터 추가
+            mealRepository.insert(mealWithFood.meal)
+            Log.d("DietViewModel", "Added meal with id: ${mealWithFood.meal.id}")
+
+            // 섭취 기록 업데이트
+            homeViewModel.refreshFilteredFoods()
+            homeViewModel.refreshFoodNames() // foodNames 업데이트
+        }
+    }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateFoodIntake(mealId: Long) {
