@@ -35,8 +35,16 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.profileLayout.setOnClickListener {
-            Snackbar.make(view, "개발 중 입니다.", Snackbar.LENGTH_SHORT).show()
+        binding.apply {
+            profileLayout.setOnClickListener {
+                Snackbar.make(view, "개발 중 입니다.", Snackbar.LENGTH_SHORT).show()
+            }
+            alarmLayout.setOnClickListener {
+                Snackbar.make(view, "개발 중 입니다.", Snackbar.LENGTH_SHORT).show()
+            }
+            myWeightLayout.setOnClickListener {
+                Snackbar.make(view, "개발 중 입니다.", Snackbar.LENGTH_SHORT).show()
+            }
         }
 
         binding.contactLayout.setOnClickListener {

@@ -75,6 +75,13 @@ class DietTabAdapter(
                 viewModel.toggleCheckedItem(item)
             }
 
+            binding.root.setOnLongClickListener {
+                if (viewModel.isLongClickEnabled.value == true) {
+                    onItemLongClick?.let { it1 -> it1(item) }
+                }
+                true
+            }
+
         }
     }
 

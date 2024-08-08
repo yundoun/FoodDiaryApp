@@ -94,10 +94,22 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(false)
     val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
 
+    private val _isLongClickEnabled = MutableLiveData<Boolean>(true)
+    val isLongClickEnabled: LiveData<Boolean> get() = _isLongClickEnabled
+
+    fun setLongClickEnabled(enabled: Boolean) {
+        _isLongClickEnabled.value = enabled
+    }
+
+
 
     // 체크된 아이템
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
+
+    // 체크된 아이템 개수 카운트
+    private val _selectedCountFoodItem = MutableLiveData<Int>(0)
+    val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
     // 식사 타입에 따라 데이터 필터링
     private val _mealType = MutableLiveData<String>("")
@@ -113,6 +125,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         val maxFoodCd = foodRepository.getMaxFoodCd()
         return if (maxFoodCd != null) {
             val numberPart = maxFoodCd.substring(1).toInt()
+            Log.d("DietViewModel", "Number part: $numberPart")
             val newNumberPart = numberPart + 1
             "D" + newNumberPart.toString().padStart(5, '0')
         } else {
@@ -125,6 +138,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             val newFoodCd = generateFoodCode()
             val newFood = food.copy(foodCd = newFoodCd)
             foodRepository.insert(newFood)
+            Log.d("DietViewModel", "New food inserted with code: $newFoodCd")
         }
     }
 
@@ -132,9 +146,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _mealType.value = type
     }
 
-    // 체크된 아이템 개수 카운트
-    private val _selectedCountFoodItem = MutableLiveData<Int>(0)
-    val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
     fun clearSelectedCountFoodItem() {
         _selectedCountFoodItem.value = 0
@@ -197,6 +208,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             value = filterAndSortFoods(allFoods.value.orEmpty().filter { it.isFavorite }, searchQuery.value.orEmpty(), order)
         }
     }
+
 
     val userAddedFoods = MediatorLiveData<List<Food>>().apply {
         addSource(allFoods) { foods ->

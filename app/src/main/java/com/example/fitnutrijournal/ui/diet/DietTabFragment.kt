@@ -21,6 +21,7 @@ import com.example.fitnutrijournal.data.adapter.DietTabAdapter
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.databinding.FragmentDietTabBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.google.android.material.snackbar.Snackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("NotifyDataSetChanged")
@@ -91,15 +92,29 @@ class DietTabFragment : Fragment() {
         dietViewModel.clearCheckedItems()
     }
 
+    fun clearSelectedCountFoodItem() {
+        dietViewModel.clearSelectedCountFoodItem()
+    }
+
+    @SuppressLint("StringFormatInvalid")
     private fun showDeleteConfirmationDialog(food: Food) {
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("삭제 확인")
-            setMessage("이 항목을 삭제하시겠습니까?")
-            setPositiveButton("확인") { dialog, _ ->
+            setTitle(R.string.message_delete_title)
+            setMessage(getString(R.string.message_delete_content, food.foodName))
+            setPositiveButton(R.string.check) { dialog, _ ->
+                // 임시 변수에 삭제될 음식 저장
+                val deletedFood = food
                 dietViewModel.deleteFood(food)
                 dialog.dismiss()
+
+                val snackbar = Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
+                snackbar.setAction(R.string.undo) {
+                    // 삭제 취소 처리
+                    dietViewModel.insertFood(deletedFood)
+                }
+                snackbar.show()
             }
-            setNegativeButton("취소") { dialog, _ ->
+            setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
         }.show()

@@ -1,17 +1,12 @@
 package com.example.fitnutrijournal.ui.home
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -32,9 +26,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
-import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.utils.CameraHelper
 import com.example.fitnutrijournal.utils.PhotoViewActivity
@@ -57,7 +51,6 @@ class MealDetailFragment : Fragment() {
     }
 
 
-    private val REQUEST_PERMISSIONS = 1001
     private lateinit var cameraHelper: CameraHelper
     private var photoUri: String? = null
     private var photoId: Long? = null
@@ -78,9 +71,17 @@ class MealDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+        val currentDate =
+            homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
         val mealType = homeViewModel.mealType.value ?: "breakfast"
-        cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
+        cameraHelper = CameraHelper(
+            this,
+            binding.imageSample,
+            binding.imageSampleLayout,
+            photoViewModel,
+            currentDate,
+            mealType
+        )
 
         dietViewModel.setAddFromLibraryButtonVisibility(false)
 
@@ -115,9 +116,16 @@ class MealDetailFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        binding.cameraBtn.setOnClickListener {
-            showImageSourceDialog()
+        binding.apply {
+            cameraBtn.setOnClickListener {
+                showImageSourceDialog()
+            }
+            cameraImageLayout.setOnClickListener {
+                showImageSourceDialog()
+            }
         }
+
+
 
         binding.imageSample.setOnClickListener {
             Log.d("PhotoViewActivity", "Photo URI: $photoUri")
@@ -164,6 +172,7 @@ class MealDetailFragment : Fragment() {
             .show()
     }
 
+
     private fun observeViewModels() {
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
             dietViewModel.setMealType(mealType)
@@ -174,7 +183,8 @@ class MealDetailFragment : Fragment() {
         homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             viewLifecycleOwner.lifecycleScope.launch {
                 val uniqueMeals = mutableListOf<MealWithFood>()
-                val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+                val date = homeViewModel.currentDate.value ?: LocalDate.now()
+                    .format(homeViewModel.dateFormatter)
                 val mealType = homeViewModel.mealType.value ?: "breakfast"
                 val meals = homeViewModel.mealRepository.getMealsByDateAndTypeSync(date, mealType)
                 meals.forEach { meal ->
@@ -195,28 +205,57 @@ class MealDetailFragment : Fragment() {
     private fun updateMealText(mealType: String) {
         val mealText = when (mealType) {
             "breakfast" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesBreakfast, homeViewModel.currentCarbIntakeBreakfast, homeViewModel.currentProteinIntakeBreakfast, homeViewModel.currentFatIntakeBreakfast)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesBreakfast,
+                    homeViewModel.currentCarbIntakeBreakfast,
+                    homeViewModel.currentProteinIntakeBreakfast,
+                    homeViewModel.currentFatIntakeBreakfast
+                )
                 "아침"
             }
+
             "lunch" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesLunch, homeViewModel.currentCarbIntakeLunch, homeViewModel.currentProteinIntakeLunch, homeViewModel.currentFatIntakeLunch)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesLunch,
+                    homeViewModel.currentCarbIntakeLunch,
+                    homeViewModel.currentProteinIntakeLunch,
+                    homeViewModel.currentFatIntakeLunch
+                )
                 "점심"
             }
+
             "dinner" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesDinner, homeViewModel.currentCarbIntakeDinner, homeViewModel.currentProteinIntakeDinner, homeViewModel.currentFatIntakeDinner)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesDinner,
+                    homeViewModel.currentCarbIntakeDinner,
+                    homeViewModel.currentProteinIntakeDinner,
+                    homeViewModel.currentFatIntakeDinner
+                )
                 "저녁"
             }
+
             "snack" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesSnack, homeViewModel.currentCarbIntakeSnack, homeViewModel.currentProteinIntakeSnack, homeViewModel.currentFatIntakeSnack)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesSnack,
+                    homeViewModel.currentCarbIntakeSnack,
+                    homeViewModel.currentProteinIntakeSnack,
+                    homeViewModel.currentFatIntakeSnack
+                )
                 "간식"
             }
+
             else -> "식사"
         }
         binding.mealType.text = mealText
     }
 
     @SuppressLint("SetTextI18n")
-    private fun observeMealNutrition(caloriesLiveData: LiveData<Int>, carbLiveData: LiveData<Int>, proteinLiveData: LiveData<Int>, fatLiveData: LiveData<Int>) {
+    private fun observeMealNutrition(
+        caloriesLiveData: LiveData<Int>,
+        carbLiveData: LiveData<Int>,
+        proteinLiveData: LiveData<Int>,
+        fatLiveData: LiveData<Int>
+    ) {
         caloriesLiveData.observe(viewLifecycleOwner) { calories ->
             binding.calories.text = "$calories kcal\n총 섭취량"
         }
@@ -237,7 +276,8 @@ class MealDetailFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         // DividerItemDecoration 추가
-        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
+        val dividerItemDecoration =
+            DividerItemDecoration(recyclerView.context, layoutManager.orientation)
         recyclerView.addItemDecoration(dividerItemDecoration)
 
         val adapter = MealWithFoodAdapter(
@@ -280,7 +320,10 @@ class MealDetailFragment : Fragment() {
 
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: MealWithFoodAdapter) {
         val itemTouchHelperCallback =
-            object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+            object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.LEFT
+            ) {
 
                 private val background =
                     ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
@@ -380,32 +423,33 @@ class MealDetailFragment : Fragment() {
     }
 
 
-
     private fun bindPhoto() {
-        val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+        val date =
+            homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
         val mealType = homeViewModel.mealType.value ?: "breakfast"
-        photoViewModel.getPhotoByDateAndMealType(date, mealType).observe(viewLifecycleOwner) { photo ->
-            if (photo?.photoUri != null) {
-                photoUri = photo.photoUri
-                photoId = photo.id
-                Glide.with(this)
-                    .load(photo.photoUri)
-                    .into(binding.imageSample)
-                // 사진이 존재할 경우
-                binding.imageSampleLayout.visibility = View.GONE
-                binding.imageSample.visibility = View.VISIBLE
-                binding.cameraBtn.visibility = View.GONE
-                binding.menuBtn.visibility = View.VISIBLE
-            } else {
-                photoUri = null
-                photoId = null
-                binding.imageSample.setImageResource(R.drawable.ic_camera_background)
-                // 사진이 존재하지 않을 경우
-                binding.imageSampleLayout.visibility = View.VISIBLE
-                binding.imageSample.visibility = View.GONE
-                binding.cameraBtn.visibility = View.VISIBLE
-                binding.menuBtn.visibility = View.GONE
+        photoViewModel.getPhotoByDateAndMealType(date, mealType)
+            .observe(viewLifecycleOwner) { photo ->
+                if (photo?.photoUri != null) {
+                    photoUri = photo.photoUri
+                    photoId = photo.id
+                    Glide.with(this)
+                        .load(photo.photoUri)
+                        .into(binding.imageSample)
+                    // 사진이 존재할 경우
+                    binding.imageSampleLayout.visibility = View.GONE
+                    binding.imageSample.visibility = View.VISIBLE
+                    binding.cameraBtn.visibility = View.GONE
+                    binding.menuBtn.visibility = View.VISIBLE
+                } else {
+                    photoUri = null
+                    photoId = null
+                    binding.imageSample.setImageResource(R.drawable.ic_camera_background)
+                    // 사진이 존재하지 않을 경우
+                    binding.imageSampleLayout.visibility = View.VISIBLE
+                    binding.imageSample.visibility = View.GONE
+                    binding.cameraBtn.visibility = View.VISIBLE
+                    binding.menuBtn.visibility = View.GONE
+                }
             }
-        }
     }
 }

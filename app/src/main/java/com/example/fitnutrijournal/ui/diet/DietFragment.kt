@@ -143,7 +143,7 @@ class DietFragment : Fragment() {
             findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
         }
 
-        observeFoodInfo()
+        //observeFoodInfo()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -160,6 +160,7 @@ class DietFragment : Fragment() {
         for (i in 0 until adapter.itemCount) {
             val fragment = childFragmentManager.findFragmentByTag("f$i") as? DietTabFragment
             fragment?.clearCheckedItems()
+            fragment?.clearSelectedCountFoodItem()
         }
     }
 
@@ -201,6 +202,8 @@ class DietFragment : Fragment() {
                 dietViewModel.setUpdateButtonVisibility(false)
                 dietViewModel.setAddFromLibraryButtonVisibility(false)
                 binding.btnAddCustomFood.visibility = View.GONE
+
+                dietViewModel.setLongClickEnabled(false)
             }
 
             else -> {
@@ -210,6 +213,8 @@ class DietFragment : Fragment() {
                 dietViewModel.setUpdateButtonVisibility(false)
                 dietViewModel.setAddFromLibraryButtonVisibility(true)
                 binding.btnAddFood.visibility = View.GONE
+
+                dietViewModel.setLongClickEnabled(true)
             }
         }
     }
