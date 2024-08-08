@@ -24,7 +24,7 @@ class ReportViewModel(application: Application, private val homeViewModel: HomeV
 
     init {
         val foodDatabase = FoodDatabase.getDatabase(application)
-        mealRepository = MealRepository(foodDatabase.mealDao())
+        mealRepository = MealRepository(foodDatabase.mealDao(), foodDatabase.foodDao())
         foodRepository = FoodRepository(foodDatabase.foodDao())
 
         _caloriesByMealType.addSource(homeViewModel.currentDate) { date ->

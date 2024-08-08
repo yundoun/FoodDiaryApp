@@ -20,12 +20,6 @@ data class Food(
         get() = foodName.firstOrNull()?.let { getInitial(it) } ?: '#'
 
     companion object {
-        private val initialMap = mapOf(
-            'ㄱ' to '가', 'ㄴ' to '나', 'ㄷ' to '다', 'ㄹ' to '라', 'ㅁ' to '마',
-            'ㅂ' to '바', 'ㅅ' to '사', 'ㅇ' to '아', 'ㅈ' to '자', 'ㅊ' to '차',
-            'ㅋ' to '카', 'ㅌ' to '타', 'ㅍ' to '파', 'ㅎ' to '하'
-        )
-
         private fun getInitial(char: Char): Char {
             return when (char) {
                 in '가'..'깋' -> 'ㄱ'

@@ -27,7 +27,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
 
-
+    private val _recentFoods = MediatorLiveData<List<Food>>()
+    val recentFoods: LiveData<List<Food>> get() = _recentFoods
 
     init {
         val database = FoodDatabase.getDatabase(application)
@@ -37,7 +38,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         foodRepository = FoodRepository(foodDao)
-        mealRepository = MealRepository(mealDao)
+        mealRepository = MealRepository(mealDao, foodDao)
+
+        // 초기화 시 최근 음식 데이터를 로드
+        loadRecentFoods()
     }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
@@ -79,6 +83,17 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
 
 
+    private fun loadRecentFoods() {
+        val recentMealsLiveData = mealRepository.getRecentMeals(20)
+        _recentFoods.addSource(recentMealsLiveData) { meals ->
+            viewModelScope.launch {
+                val foods = meals.map { meal ->
+                    foodRepository.getFoodByFoodCode(meal.dietFoodCode)
+                }.distinctBy { it.foodCd }
+                _recentFoods.postValue(foods)
+            }
+        }
+    }
 
     // 버튼 가시성 설정
 
@@ -345,6 +360,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 currentFat = (initialRecord.currentFat + fat).toInt()
             )
 
+            // 식사 및 섭취 기록 저장
             mealRepository.insert(meal)
             dailyIntakeRecordRepository.insert(updatedRecord)
             _dailyIntakeRecord.postValue(updatedRecord)
@@ -358,7 +374,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 "DietViewModel",
                 "Updated record: ${updatedRecord.date}, Calories: ${updatedRecord.currentCalories}, Carbs: ${updatedRecord.currentCarbs}, Protein: ${updatedRecord.currentProtein}, Fat: ${updatedRecord.currentFat}"
             )
-
 
             homeViewModel.updateNutrientData(mealType, food, totalContent)
             homeViewModel.refreshFoodNames()  // 음식 추가 후 foodNames 업데이트

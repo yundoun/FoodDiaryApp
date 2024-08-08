@@ -20,9 +20,6 @@ interface FoodDao {
     @Update
     suspend fun update(food: Food)
 
-    @Query("SELECT * FROM Food WHERE foodCd = :foodCode")
-    suspend fun getFoodByFoodCode(foodCode: String): Food
-
     // 모든 Food 객체 리스트를 LiveData 형태로 반환
     @Query("SELECT * FROM Food")
     fun getAllFoods(): LiveData<List<Food>>
@@ -46,5 +43,9 @@ interface FoodDao {
     // Food 데이터 삭제
     @Delete
     suspend fun delete(food: Food)
+
+
+    @Query("SELECT * FROM Food WHERE foodCd = :foodCd LIMIT 1")
+    suspend fun getFoodByFoodCodeSync(foodCd: String): Food
 
 }

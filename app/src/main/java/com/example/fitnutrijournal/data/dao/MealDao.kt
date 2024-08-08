@@ -29,6 +29,9 @@ interface MealDao {
     @Query("SELECT * FROM meal WHERE dietFoodCode = :foodCd AND date = :date")
     suspend fun getMealsByFoodCodeAndDate(foodCd: String, date: String): List<Meal>
 
+    // 최근 식사 기록을 가져오는 쿼리
+    @Query("SELECT * FROM Meal ORDER BY date DESC LIMIT :limit")
+    fun getRecentMeals(limit: Int): LiveData<List<Meal>>
 
     @Update
     suspend fun update(meal: Meal)
