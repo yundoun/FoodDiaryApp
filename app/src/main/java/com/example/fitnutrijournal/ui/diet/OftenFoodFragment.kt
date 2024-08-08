@@ -20,8 +20,7 @@ import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.google.android.material.snackbar.Snackbar
 
-@RequiresApi(Build.VERSION_CODES.O)
-class CustomAddTabFragment : Fragment() {
+class OftenFoodFragment : Fragment() {
     private val dietViewModel: DietViewModel by activityViewModels()
     private lateinit var adapter: DietTabAdapter
 
@@ -32,6 +31,7 @@ class CustomAddTabFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_diet_tab, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,18 +51,23 @@ class CustomAddTabFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        dietViewModel.userAddedFoods.observe(viewLifecycleOwner) { diets ->
-            Log.d("CustomAddTabFragment", "Updating adapter with user added diets: $diets")
-            adapter.updateDiets(diets)
+        dietViewModel.recentFoods.observe(viewLifecycleOwner) { foods ->
+            Log.d("UserAddedTabFragment", "Updating adapter with recent foods: $foods")
+            adapter.updateDiets(foods)
         }
+
 
         dietViewModel.checkedItems.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
         }
 
+        dietViewModel.recentFoods.observe(viewLifecycleOwner) { foods ->
+            adapter.updateDiets(foods)
+        }
+
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showDeleteConfirmationDialog(food: Food) {
         AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.message_delete_title)

@@ -1,17 +1,12 @@
 package com.example.fitnutrijournal.ui.home
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -32,9 +26,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.fitnutrijournal.R
+import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
-import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.ui.main.MainActivity
 import com.example.fitnutrijournal.utils.CameraHelper
 import com.example.fitnutrijournal.utils.PhotoViewActivity
@@ -42,6 +36,7 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.PhotoViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -57,7 +52,6 @@ class MealDetailFragment : Fragment() {
     }
 
 
-    private val REQUEST_PERMISSIONS = 1001
     private lateinit var cameraHelper: CameraHelper
     private var photoUri: String? = null
     private var photoId: Long? = null
@@ -78,11 +72,17 @@ class MealDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentDate = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+        val currentDate =
+            homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
         val mealType = homeViewModel.mealType.value ?: "breakfast"
-        cameraHelper = CameraHelper(this, binding.imageSample,binding.imageSampleLayout , photoViewModel, currentDate, mealType)
-
-        dietViewModel.setAddFromLibraryButtonVisibility(false)
+        cameraHelper = CameraHelper(
+            this,
+            binding.imageSample,
+            binding.imageSampleLayout,
+            photoViewModel,
+            currentDate,
+            mealType
+        )
 
         clearCheckedItems()
 
@@ -90,9 +90,6 @@ class MealDetailFragment : Fragment() {
         bindPhoto()
 
         setClickListeners()
-
-        // 카메라 권한 체크
-        checkPermissions()
 
         dietViewModel.setCheckboxVisible(false)
 
@@ -111,16 +108,23 @@ class MealDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        binding.btnAddFood.setOnClickListener {
+        binding.btnAddFoodFromMealDetail.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
             val action =
                 MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)
             findNavController().navigate(action)
         }
 
-        binding.cameraBtn.setOnClickListener {
-            showImageSourceDialog()
+        binding.apply {
+            cameraBtn.setOnClickListener {
+                showImageSourceDialog()
+            }
+            cameraImageLayout.setOnClickListener {
+                showImageSourceDialog()
+            }
         }
+
+
 
         binding.imageSample.setOnClickListener {
             Log.d("PhotoViewActivity", "Photo URI: $photoUri")
@@ -167,6 +171,7 @@ class MealDetailFragment : Fragment() {
             .show()
     }
 
+
     private fun observeViewModels() {
         homeViewModel.mealType.observe(viewLifecycleOwner) { mealType ->
             dietViewModel.setMealType(mealType)
@@ -177,7 +182,8 @@ class MealDetailFragment : Fragment() {
         homeViewModel.filteredFoods.observe(viewLifecycleOwner) { foods ->
             viewLifecycleOwner.lifecycleScope.launch {
                 val uniqueMeals = mutableListOf<MealWithFood>()
-                val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+                val date = homeViewModel.currentDate.value ?: LocalDate.now()
+                    .format(homeViewModel.dateFormatter)
                 val mealType = homeViewModel.mealType.value ?: "breakfast"
                 val meals = homeViewModel.mealRepository.getMealsByDateAndTypeSync(date, mealType)
                 meals.forEach { meal ->
@@ -198,28 +204,57 @@ class MealDetailFragment : Fragment() {
     private fun updateMealText(mealType: String) {
         val mealText = when (mealType) {
             "breakfast" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesBreakfast, homeViewModel.currentCarbIntakeBreakfast, homeViewModel.currentProteinIntakeBreakfast, homeViewModel.currentFatIntakeBreakfast)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesBreakfast,
+                    homeViewModel.currentCarbIntakeBreakfast,
+                    homeViewModel.currentProteinIntakeBreakfast,
+                    homeViewModel.currentFatIntakeBreakfast
+                )
                 "아침"
             }
+
             "lunch" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesLunch, homeViewModel.currentCarbIntakeLunch, homeViewModel.currentProteinIntakeLunch, homeViewModel.currentFatIntakeLunch)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesLunch,
+                    homeViewModel.currentCarbIntakeLunch,
+                    homeViewModel.currentProteinIntakeLunch,
+                    homeViewModel.currentFatIntakeLunch
+                )
                 "점심"
             }
+
             "dinner" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesDinner, homeViewModel.currentCarbIntakeDinner, homeViewModel.currentProteinIntakeDinner, homeViewModel.currentFatIntakeDinner)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesDinner,
+                    homeViewModel.currentCarbIntakeDinner,
+                    homeViewModel.currentProteinIntakeDinner,
+                    homeViewModel.currentFatIntakeDinner
+                )
                 "저녁"
             }
+
             "snack" -> {
-                observeMealNutrition(homeViewModel.currentCaloriesSnack, homeViewModel.currentCarbIntakeSnack, homeViewModel.currentProteinIntakeSnack, homeViewModel.currentFatIntakeSnack)
+                observeMealNutrition(
+                    homeViewModel.currentCaloriesSnack,
+                    homeViewModel.currentCarbIntakeSnack,
+                    homeViewModel.currentProteinIntakeSnack,
+                    homeViewModel.currentFatIntakeSnack
+                )
                 "간식"
             }
+
             else -> "식사"
         }
         binding.mealType.text = mealText
     }
 
     @SuppressLint("SetTextI18n")
-    private fun observeMealNutrition(caloriesLiveData: LiveData<Int>, carbLiveData: LiveData<Int>, proteinLiveData: LiveData<Int>, fatLiveData: LiveData<Int>) {
+    private fun observeMealNutrition(
+        caloriesLiveData: LiveData<Int>,
+        carbLiveData: LiveData<Int>,
+        proteinLiveData: LiveData<Int>,
+        fatLiveData: LiveData<Int>
+    ) {
         caloriesLiveData.observe(viewLifecycleOwner) { calories ->
             binding.calories.text = "$calories kcal\n총 섭취량"
         }
@@ -240,7 +275,8 @@ class MealDetailFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         // DividerItemDecoration 추가
-        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, layoutManager.orientation)
+        val dividerItemDecoration =
+            DividerItemDecoration(recyclerView.context, layoutManager.orientation)
         recyclerView.addItemDecoration(dividerItemDecoration)
 
         val adapter = MealWithFoodAdapter(
@@ -283,7 +319,10 @@ class MealDetailFragment : Fragment() {
 
     private fun setupItemTouchHelper(recyclerView: RecyclerView, adapter: MealWithFoodAdapter) {
         val itemTouchHelperCallback =
-            object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+            object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.LEFT
+            ) {
 
                 private val background =
                     ColorDrawable(ContextCompat.getColor(requireContext(), R.color.delete_red))
@@ -304,10 +343,21 @@ class MealDetailFragment : Fragment() {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     val position = viewHolder.adapterPosition
-                    val removedItem = adapter.removeItemById(adapter.getItem(position).meal.id)
-                    if (removedItem != null) {
-                        dietViewModel.deleteMealById(removedItem.meal.id)
-                    }
+                    val removedItem = adapter.getItem(position)
+
+                    adapter.removeItemById(removedItem.meal.id)
+
+                    Snackbar.make(binding.root, R.string.message_delete, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo) {
+                            adapter.addItem(position, removedItem)
+                            recyclerView.scrollToPosition(position)
+                        }.addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                if (event != DISMISS_EVENT_ACTION) {
+                                    dietViewModel.deleteMealById(removedItem.meal.id)
+                                }
+                            }
+                        }).show()
                 }
 
                 override fun onChildDraw(
@@ -382,83 +432,34 @@ class MealDetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun checkPermissions() {
-        val permissions = mutableListOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-
-        val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                it
-            ) != PackageManager.PERMISSION_GRANTED
-        }
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permissionsToRequest.toTypedArray(),
-                REQUEST_PERMISSIONS
-            )
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.parse("package:" + requireContext().packageName)
-                startActivity(intent)
-            }
-        }
-        Log.d("camera", "Permissions checked and requested if necessary")
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSIONS) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = Uri.parse("package:" + requireContext().packageName)
-                    startActivity(intent)
-                }
-            } else {
-                Toast.makeText(requireContext(), "필요한 권한이 승인되지 않았습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-        Log.d("camera", "Permissions result: $grantResults")
-    }
 
     private fun bindPhoto() {
-        val date = homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
+        val date =
+            homeViewModel.currentDate.value ?: LocalDate.now().format(homeViewModel.dateFormatter)
         val mealType = homeViewModel.mealType.value ?: "breakfast"
-        photoViewModel.getPhotoByDateAndMealType(date, mealType).observe(viewLifecycleOwner) { photo ->
-            if (photo?.photoUri != null) {
-                photoUri = photo.photoUri
-                photoId = photo.id
-                Glide.with(this)
-                    .load(photo.photoUri)
-                    .into(binding.imageSample)
-                // 사진이 존재할 경우
-                binding.imageSampleLayout.visibility = View.GONE
-                binding.imageSample.visibility = View.VISIBLE
-                binding.cameraBtn.visibility = View.GONE
-                binding.menuBtn.visibility = View.VISIBLE
-            } else {
-                photoUri = null
-                photoId = null
-                binding.imageSample.setImageResource(R.drawable.ic_camera_background)
-                // 사진이 존재하지 않을 경우
-                binding.imageSampleLayout.visibility = View.VISIBLE
-                binding.imageSample.visibility = View.GONE
-                binding.cameraBtn.visibility = View.VISIBLE
-                binding.menuBtn.visibility = View.GONE
+        photoViewModel.getPhotoByDateAndMealType(date, mealType)
+            .observe(viewLifecycleOwner) { photo ->
+                if (photo?.photoUri != null) {
+                    photoUri = photo.photoUri
+                    photoId = photo.id
+                    Glide.with(this)
+                        .load(photo.photoUri)
+                        .into(binding.imageSample)
+                    // 사진이 존재할 경우
+                    binding.imageSampleLayout.visibility = View.GONE
+                    binding.imageSample.visibility = View.VISIBLE
+                    binding.cameraBtn.visibility = View.GONE
+                    binding.menuBtn.visibility = View.VISIBLE
+                } else {
+                    photoUri = null
+                    photoId = null
+                    binding.imageSample.setImageResource(R.drawable.ic_camera_background)
+                    // 사진이 존재하지 않을 경우
+                    binding.imageSampleLayout.visibility = View.VISIBLE
+                    binding.imageSample.visibility = View.GONE
+                    binding.cameraBtn.visibility = View.VISIBLE
+                    binding.menuBtn.visibility = View.GONE
+                }
             }
-        }
     }
 }

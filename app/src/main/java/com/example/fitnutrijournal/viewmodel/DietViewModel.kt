@@ -27,7 +27,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _dailyIntakeRecord = MutableLiveData<DailyIntakeRecord?>()
 
-
+    private val _recentFoods = MediatorLiveData<List<Food>>()
+    val recentFoods: LiveData<List<Food>> get() = _recentFoods
 
     init {
         val database = FoodDatabase.getDatabase(application)
@@ -37,11 +38,18 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         foodRepository = FoodRepository(foodDao)
-        mealRepository = MealRepository(mealDao)
+        mealRepository = MealRepository(mealDao, foodDao)
+
+        // 초기화 시 최근 음식 데이터를 로드
+        loadRecentFoods()
+
+
     }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
     val favorites: LiveData<Set<String>> get() = _favorites
+
+    val isFavorite = MutableLiveData<Boolean>()
 
     // 아이템 검색
     private val _searchQuery = MutableLiveData("")
@@ -79,25 +87,51 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
 
 
+    private fun loadRecentFoods() {
+        val recentMealsLiveData = mealRepository.getRecentMeals(20)
+        _recentFoods.addSource(recentMealsLiveData) { meals ->
+            viewModelScope.launch {
+                val foods = meals.map { meal ->
+                    foodRepository.getFoodByFoodCode(meal.dietFoodCode)
+                }.distinctBy { it.foodCd }
+                _recentFoods.postValue(foods)
+            }
+        }
+    }
 
     // 버튼 가시성 설정
 
-    private val _isCheckboxVisible = MutableLiveData<Boolean>(false)
+    private val _isCheckboxVisible = MutableLiveData<Boolean>(true)
     val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
 
-    private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isFavoriteButtonVisible = MutableLiveData<Boolean>(true)
+    val isFavoriteButtonVisible: LiveData<Boolean> get() = _isFavoriteButtonVisible
+
+    private val _isSaveButtonVisible = MutableLiveData<Boolean>(true)
     val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
 
-    private val _isUpdateButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isUpdateButtonVisible = MutableLiveData<Boolean>(true)
     val isUpdateButtonVisible: LiveData<Boolean> get() = _isUpdateButtonVisible
 
-    private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(true)
     val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
+
+    private val _isLongClickEnabled = MutableLiveData<Boolean>(true)
+    val isLongClickEnabled: LiveData<Boolean> get() = _isLongClickEnabled
+
+    fun setLongClickEnabled(enabled: Boolean) {
+        _isLongClickEnabled.value = enabled
+    }
+
 
 
     // 체크된 아이템
     private val _checkedItems = MutableLiveData<Set<Food>>(emptySet())
     val checkedItems: LiveData<Set<Food>> get() = _checkedItems
+
+    // 체크된 아이템 개수 카운트
+    private val _selectedCountFoodItem = MutableLiveData<Int>(0)
+    val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
     // 식사 타입에 따라 데이터 필터링
     private val _mealType = MutableLiveData<String>("")
@@ -113,6 +147,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         val maxFoodCd = foodRepository.getMaxFoodCd()
         return if (maxFoodCd != null) {
             val numberPart = maxFoodCd.substring(1).toInt()
+            Log.d("DietViewModel", "Number part: $numberPart")
             val newNumberPart = numberPart + 1
             "D" + newNumberPart.toString().padStart(5, '0')
         } else {
@@ -125,6 +160,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             val newFoodCd = generateFoodCode()
             val newFood = food.copy(foodCd = newFoodCd)
             foodRepository.insert(newFood)
+            Log.d("DietViewModel", "New food inserted with code: $newFoodCd")
         }
     }
 
@@ -132,9 +168,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _mealType.value = type
     }
 
-    // 체크된 아이템 개수 카운트
-    private val _selectedCountFoodItem = MutableLiveData<Int>(0)
-    val selectedCountFoodItem: LiveData<Int> get() = _selectedCountFoodItem
 
     fun clearSelectedCountFoodItem() {
         _selectedCountFoodItem.value = 0
@@ -142,6 +175,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     fun setCheckboxVisible(isVisible: Boolean) {
         _isCheckboxVisible.value = isVisible
+    }
+
+    fun setFavoriteButtonVisibility(isVisible: Boolean) {
+        _isFavoriteButtonVisible.value = isVisible
     }
 
     fun setSaveButtonVisibility(isVisible: Boolean) {
@@ -198,6 +235,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
+
     val userAddedFoods = MediatorLiveData<List<Food>>().apply {
         addSource(allFoods) { foods ->
             value = filterAndSortFoods(foods.filter { it.isAddedByUser }, searchQuery.value.orEmpty(), sortOrder.value ?: SortOrder.ASCENDING)
@@ -226,6 +264,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         // favoriteFoods LiveData를 관찰하여 favorite 목록 업데이트
         favoriteFoods.observeForever { favoriteList ->
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
+        }
+
+        selectedFood.observeForever { food ->
+            isFavorite.value = food?.isFavorite ?: false
         }
     }
 
@@ -288,17 +330,20 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _searchQuery.value = query
     }
 
-    fun toggleFavorite(item: Food) {
-        viewModelScope.launch {
-            val currentFavorites = _favorites.value ?: emptySet()
-            if (currentFavorites.contains(item.foodCd)) {
-                _favorites.value = currentFavorites - item.foodCd
-                item.isFavorite = false
-            } else {
-                _favorites.value = currentFavorites + item.foodCd
-                item.isFavorite = true
+    fun toggleFavorite() {
+        selectedFood.value?.let { food ->
+            viewModelScope.launch {
+                val currentFavorites = _favorites.value ?: emptySet()
+                if (currentFavorites.contains(food.foodCd)) {
+                    _favorites.value = currentFavorites - food.foodCd
+                    food.isFavorite = false
+                } else {
+                    _favorites.value = currentFavorites + food.foodCd
+                    food.isFavorite = true
+                }
+                isFavorite.value = food.isFavorite
+                foodRepository.update(food)
             }
-            foodRepository.update(item)
         }
     }
 
@@ -333,6 +378,7 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 currentFat = (initialRecord.currentFat + fat).toInt()
             )
 
+            // 식사 및 섭취 기록 저장
             mealRepository.insert(meal)
             dailyIntakeRecordRepository.insert(updatedRecord)
             _dailyIntakeRecord.postValue(updatedRecord)
@@ -346,7 +392,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
                 "DietViewModel",
                 "Updated record: ${updatedRecord.date}, Calories: ${updatedRecord.currentCalories}, Carbs: ${updatedRecord.currentCarbs}, Protein: ${updatedRecord.currentProtein}, Fat: ${updatedRecord.currentFat}"
             )
-
 
             homeViewModel.updateNutrientData(mealType, food, totalContent)
             homeViewModel.refreshFoodNames()  // 음식 추가 후 foodNames 업데이트
@@ -416,6 +461,26 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             }
         }
     }
+
+    // 실행 취소 시 음식 복구
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addMealWithFood(mealWithFood: MealWithFood) {
+        viewModelScope.launch {
+            val quantity = mealWithFood.meal.quantity
+            val mealType = mealWithFood.meal.mealType
+            Log.d("DietViewModel", "Adding meal: ${mealWithFood.meal}")
+            // 섭취량 증가
+            homeViewModel.updateNutrientData(mealType, mealWithFood.food, quantity)
+            // 식사 데이터 추가
+            mealRepository.insert(mealWithFood.meal)
+            Log.d("DietViewModel", "Added meal with id: ${mealWithFood.meal.id}")
+
+            // 섭취 기록 업데이트
+            homeViewModel.refreshFilteredFoods()
+            homeViewModel.refreshFoodNames() // foodNames 업데이트
+        }
+    }
+
 
 
     @RequiresApi(Build.VERSION_CODES.O)

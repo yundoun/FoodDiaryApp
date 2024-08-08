@@ -54,6 +54,10 @@ class FoodDetailFragment : Fragment(), ModalBottomSheet.OnMealTypeSelectedListen
             findNavController().popBackStack()
         }
 
+        binding.favoriteBtn.setOnClickListener {
+            dietViewModel.toggleFavorite()
+        }
+
         dietViewModel.isSaveButtonVisible.observe(viewLifecycleOwner) { isVisible ->
             binding.btnSave.visibility = if (isVisible) View.VISIBLE else View.GONE
             binding.btnUpdate.visibility = if (isVisible) View.GONE else View.VISIBLE

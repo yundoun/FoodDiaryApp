@@ -29,8 +29,8 @@ class FoodRepository(private val foodDao: FoodDao) {
     }
 
     // 특정 foodCode에 해당하는 Food 객체를 반환
-    suspend fun getFoodByFoodCode(foodCode: String): Food {
-        return foodDao.getFoodByFoodCode(foodCode)
+    suspend fun getFoodByFoodCode(foodCd: String): Food {
+        return foodDao.getFoodByFoodCodeSync(foodCd)
     }
 
     suspend fun mergeAndInsertAll(apiFoods: List<Food>) {

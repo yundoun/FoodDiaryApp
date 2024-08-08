@@ -1,12 +1,15 @@
 package com.example.fitnutrijournal.data.adapter
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.ItemDietBinding
+import com.example.fitnutrijournal.databinding.ItemMealBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import java.util.Collections
 
@@ -26,7 +29,7 @@ class MealWithFoodAdapter(
         notifyDataSetChanged()
     }
 
-    inner class MealViewHolder(private val binding: ItemDietBinding) :
+    inner class MealViewHolder(private val binding: ItemMealBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(item: MealWithFood) {
@@ -44,7 +47,7 @@ class MealWithFoodAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
-        val binding = ItemDietBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemMealBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MealViewHolder(binding)
     }
 
@@ -83,4 +86,15 @@ class MealWithFoodAdapter(
         mealsWithFood = mutableList
         notifyItemMoved(fromPosition, toPosition)
     }
+
+    // 추가: 아이템을 특정 위치에 추가하는 메서드
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addItem(position: Int, mealWithFood: MealWithFood) {
+        val mutableList = mealsWithFood.toMutableList()
+        mutableList.add(position, mealWithFood)
+        mealsWithFood = mutableList
+        notifyItemInserted(position)
+        viewModel.addMealWithFood(mealWithFood)
+    }
+
 }

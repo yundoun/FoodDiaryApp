@@ -1,11 +1,14 @@
 package com.example.fitnutrijournal.data.repository
 
 import androidx.lifecycle.LiveData
+import com.example.fitnutrijournal.data.dao.FoodDao
 import com.example.fitnutrijournal.data.dao.MealDao
+import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.data.model.Meal
 import com.example.fitnutrijournal.data.model.MealWithFood
+import kotlinx.coroutines.runBlocking
 
-class MealRepository(private val mealDao: MealDao) {
+class MealRepository(private val mealDao: MealDao,  private val foodDao: FoodDao) {
 
     // 주어진 Meal 객체를 삽입하는 역할
     suspend fun insert(meal: Meal) {
@@ -51,6 +54,10 @@ class MealRepository(private val mealDao: MealDao) {
 
     suspend fun getAllMealsWithFood(): List<MealWithFood> {
         return mealDao.getAllMealsWithFood()
+    }
+
+    fun getRecentMeals(limit: Int): LiveData<List<Meal>> {
+        return mealDao.getRecentMeals(limit)
     }
 
 }

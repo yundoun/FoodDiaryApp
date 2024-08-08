@@ -465,13 +465,14 @@
 
                             <TextView
                                 android:id="@+id/breakfastList"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/tvBreakfastCalories"
                                 app:textOrGone="@{viewModel.breakfastFoodNames}" />
@@ -517,13 +518,14 @@
 
                             <TextView
                                 android:id="@+id/lunchList"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/tvLunchCalories"
                                 app:textOrGone="@{viewModel.lunchFoodNames}" />
@@ -569,13 +571,14 @@
 
                             <TextView
                                 android:id="@+id/dinnerList"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/tvDinnerCalories"
                                 app:textOrGone="@{viewModel.dinnerFoodNames}" />
@@ -624,13 +627,14 @@
 
                             <TextView
                                 android:id="@+id/snackList"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/tvSnackCalories"
                                 app:textOrGone="@{viewModel.snackFoodNames}" />

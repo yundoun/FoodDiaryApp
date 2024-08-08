@@ -17,6 +17,7 @@ import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.adapter.DietTabAdapter
 import com.example.fitnutrijournal.data.model.Food
 import com.example.fitnutrijournal.viewmodel.DietViewModel
+import com.google.android.material.snackbar.Snackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FavoriteTabFragment : Fragment() {
@@ -30,12 +31,9 @@ class FavoriteTabFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_diet_tab, container, false)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
 
 
         val adapter = DietTabAdapter(
-            emptyList(),
-            dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
                 dietViewModel.selectFood(diet.foodCd)
@@ -45,6 +43,7 @@ class FavoriteTabFragment : Fragment() {
             dietViewModel
         )
         recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.favoriteFoods.observe(viewLifecycleOwner) { favorites ->
             adapter.updateDiets(favorites)
@@ -58,13 +57,22 @@ class FavoriteTabFragment : Fragment() {
     }
     private fun showDeleteConfirmationDialog(food: Food) {
         AlertDialog.Builder(requireContext()).apply {
-            setTitle("삭제 확인")
-            setMessage("이 항목을 삭제하시겠습니까?")
-            setPositiveButton("확인") { dialog, _ ->
+            setTitle(R.string.message_delete_title)
+            setMessage(getString(R.string.message_delete_content, food.foodName))
+            setPositiveButton(R.string.check) { dialog, _ ->
+                // 임시 변수에 삭제될 음식 저장
+                val deletedFood = food
                 dietViewModel.deleteFood(food)
                 dialog.dismiss()
+
+                val snackbar = Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
+                snackbar.setAction(R.string.undo) {
+                    // 삭제 취소 처리
+                    dietViewModel.insertFood(deletedFood)
+                }
+                snackbar.show()
             }
-            setNegativeButton("취소") { dialog, _ ->
+            setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
         }.show()

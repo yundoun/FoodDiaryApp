@@ -519,7 +519,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         dailyIntakeGoalRepository = DailyIntakeGoalRepository(dailyIntakeGoalDao)
         dailyIntakeRecordRepository = DailyIntakeRecordRepository(dailyIntakeRecordDao)
         foodRepository = FoodRepository(foodDao)
-        mealRepository = MealRepository(mealDao)
+        mealRepository = MealRepository(mealDao, foodDao)
 
         // 현재 날짜의 섭취 목표를 로드합니다.
         loadDailyIntakeGoal(selectedDate.value ?: LocalDate.now().format(dateFormatter))
