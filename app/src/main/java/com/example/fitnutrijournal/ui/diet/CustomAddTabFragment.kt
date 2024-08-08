@@ -38,7 +38,6 @@ class CustomAddTabFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
 
         adapter = DietTabAdapter(
-            dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { food ->
                 dietViewModel.selectFood(food.foodCd)

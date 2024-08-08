@@ -195,16 +195,20 @@ class DietFragment : Fragment() {
             "breakfast", "lunch", "dinner", "snack" -> {
                 setUi()
                 dietViewModel.setMealType(source)  // mealType 설정
+                dietViewModel.setCheckboxVisible(true)
+                dietViewModel.setFavoriteButtonVisibility(false)
+
                 dietViewModel.setSaveButtonVisibility(true)
                 dietViewModel.setUpdateButtonVisibility(false)
                 dietViewModel.setAddFromLibraryButtonVisibility(false)
-
                 dietViewModel.setLongClickEnabled(false)
             }
 
             else -> {
                 // 네비게이션 바를 통해 접근했을 때 기본 UI
                 dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
+                dietViewModel.setFavoriteButtonVisibility(true)
+
                 dietViewModel.setSaveButtonVisibility(false)
                 dietViewModel.setUpdateButtonVisibility(false)
                 dietViewModel.setAddFromLibraryButtonVisibility(true)

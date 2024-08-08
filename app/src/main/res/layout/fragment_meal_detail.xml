@@ -259,17 +259,18 @@
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/btnAddFood"
+            android:id="@+id/btnAddFoodFromMealDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:layout_marginBottom="20dp"
             android:paddingStart="20dp"
-            android:text="음식 추가하기"
+            android:text="@string/addFoodFromMealDetail"
             android:textColor="@color/black"
             app:backgroundTint="@color/light_green"
             app:layout_anchor="@id/nestedScrollView"
-            app:layout_anchorGravity="bottom|center" />
+            app:layout_anchorGravity="bottom|center"
+            tools:ignore="RtlSymmetry" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

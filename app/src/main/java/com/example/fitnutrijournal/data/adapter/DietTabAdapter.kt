@@ -16,7 +16,6 @@ import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 
 class DietTabAdapter(
-    private val toggleFavorite: (Food) -> Unit,
     private val favorites: LiveData<Set<String>>,
     private val onItemClick: (Food) -> Unit,
     private val onItemLongClick: ((Food) -> Unit)? = null,
@@ -52,11 +51,6 @@ class DietTabAdapter(
             binding.foodName.text = item.foodName
             binding.foodTotalContent.text = "${item.servingSize} g"
             binding.foodCalories.text = "${item.calories} kcal"
-            updateFavoriteButton(binding.favoriteBtn, item.foodCd)
-
-            binding.favoriteBtn.setOnClickListener {
-                toggleFavorite(item)
-            }
 
             binding.root.setOnClickListener {
                 onItemClick(item)
@@ -69,15 +63,9 @@ class DietTabAdapter(
 
             when (viewModel.isCheckboxVisible.value) {
                 true -> {
-                    binding.favoriteBtn.visibility = View.GONE
                     binding.checkbox.visibility = View.VISIBLE
                 }
-                false -> {
-                    binding.favoriteBtn.visibility = View.VISIBLE
-                    binding.checkbox.visibility = View.GONE
-                }
                 else -> {
-                    binding.favoriteBtn.visibility = View.GONE
                     binding.checkbox.visibility = View.GONE
                 }
             }

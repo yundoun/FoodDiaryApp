@@ -63,5 +63,6 @@
     <string name="carb_g">탄수화물(g)</string>
     <string name="protein_g">단백질(g)</string>
     <string name="fat_g">지방(g)</string>
+    <string name="addFoodFromMealDetail">음식 추가하기</string>
 
 </resources>

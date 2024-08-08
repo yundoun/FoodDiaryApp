@@ -83,8 +83,6 @@ class MealDetailFragment : Fragment() {
             mealType
         )
 
-        dietViewModel.setAddFromLibraryButtonVisibility(false)
-
         clearCheckedItems()
 
         // 날짜와 식사 타입에 따른 사진 바인딩
@@ -109,7 +107,7 @@ class MealDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        binding.btnAddFood.setOnClickListener {
+        binding.btnAddFoodFromMealDetail.setOnClickListener {
             val source = homeViewModel.mealType.value ?: "breakfast"
             val action =
                 MealDetailFragmentDirections.actionMealDetailFragmentToNavigationDiet(source)

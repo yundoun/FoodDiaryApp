@@ -47,6 +47,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
     val favorites: LiveData<Set<String>> get() = _favorites
 
+    val isFavorite = MutableLiveData<Boolean>()
+
     // 아이템 검색
     private val _searchQuery = MutableLiveData("")
     private val searchQuery: LiveData<String> get() = _searchQuery
@@ -97,16 +99,19 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     // 버튼 가시성 설정
 
-    private val _isCheckboxVisible = MutableLiveData<Boolean>(false)
+    private val _isCheckboxVisible = MutableLiveData<Boolean>(true)
     val isCheckboxVisible: LiveData<Boolean> get() = _isCheckboxVisible
 
-    private val _isSaveButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isFavoriteButtonVisible = MutableLiveData<Boolean>(true)
+    val isFavoriteButtonVisible: LiveData<Boolean> get() = _isFavoriteButtonVisible
+
+    private val _isSaveButtonVisible = MutableLiveData<Boolean>(true)
     val isSaveButtonVisible: LiveData<Boolean> get() = _isSaveButtonVisible
 
-    private val _isUpdateButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isUpdateButtonVisible = MutableLiveData<Boolean>(true)
     val isUpdateButtonVisible: LiveData<Boolean> get() = _isUpdateButtonVisible
 
-    private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(false)
+    private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(true)
     val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
 
     private val _isLongClickEnabled = MutableLiveData<Boolean>(true)
@@ -168,6 +173,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     fun setCheckboxVisible(isVisible: Boolean) {
         _isCheckboxVisible.value = isVisible
+    }
+
+    fun setFavoriteButtonVisibility(isVisible: Boolean) {
+        _isFavoriteButtonVisible.value = isVisible
     }
 
     fun setSaveButtonVisibility(isVisible: Boolean) {
@@ -315,17 +324,20 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         _searchQuery.value = query
     }
 
-    fun toggleFavorite(item: Food) {
-        viewModelScope.launch {
-            val currentFavorites = _favorites.value ?: emptySet()
-            if (currentFavorites.contains(item.foodCd)) {
-                _favorites.value = currentFavorites - item.foodCd
-                item.isFavorite = false
-            } else {
-                _favorites.value = currentFavorites + item.foodCd
-                item.isFavorite = true
+    fun toggleFavorite() {
+        selectedFood.value?.let { food ->
+            viewModelScope.launch {
+                val currentFavorites = _favorites.value ?: emptySet()
+                if (currentFavorites.contains(food.foodCd)) {
+                    _favorites.value = currentFavorites - food.foodCd
+                    food.isFavorite = false
+                } else {
+                    _favorites.value = currentFavorites + food.foodCd
+                    food.isFavorite = true
+                }
+                isFavorite.value = food.isFavorite
+                foodRepository.update(food)
             }
-            foodRepository.update(item)
         }
     }
 

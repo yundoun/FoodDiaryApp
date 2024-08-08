@@ -34,7 +34,6 @@ class FavoriteTabFragment : Fragment() {
 
 
         val adapter = DietTabAdapter(
-            dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
                 dietViewModel.selectFood(diet.foodCd)

@@ -52,14 +52,13 @@ class DietTabFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = DietTabAdapter(
-            dietViewModel::toggleFavorite,
             dietViewModel.favorites,
             { diet ->
                 dietViewModel.selectFood(diet.foodCd)
                 findNavController().navigate(R.id.action_navigation_diet_to_FoodDetailFragment)
             },
-            { diet ->
-                showDeleteConfirmationDialog(diet)
+            {
+
             },
             dietViewModel
         )
@@ -92,32 +91,6 @@ class DietTabFragment : Fragment() {
     fun clearSelectedCountFoodItem() {
         dietViewModel.clearSelectedCountFoodItem()
     }
-
-    @SuppressLint("StringFormatInvalid")
-    private fun showDeleteConfirmationDialog(food: Food) {
-        AlertDialog.Builder(requireContext()).apply {
-            setTitle(R.string.message_delete_title)
-            setMessage(getString(R.string.message_delete_content, food.foodName))
-            setPositiveButton(R.string.check) { dialog, _ ->
-                // 임시 변수에 삭제될 음식 저장
-                val deletedFood = food
-                dietViewModel.deleteFood(food)
-                dialog.dismiss()
-
-                val snackbar =
-                    Snackbar.make(requireView(), R.string.message_delete, Snackbar.LENGTH_LONG)
-                snackbar.setAction(R.string.undo) {
-                    // 삭제 취소 처리
-                    dietViewModel.insertFood(deletedFood)
-                }
-                snackbar.show()
-            }
-            setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
-        }.show()
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

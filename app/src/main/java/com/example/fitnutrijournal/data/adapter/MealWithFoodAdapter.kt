@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.ItemDietBinding
+import com.example.fitnutrijournal.databinding.ItemMealBinding
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import java.util.Collections
 
@@ -26,7 +27,7 @@ class MealWithFoodAdapter(
         notifyDataSetChanged()
     }
 
-    inner class MealViewHolder(private val binding: ItemDietBinding) :
+    inner class MealViewHolder(private val binding: ItemMealBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(item: MealWithFood) {
@@ -44,7 +45,7 @@ class MealWithFoodAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
-        val binding = ItemDietBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemMealBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MealViewHolder(binding)
     }
 
