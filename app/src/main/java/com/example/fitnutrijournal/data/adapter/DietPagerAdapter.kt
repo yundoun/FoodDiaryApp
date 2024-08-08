@@ -15,7 +15,7 @@ class DietPagerAdapter(fragmentActivity: DietFragment) :
     FragmentStateAdapter(fragmentActivity) {
 
     companion object {
-        private val TAB_TITLES = arrayOf("음식", "직접 추가한 음식", "즐겨찾기", "최근에 먹은 음식", "저장된 식사")
+        private val TAB_TITLES = arrayOf("음식", "직접 추가한 음식", "즐겨찾기", "최근에 먹은 음식")
     }
 
     override fun getItemCount(): Int {
@@ -34,11 +34,8 @@ class DietPagerAdapter(fragmentActivity: DietFragment) :
             2 -> {
                 FavoriteTabFragment()
             }
-            3 -> {
-                OftenFoodFragment()
-            }
             else -> {
-                MealListFragment()
+                OftenFoodFragment()
             }
         }
     }

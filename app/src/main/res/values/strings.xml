@@ -55,7 +55,7 @@
     <string name="message_delete_title">삭제 확인</string>
     <string name="message_delete_content">%1$s을 삭제하시겠습니까?\n(라이브러리에서 삭제됩니다)</string>
     <string name="message_delete">삭제되었습니다.</string>
-    <string name="custom_add_food">음식 추가하기</string>
+    <string name="custom_add_food">음식 직접 추가하기</string>
     <string name="custom_add_food_info">음식을 자유롭게 추가하세요</string>
     <string name="name">이름</string>
     <string name="serving_size_g">기본 제공량(g)</string>

@@ -91,6 +91,7 @@ class DietFragment : Fragment() {
 
         // 정렬 버튼 클릭 시 팝업 메뉴 표시
         binding.btnSort.setOnClickListener { showSortMenu(it) }
+        binding.btnMenu.setOnClickListener { showMenu(it) }
 
         // 실시간 검색을 위한 EditText의 TextWatcher 설정
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
@@ -137,10 +138,6 @@ class DietFragment : Fragment() {
             dietViewModel.clearCheckedItems()
             dietViewModel.clearSelectedCountFoodItem()
             Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
-        }
-
-        binding.btnAddCustomFood.setOnClickListener {
-            findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
         }
 
         //observeFoodInfo()
@@ -201,7 +198,6 @@ class DietFragment : Fragment() {
                 dietViewModel.setSaveButtonVisibility(true)
                 dietViewModel.setUpdateButtonVisibility(false)
                 dietViewModel.setAddFromLibraryButtonVisibility(false)
-                binding.btnAddCustomFood.visibility = View.GONE
 
                 dietViewModel.setLongClickEnabled(false)
             }
@@ -260,6 +256,22 @@ class DietFragment : Fragment() {
                 }
                 R.id.sort_descending -> {
                     dietViewModel.setSortOrder(DietViewModel.SortOrder.DESCENDING)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun showMenu(view: View){
+        val popup = PopupMenu(requireContext(),view)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.diet_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.add_food -> {
+                    findNavController().navigate(DietFragmentDirections.actionNavigationDietToCustomAddFragment())
                     true
                 }
                 else -> false
