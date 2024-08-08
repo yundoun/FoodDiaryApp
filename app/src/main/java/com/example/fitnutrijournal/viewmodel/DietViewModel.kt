@@ -42,6 +42,8 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
         // 초기화 시 최근 음식 데이터를 로드
         loadRecentFoods()
+
+
     }
 
     private val _favorites = MutableLiveData<Set<String>>(emptySet())
@@ -262,6 +264,10 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         // favoriteFoods LiveData를 관찰하여 favorite 목록 업데이트
         favoriteFoods.observeForever { favoriteList ->
             _favorites.value = favoriteList.map { it.foodCd }.toSet()
+        }
+
+        selectedFood.observeForever { food ->
+            isFavorite.value = food?.isFavorite ?: false
         }
     }
 

@@ -52,7 +52,7 @@ class CustomAddTabFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         dietViewModel.userAddedFoods.observe(viewLifecycleOwner) { diets ->
-            Log.d("UserAddedTabFragment", "Updating adapter with user added diets: $diets")
+            Log.d("CustomAddTabFragment", "Updating adapter with user added diets: $diets")
             adapter.updateDiets(diets)
         }
 

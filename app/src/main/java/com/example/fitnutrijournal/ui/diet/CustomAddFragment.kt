@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,6 +68,7 @@ class CustomAddFragment : Fragment() {
                         isFavorite = false,
                         isAddedByUser = true
                     )
+                    Log.d("CustomAddFragment", "Adding food: $food")
                     dietViewModel.insertFood(food)
                     findNavController().popBackStack()
                     Toast.makeText(context, "음식이 추가되었습니다.", Toast.LENGTH_SHORT).show()
