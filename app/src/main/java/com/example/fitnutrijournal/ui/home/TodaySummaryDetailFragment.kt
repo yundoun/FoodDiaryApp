@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -29,7 +28,7 @@ import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.DialogCalorieInputBinding
 import com.example.fitnutrijournal.databinding.FragmentTodaySummaryDetailBinding
 import com.example.fitnutrijournal.ui.home.Tab.ViewPagerAdapter
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator

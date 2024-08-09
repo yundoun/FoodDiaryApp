@@ -15,8 +15,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -31,7 +29,7 @@ import com.example.fitnutrijournal.data.database.FoodDatabase
 import com.example.fitnutrijournal.data.repository.FoodApiRepository
 import com.example.fitnutrijournal.data.repository.FoodRepository
 import com.example.fitnutrijournal.databinding.FragmentDietBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel

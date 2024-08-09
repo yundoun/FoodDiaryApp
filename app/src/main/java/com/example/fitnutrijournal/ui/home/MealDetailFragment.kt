@@ -29,7 +29,7 @@ import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.adapter.MealWithFoodAdapter
 import com.example.fitnutrijournal.data.model.MealWithFood
 import com.example.fitnutrijournal.databinding.FragmentMealDetailBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.utils.CameraHelper
 import com.example.fitnutrijournal.utils.PhotoViewActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel

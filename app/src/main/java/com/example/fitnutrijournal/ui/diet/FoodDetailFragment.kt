@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.utils.ModalBottomSheet
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.google.android.material.snackbar.Snackbar

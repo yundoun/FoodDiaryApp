@@ -38,7 +38,7 @@ class FoodApiRepository(private val foodRepository: FoodRepository) {
                     response.body()?.let {
                         _foodInfo.postValue(it)
                         CoroutineScope(Dispatchers.IO).launch {
-                            val foods = it.i2790.rows?.mapNotNull { item ->
+                            val foods = it.i2790.rows.mapNotNull { item ->
                                 val foodCd = item.foodCd ?: return@mapNotNull null
                                 val foodName = item.foodName ?: return@mapNotNull null
                                 val servingSize = item.servingSize?.toIntOrNull() ?: return@mapNotNull null

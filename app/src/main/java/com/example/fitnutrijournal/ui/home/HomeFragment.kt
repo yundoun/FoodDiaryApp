@@ -29,7 +29,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentHomeBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.viewmodel.DietViewModel
 import com.example.fitnutrijournal.viewmodel.DietViewModelFactory
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
