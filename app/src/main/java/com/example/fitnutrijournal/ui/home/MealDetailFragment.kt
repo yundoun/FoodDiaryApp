@@ -429,6 +429,7 @@ class MealDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        dietViewModel.setAddFromLibraryButtonVisible(false)
         _binding = null
     }
 
