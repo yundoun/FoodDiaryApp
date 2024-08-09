@@ -19,7 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.CalendarDayLayoutBinding
 import com.example.fitnutrijournal.databinding.FragmentCalendarBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.MemoViewModel
 import com.kizitonwose.calendar.core.CalendarDay

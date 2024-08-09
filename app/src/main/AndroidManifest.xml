@@ -38,7 +38,7 @@
         tools:ignore="HardcodedDebugMode"
         tools:targetApi="s">
 
-        <activity android:name="com.example.fitnutrijournal.ui.main.SplashActivity"
+        <activity android:name="com.example.fitnutrijournal.ui.Activity.SplashActivity"
             android:theme="@style/SplashTheme"
             android:exported="true">
             <intent-filter>
@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.fitnutrijournal.ui.main.MainActivity"
+        <activity android:name="com.example.fitnutrijournal.ui.Activity.MainActivity"
             android:theme="@style/AppTheme"/>
 
 

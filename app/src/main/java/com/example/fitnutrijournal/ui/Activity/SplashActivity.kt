@@ -1,4 +1,4 @@
-package com.example.fitnutrijournal.ui.main
+package com.example.fitnutrijournal.ui.Activity
 
 
 import android.annotation.SuppressLint

@@ -38,6 +38,7 @@ class CameraHelper(
     private var currentPhotoPath: String? = null
     private var photoUri: Uri? = null
 
+    // 카메라 앱 실행해서 사진 촬영
     @SuppressLint("QueryPermissionsNeeded")
     fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -60,6 +61,7 @@ class CameraHelper(
         }
     }
 
+    // 임시 파일 생성
     @Throws(IOException::class)
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
@@ -74,6 +76,7 @@ class CameraHelper(
         }
     }
 
+    // 사진 촬영 완료되면 호출됨. photoUri를 cropImage()에 전달
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
@@ -105,6 +108,7 @@ class CameraHelper(
         }
     }
 
+    // 크롭된 이미지를 저장하고 이미지뷰에 표시
     @SuppressLint("QueryPermissionsNeeded")
     private fun cropImage(uri: Uri) {
         try {

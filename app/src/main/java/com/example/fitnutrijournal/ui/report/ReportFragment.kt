@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.data.adapter.PhiChartFoodListAdapter
 import com.example.fitnutrijournal.databinding.FragmentReportBinding
-import com.example.fitnutrijournal.ui.main.MainActivity
+import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.viewmodel.HomeViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModel
 import com.example.fitnutrijournal.viewmodel.ReportViewModelFactory
@@ -131,7 +131,7 @@ class ReportFragment : Fragment() {
                 return if (usePercentValues) {
                     "${value.toInt()}%"
                 } else {
-                    "${value.toInt()}g"
+                    "${value.toInt()}kcal"
                 }
             }
         })
@@ -142,6 +142,11 @@ class ReportFragment : Fragment() {
             setUsePercentValues(usePercentValues)
             centerText = "섭취한 칼로리\n${totalCalories}"
             setCenterTextSize(16f)
+
+            description.text = "목표 ${homeViewModel.targetCalories.value}kcal"
+            description.textSize = 16f
+            description.textColor = Color.BLACK
+
             setCenterTextColor(R.color.text_gray)
             invalidate() // Refresh the chart
         }

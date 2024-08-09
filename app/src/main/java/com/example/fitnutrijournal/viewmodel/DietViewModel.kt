@@ -115,6 +115,9 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
 
     private val _isAddFromLibraryButtonVisible = MutableLiveData<Boolean>(true)
     val isAddFromLibraryButtonVisible: LiveData<Boolean> get() = _isAddFromLibraryButtonVisible
+    fun setAddFromLibraryButtonVisible(isVisible: Boolean) {
+        _isAddFromLibraryButtonVisible.value = isVisible
+    }
 
     private val _isLongClickEnabled = MutableLiveData<Boolean>(true)
     val isLongClickEnabled: LiveData<Boolean> get() = _isLongClickEnabled

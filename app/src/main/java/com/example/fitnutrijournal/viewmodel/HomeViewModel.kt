@@ -557,7 +557,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    // checkedItems를 Meal 객체로 변환하고 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트하는 메소드
+    // checkedItems를 Meal 객체로 변환
     fun addCheckedItemsToDailyIntakeRecord(checkedItems: Set<Food>, date: String, mealType: String) {
         viewModelScope.launch {
             Log.d("HomeViewModel", "Adding checked items: ${checkedItems.map { it.foodName }} to mealType: $mealType on date: $date")
@@ -577,6 +577,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Meal 객체를 이용해서 DailyIntakeRecord와 각 식사 유형별 섭취한 영양소 데이터를 업데이트
+    // Meal 객체를 데이터베이스에 삽입하고 해당 음식의 영양 성분을 누적함
     private suspend fun addMealsAndUpdateIntakeRecord(meals: List<Meal>, mealType: String) {
         // 첫 번째 meal의 날짜를 사용하여 DailyIntakeRecord를 가져옵니다.
         val date = meals.first().date
