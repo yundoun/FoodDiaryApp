@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.fitnutrijournal.R
 import com.example.fitnutrijournal.databinding.FragmentFoodDetailBinding
 import com.example.fitnutrijournal.ui.Activity.MainActivity
 import com.example.fitnutrijournal.utils.ModalBottomSheet
@@ -33,9 +34,7 @@ class FoodDetailFragment : Fragment(), ModalBottomSheet.OnMealTypeSelectedListen
         binding = FragmentFoodDetailBinding.inflate(inflater, container, false)
         binding.viewModel = dietViewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
         (activity as MainActivity).showBottomNavigation(false)
-
         return binding.root
     }
 
@@ -44,90 +43,91 @@ class FoodDetailFragment : Fragment(), ModalBottomSheet.OnMealTypeSelectedListen
 
         mealId = arguments?.getLong("mealId") ?: -1L
 
-        binding.btnUpdate.setOnClickListener {
-            dietViewModel.updateFoodIntake(mealId)
-            Toast.makeText(context, "식사가 업데이트되었습니다.", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-        }
-
-        binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        binding.favoriteBtn.setOnClickListener {
-            dietViewModel.toggleFavorite()
-        }
-
-        dietViewModel.isSaveButtonVisible.observe(viewLifecycleOwner) { isVisible ->
-            binding.btnSave.visibility = if (isVisible) View.VISIBLE else View.GONE
-            binding.btnUpdate.visibility = if (isVisible) View.GONE else View.VISIBLE
-            Log.d("FoodDetailFragment", "isSaveButtonVisible: $isVisible")
-        }
-
-        dietViewModel.isUpdateButtonVisible.observe(viewLifecycleOwner) { isVisible ->
-            binding.btnUpdate.visibility = if (isVisible) View.VISIBLE else View.GONE
-            Log.d("FoodDetailFragment", "isUpdateButtonVisible: $isVisible")
-        }
-
-        dietViewModel.isAddFromLibraryButtonVisible.observe(viewLifecycleOwner) { isVisible ->
-            binding.btnAddFromLibrary.visibility = if (isVisible) View.VISIBLE else View.GONE
-            Log.d("FoodDetailFragment", "isAddFromLibraryButtonVisible: $isVisible")
-        }
-
-        dietViewModel.selectedFood.observe(viewLifecycleOwner) { food ->
-            val selectedMealQuantity = dietViewModel.selectedMealQuantity.value
-            if (selectedMealQuantity != null) {
-                binding.totalContentInput.setText(selectedMealQuantity.toString())
-                Log.d("FoodDetailFragment", "selectedMealQuantity: $selectedMealQuantity")
-
-            } else {
-                binding.totalContentInput.setText(food?.servingSize?.toString() ?: "")
-            }
-        }
-
-        binding.totalContentInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                updateButtonStates()
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                dietViewModel.updateTotalContent(s.toString())
-            }
-        })
-
-        binding.btnSave.setOnClickListener {
-            dietViewModel.saveCurrentFoodIntake()
-            Toast.makeText(context, "식사가 저장되었습니다.", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-        }
-
-        binding.btnAddFromLibrary.setOnClickListener {
-            val modalBottomSheet = ModalBottomSheet(this)
-            modalBottomSheet.show(childFragmentManager, ModalBottomSheet.TAG)
-        }
-
+        setupUI()
+        setupObservers()
         updateButtonStates()
     }
 
-    private fun updateButtonStates() {
-        val totalContent = binding.totalContentInput.text.toString()
-        val isTotalContentNotEmpty = totalContent.isNotEmpty()
+    private fun setupUI() {
+        binding.apply {
 
+            btnBack.setOnClickListener { findNavController().popBackStack() }
+            favoriteBtn.setOnClickListener { dietViewModel.toggleFavorite() }
+            binding.btnAddFromLibrary.setOnClickListener { showBottomSheet() }
+
+            btnUpdate.setOnClickListener {
+                dietViewModel.updateFoodIntake(mealId)
+                showToast(R.string.message_meal_update)
+                findNavController().popBackStack()
+            }
+
+            btnSave.setOnClickListener {
+                dietViewModel.saveCurrentFoodIntake()
+                showToast(R.string.message_meal_save)
+                findNavController().popBackStack()
+            }
+
+            totalContentInput.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) { updateButtonStates() }
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    dietViewModel.updateTotalContent(s.toString())
+                }
+            })
+        }
+    }
+
+    private fun setupObservers() {
+        dietViewModel.apply {
+            isSaveButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+                binding.btnSave.visibility = if (isVisible) View.VISIBLE else View.GONE
+                binding.btnUpdate.visibility = if (isVisible) View.GONE else View.VISIBLE
+                Log.d("FoodDetailFragment", "isSaveButtonVisible: $isVisible")
+            }
+            isUpdateButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+                binding.btnUpdate.visibility = if (isVisible) View.VISIBLE else View.GONE
+                Log.d("FoodDetailFragment", "isUpdateButtonVisible: $isVisible")
+            }
+            isAddFromLibraryButtonVisible.observe(viewLifecycleOwner) { isVisible ->
+                binding.btnAddFromLibrary.visibility = if (isVisible) View.VISIBLE else View.GONE
+                Log.d("FoodDetailFragment", "isAddFromLibraryButtonVisible: $isVisible")
+            }
+            selectedFood.observe(viewLifecycleOwner) { food ->
+                binding.totalContentInput.setText(
+                    selectedMealQuantity.value?.toString() ?: food?.servingSize?.toString() ?: ""
+                )
+            }
+        }
+    }
+
+    private fun showToast(messageResId: Int) {
+        Toast.makeText(context, messageResId, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateButtonStates() {
+        val isTotalContentNotEmpty = binding.totalContentInput.text.toString().isNotEmpty()
         binding.btnSave.isEnabled = isTotalContentNotEmpty
         binding.btnUpdate.isEnabled = isTotalContentNotEmpty
+    }
+
+    private fun showBottomSheet() {
+        ModalBottomSheet(this).show(childFragmentManager, ModalBottomSheet.TAG)
+    }
+
+    override fun onMealTypeSelected(mealType: String) {
+        dietViewModel.setMealType(mealType)
+        dietViewModel.saveCurrentFoodIntake()
+        Snackbar.make(requireView(), R.string.message_meal_add, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         dietViewModel.clearSelectedMealQuantity()
     }
-
-    override fun onMealTypeSelected(mealType: String) {
-        dietViewModel.setMealType(mealType)
-        dietViewModel.saveCurrentFoodIntake()
-        Snackbar.make(requireView(), "식사가 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
-    }
-
 }

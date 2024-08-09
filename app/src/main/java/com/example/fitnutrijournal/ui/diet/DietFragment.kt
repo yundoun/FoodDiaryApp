@@ -155,11 +155,11 @@ class DietFragment : Fragment() {
             RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "음성을 입력하세요")
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.message_input_voice)
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "음성 인식을 지원하지 않습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.message_input_voice_error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -183,7 +183,6 @@ class DietFragment : Fragment() {
                 dietViewModel.setMealType(source)  // mealType 설정
                 setupMealUI()
             }
-
             else -> {
                 setupDefaultUI()
             }

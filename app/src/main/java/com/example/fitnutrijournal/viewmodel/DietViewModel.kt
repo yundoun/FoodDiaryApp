@@ -484,8 +484,6 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
         }
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateFoodIntake(mealId: Long) {
         val food = _selectedFood.value ?: return
@@ -512,6 +510,4 @@ class DietViewModel(application: Application, private val homeViewModel: HomeVie
             }
         }
     }
-
-
 }
