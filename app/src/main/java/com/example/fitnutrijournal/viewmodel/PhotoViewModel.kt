@@ -36,9 +36,4 @@ class PhotoViewModel (application: Application) : AndroidViewModel(application) 
             photoRepository.deletePhotoById(photoId)
         }
     }
-
-
-
-
-
 }

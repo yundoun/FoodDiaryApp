@@ -884,7 +884,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val foods = meals.map { meal ->
             foodRepository.getFoodByFoodCode(meal.dietFoodCode).foodName
         }
-
         when (mealType) {
             "breakfast" -> _breakfastFoodNames.postValue(foods)
             "lunch" -> _lunchFoodNames.postValue(foods)
@@ -892,11 +891,5 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             "snack" -> _snackFoodNames.postValue(foods)
         }
     }
-
-
-
-
-
-
 }
 

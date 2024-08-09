@@ -149,7 +149,6 @@ class CameraHelper(
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
             }
-
             fragment.startActivityForResult(cropIntent, REQUEST_IMAGE_CROP)
         } catch (e: Exception) {
             Toast.makeText(fragment.requireContext(), "이미지 크롭 작업을 지원하지 않습니다.", Toast.LENGTH_SHORT)
@@ -183,7 +182,7 @@ class CameraHelper(
 
             // Determine how much to scale down the image
             val scaleFactor: Int = if (targetW > 0 && targetH > 0) {
-                Math.min(photoW / targetW, photoH / targetH)
+                (photoW / targetW).coerceAtMost(photoH / targetH)
             } else {
                 1
             }
