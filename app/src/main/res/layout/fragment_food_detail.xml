@@ -355,7 +355,7 @@
                     android:layout_marginBottom="30dp"
                     android:background="@drawable/border_section_light_green"
                     android:text="@string/addToMeal"
-                    android:visibility="@{viewModel.isAddFromLibraryButtonVisible() ? android.view.View.VISIBLE : android.view.View.GONE}"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

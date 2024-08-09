@@ -85,7 +85,6 @@ class HomeFragment : Fragment() {
             memoViewModel.loadMemoByDate(date)
         }
 
-
         memoViewModel.clickedDateMemo.observe(viewLifecycleOwner) { memo ->
             binding.edtMemo.text = memo?.content?.ifEmpty {
                 "작성된 메모가 없습니다"

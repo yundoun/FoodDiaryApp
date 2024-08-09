@@ -51,10 +51,10 @@ class DietFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private var shouldClearCheckedItems = true
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDietBinding.inflate(inflater, container, false).apply {
             viewModel = dietViewModel
@@ -68,6 +68,16 @@ class DietFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewPagerAndTabs()
+        setupNavigationListener()
+        setupButtonClickListeners()
+        setupSearchTextWatcher()
+        setupObservers()
+
+        handleArgs(arguments?.getString("source") ?: "")
+    }
+
+    private fun setupViewPagerAndTabs() {
         viewPager = binding.viewPager
         tabLayout = binding.tabLayout
 
@@ -77,21 +87,31 @@ class DietFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
+    }
 
-
-
+    private fun setupNavigationListener() {
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             shouldClearCheckedItems = when (destination.id) {
                 R.id.foodDetailFragment -> false
                 else -> true
             }
         }
+    }
 
-        // 정렬 버튼 클릭 시 팝업 메뉴 표시
-        binding.btnSort.setOnClickListener { showSortMenu(it) }
-        binding.btnMenu.setOnClickListener { showMenu(it) }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupButtonClickListeners() {
 
-        // 실시간 검색을 위한 EditText의 TextWatcher 설정
+        binding.apply {
+            btnSort.setOnClickListener { showSortMenu(it) }
+            btnMenu.setOnClickListener { showMenu(it) }
+            btnBack.setOnClickListener { findNavController().popBackStack() }
+            micBtn.setOnClickListener { startVoiceInput() }
+            btnAddFood.setOnClickListener { handleAddFoodClick() }
+        }
+    }
+
+    // 실시간 검색을 위한 EditText의 TextWatcher 설정
+    private fun setupSearchTextWatcher() {
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
@@ -102,43 +122,13 @@ class DietFragment : Fragment() {
                 dietViewModel.setSearchQuery(query)
             }
         })
+    }
 
-        binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        binding.micBtn.setOnClickListener {
-            startVoiceInput()
-        }
-
-        handleArgs(arguments?.getString("source") ?: "")
-
-        binding.btnAddFood.setOnClickListener {
-            val checkedItems = dietViewModel.checkedItems.value ?: emptySet()
-            val date = homeViewModel.currentDate.value ?: ""
-            val mealType = dietViewModel.mealType.value ?: ""
-
-            if (checkedItems.isEmpty()) {
-                Snackbar.make(view, "선택된 아이템이 없습니다.", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            homeViewModel.addCheckedItemsToDailyIntakeRecord(checkedItems, date, mealType)
-
-            checkedItems.forEach { food ->
-                val quantity = food.servingSize.toFloat()
-                Log.d(
-                    "DietFragment",
-                    "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity"
-                )
-            }
-
-            dietViewModel.clearCheckedItems()
-            dietViewModel.clearSelectedCountFoodItem()
-            Snackbar.make(view, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
-        }
-
-        //observeFoodInfo()
+    private fun setupObservers() {
+        // 체크된 항목 개수 관찰
+        dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->
+            binding.btnAddFood.text = getString(R.string.check_item_count, count)
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -162,8 +152,7 @@ class DietFragment : Fragment() {
     private fun startVoiceInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "음성을 입력하세요")
@@ -191,60 +180,61 @@ class DietFragment : Fragment() {
     private fun handleArgs(source: String) {
         when (source) {
             "breakfast", "lunch", "dinner", "snack" -> {
-                setUi()
                 dietViewModel.setMealType(source)  // mealType 설정
-                dietViewModel.setCheckboxVisible(true)
-                dietViewModel.setFavoriteButtonVisibility(false)
-
-                dietViewModel.setSaveButtonVisibility(true)
-                dietViewModel.setUpdateButtonVisibility(false)
-                dietViewModel.setAddFromLibraryButtonVisibility(false)
-                dietViewModel.setLongClickEnabled(false)
+                setupMealUI()
             }
 
             else -> {
-                // 네비게이션 바를 통해 접근했을 때 기본 UI
-                dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
-                dietViewModel.setFavoriteButtonVisibility(true)
-
-                dietViewModel.setSaveButtonVisibility(false)
-                dietViewModel.setUpdateButtonVisibility(false)
-                dietViewModel.setAddFromLibraryButtonVisibility(true)
-                binding.btnAddFood.visibility = View.GONE
-
-                dietViewModel.setLongClickEnabled(true)
+                setupDefaultUI()
             }
         }
     }
 
-    private fun observeFoodInfo() {
-        Log.d("DietFragment", "observeFoodInfo() 메소드 호출됨")
-        val foodDao = FoodDatabase.getDatabase(requireContext()).foodDao()
-        val foodRepository = FoodRepository(foodDao)
-        val foodApiRepository = FoodApiRepository(foodRepository)
-
-        foodApiRepository.fetchFoodInfo().observe(viewLifecycleOwner, Observer { foodResponse ->
-            foodResponse?.i2790?.rows?.forEach { item ->
-                //Log.d("DietFragment", "Api 호출 관찰됨 ")
-            }
-        })
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun setUi() {
-        // 음식 추가 관련 UI 조정
+    private fun setupMealUI() {
         (activity as MainActivity).showBottomNavigation(false)
-
-
-        // 체크된 항목 개수 관찰
-        dietViewModel.selectedCountFoodItem.observe(viewLifecycleOwner, Observer { count ->
-            binding.btnAddFood.text = "${count}개 추가하기"
-        })
-
-        dietViewModel.setCheckboxVisible(true) // 체크박스 표시 + 어댑터에서 즐겨찾기 숨김
-        dietViewModel.setSaveButtonVisibility(true) // 저장 버튼 표시
+        dietViewModel.setCheckboxVisible(true)
+        dietViewModel.setFavoriteButtonVisibility(false)
+        dietViewModel.setSaveButtonVisibility(true)
+        dietViewModel.setUpdateButtonVisibility(false)
+        dietViewModel.setAddFromLibraryButtonVisibility(false)
+        dietViewModel.setLongClickEnabled(false)
     }
 
+    private fun setupDefaultUI() {
+        dietViewModel.setCheckboxVisible(false) // 체크박스 숨김
+        dietViewModel.setFavoriteButtonVisibility(true)
+        dietViewModel.setSaveButtonVisibility(false)
+        dietViewModel.setUpdateButtonVisibility(false)
+        dietViewModel.setAddFromLibraryButtonVisibility(true)
+        binding.btnAddFood.visibility = View.GONE
+        dietViewModel.setLongClickEnabled(true)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun handleAddFoodClick() {
+        val checkedItems = dietViewModel.checkedItems.value ?: emptySet()
+        val date = homeViewModel.currentDate.value ?: ""
+        val mealType = dietViewModel.mealType.value ?: ""
+
+        if (checkedItems.isEmpty()) {
+            view?.let { Snackbar.make(it, "선택된 아이템이 없습니다.", Snackbar.LENGTH_SHORT).show() }
+            return
+        }
+
+        homeViewModel.addCheckedItemsToDailyIntakeRecord(checkedItems, date, mealType)
+
+        checkedItems.forEach { food ->
+            val quantity = food.servingSize.toFloat()
+            Log.d(
+                "DietFragment",
+                "Checked items: ${food.foodCd}, Date: $date, Meal type: $mealType, Quantity: $quantity"
+            )
+        }
+
+        dietViewModel.clearCheckedItems()
+        dietViewModel.clearSelectedCountFoodItem()
+        view?.let { Snackbar.make(it, "음식이 추가되었습니다.", Snackbar.LENGTH_SHORT).show() }
+    }
 
     private fun showSortMenu(view: View) {
         val popup = PopupMenu(requireContext(), view)
@@ -256,18 +246,20 @@ class DietFragment : Fragment() {
                     dietViewModel.setSortOrder(DietViewModel.SortOrder.ASCENDING)
                     true
                 }
+
                 R.id.sort_descending -> {
                     dietViewModel.setSortOrder(DietViewModel.SortOrder.DESCENDING)
                     true
                 }
+
                 else -> false
             }
         }
         popup.show()
     }
 
-    private fun showMenu(view: View){
-        val popup = PopupMenu(requireContext(),view)
+    private fun showMenu(view: View) {
+        val popup = PopupMenu(requireContext(), view)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.diet_menu, popup.menu)
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->

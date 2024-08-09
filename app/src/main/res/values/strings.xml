@@ -64,5 +64,6 @@
     <string name="protein_g">단백질(g)</string>
     <string name="fat_g">지방(g)</string>
     <string name="addFoodFromMealDetail">음식 추가하기</string>
-
+    
+    <string name="check_item_count">%1$d개 추가하기</string>
 </resources>
