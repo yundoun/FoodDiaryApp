@@ -1,3 +1,24 @@
+<!-- 첫번째 행: 2개 이미지 -->
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <img src="https://github.com/user-attachments/assets/0d914b36-077f-4669-9ba7-91f92813d038" width="48%" alt="앱 스크린샷 1"/>
+    <img src="https://github.com/user-attachments/assets/83a9af38-d9da-4af9-b50c-01f57c2e951a" width="48%" alt="앱 스크린샷 2"/>
+</div>
+
+<!-- 두번째 행: 3개 이미지 -->
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <img src="https://github.com/user-attachments/assets/bed37d31-6677-493d-9819-6a679bf7f801" width="32%" alt="앱 스크린샷 3"/>
+    <img src="https://github.com/user-attachments/assets/e86c2d0f-eb46-42cf-a223-ab674e585e28" width="32%" alt="앱 스크린샷 4"/>
+    <img src="https://github.com/user-attachments/assets/7bdaa116-cc74-4f48-939e-a0cff26e521d" width="32%" alt="앱 스크린샷 5"/>
+</div>
+
+<!-- 세번째 행: 3개 이미지 -->
+<div style="display: flex; justify-content: space-between;">
+    <img src="https://github.com/user-attachments/assets/f92d293f-e8f7-425f-8c76-4db1ad503944" width="32%" alt="앱 스크린샷 6"/>
+    <img src="https://github.com/user-attachments/assets/e25b44f2-2cc1-44c1-ad15-ff1c303c725d" width="32%" alt="앱 스크린샷 7"/>
+    <img src="https://github.com/user-attachments/assets/f9a0764f-d722-4e17-9e9c-921e0b85dfbd" width="32%" alt="앱 스크린샷 8"/>
+</div>
+
+
 # 식단일지 애플리케이션 - FoodDiaryApp
 
 ## 프로젝트 개요
